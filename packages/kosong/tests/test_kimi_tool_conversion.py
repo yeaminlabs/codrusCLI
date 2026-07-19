@@ -1,13 +1,14 @@
-"""Tests for `_convert_tool` in the Kimi chat provider.
+"""Tests for `_convert_tool` in the Codrus chat provider.
 
 These guard the Moonshot-specific schema quirk: Moonshot rejects tool
 parameter schemas whose nested properties omit `type`, even though such
-schemas are valid JSON Schema and accepted by OpenAI/Anthropic. The Kimi
+schemas are valid JSON Schema and accepted by OpenAI/Anthropic. The Codrus
 provider normalizes schemas locally so MCP tools from servers that emit
 type-less properties (e.g. some JetBrains MCP tools) keep working.
 """
 
-from kosong.chat_provider.kimi import _convert_tool  # pyright: ignore[reportPrivateUsage]
+from kosong.chat_provider.codrus import _convert_tool  # pyright: ignore[reportPrivateUsage]
+
 from kosong.tooling import Tool
 
 
@@ -53,7 +54,7 @@ def test_convert_tool_does_not_mutate_source_tool() -> None:
 
 
 def test_convert_tool_preserves_builtin_function_shape() -> None:
-    """Kimi builtin functions (names starting with `$`) don't carry
+    """Codrus builtin functions (names starting with `$`) don't carry
     parameters — the normalization path must not touch them."""
     builtin = Tool(name="$web_search", description="", parameters={})
     converted = _convert_tool(builtin)

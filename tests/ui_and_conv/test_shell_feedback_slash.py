@@ -14,14 +14,14 @@ import pytest
 from kosong.tooling.empty import EmptyToolset
 from pydantic import SecretStr
 
-from kimi_cli.config import LLMProvider, OAuthRef
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.ui.shell import Shell
-from kimi_cli.ui.shell import slash as shell_slash
-from kimi_cli.ui.shell.slash import registry as shell_slash_registry
-from kimi_cli.ui.shell.slash import shell_mode_registry
+from codrus_cli.config import LLMProvider, OAuthRef
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.ui.shell import Shell
+from codrus_cli.ui.shell import slash as shell_slash
+from codrus_cli.ui.shell.slash import registry as shell_slash_registry
+from codrus_cli.ui.shell.slash import shell_mode_registry
 
 
 def _make_shell_app(runtime: Runtime, tmp_path: Path) -> SimpleNamespace:
@@ -36,12 +36,12 @@ def _make_shell_app(runtime: Runtime, tmp_path: Path) -> SimpleNamespace:
 
 
 def _setup_feedback_provider(runtime: Runtime) -> None:
-    """Add a managed:kimi-code provider with OAuth to the runtime config."""
-    runtime.config.providers["managed:kimi-code"] = LLMProvider(
-        type="kimi",
-        base_url="https://api.kimi.com/coding/v1",
+    """Add a managed:codrus-code provider with OAuth to the runtime config."""
+    runtime.config.providers["managed:codrus-code"] = LLMProvider(
+        type="codrus",
+        base_url="https://api.codrus.com/coding/v1",
         api_key=SecretStr("test-api-key"),
-        oauth=OAuthRef(storage="file", key="oauth/kimi-code"),
+        oauth=OAuthRef(storage="file", key="oauth/codrus-code"),
         custom_headers={"x-canary-kfc": "always"},
     )
 
@@ -76,7 +76,7 @@ def _setup_submission_mocks(monkeypatch, *, feedback_text="Great tool!", session
         AsyncMock(return_value=feedback_text),
     )
     if session_factory is not None:
-        monkeypatch.setattr("kimi_cli.utils.aiohttp.new_client_session", session_factory)
+        monkeypatch.setattr("codrus_cli.utils.aiohttp.new_client_session", session_factory)
     return print_mock, open_mock
 
 
@@ -120,7 +120,7 @@ class TestFeedbackGuards:
     async def test_fallback_when_no_provider(
         self, runtime: Runtime, tmp_path: Path, monkeypatch
     ) -> None:
-        """When managed:kimi-code provider is missing, should fallback."""
+        """When managed:codrus-code provider is missing, should fallback."""
         app = _make_shell_app(runtime, tmp_path)
 
         open_mock = Mock(return_value=True)
@@ -136,9 +136,9 @@ class TestFeedbackGuards:
         self, runtime: Runtime, tmp_path: Path, monkeypatch
     ) -> None:
         """When provider exists but has no oauth, should fallback."""
-        runtime.config.providers["managed:kimi-code"] = LLMProvider(
-            type="kimi",
-            base_url="https://api.kimi.com/coding/v1",
+        runtime.config.providers["managed:codrus-code"] = LLMProvider(
+            type="codrus",
+            base_url="https://api.codrus.com/coding/v1",
             api_key=SecretStr("test-api-key"),
             oauth=None,
         )
@@ -227,7 +227,7 @@ class TestFeedbackSubmission:
         # Verify request URL
         mock_session = await mock_session_factory.return_value.__aenter__()
         post_call = mock_session.post.call_args
-        assert post_call.args[0] == "https://api.kimi.com/coding/v1/feedback"
+        assert post_call.args[0] == "https://api.codrus.com/coding/v1/feedback"
 
         # Verify custom_headers are included
         headers = post_call.kwargs["headers"]

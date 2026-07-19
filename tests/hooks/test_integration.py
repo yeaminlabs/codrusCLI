@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 import tomlkit
 
-from kimi_cli.hooks.config import HookDef
-from kimi_cli.hooks.engine import HookEngine
+from codrus_cli.hooks.config import HookDef
+from codrus_cli.hooks.engine import HookEngine
 
 
 @pytest.mark.asyncio
@@ -110,10 +110,10 @@ command = "echo ok"
 [[hooks]]
 event = "Notification"
 matcher = "permission_prompt"
-command = "notify-send Kimi"
+command = "notify-send Codrus"
 timeout = 5
 """
-    from kimi_cli.config import Config
+    from codrus_cli.config import Config
 
     data = tomlkit.parse(toml_str)
     config = Config.model_validate(data)
@@ -138,7 +138,7 @@ def test_hook_engine_summary():
 @pytest.mark.asyncio
 async def test_session_hooks_payload():
     """SessionStart/End hooks receive correct payloads."""
-    from kimi_cli.hooks import events
+    from codrus_cli.hooks import events
 
     hooks = [
         HookDef(

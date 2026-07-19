@@ -230,7 +230,7 @@ def start_shell_pty(
     env["PROMPT_TOOLKIT_NO_CPR"] = "1"
     env.pop("NO_COLOR", None)
 
-    cmd = [sys.executable, "-m", "kimi_cli.cli"]
+    cmd = [sys.executable, "-m", "codrus_cli.cli"]
     if yolo:
         cmd.append("--yolo")
     cmd.extend(["--config-file", str(config_path), "--work-dir", str(work_dir)])
@@ -253,7 +253,7 @@ def start_shell_pty(
 
 def find_session_dir(home_dir: Path, work_dir: Path) -> Path:
     path_md5 = hashlib.md5(str(work_dir.resolve()).encode("utf-8")).hexdigest()
-    sessions_root = home_dir / ".kimi" / "sessions" / path_md5
+    sessions_root = home_dir / ".codrus" / "sessions" / path_md5
     session_dirs = [path for path in sessions_root.iterdir() if path.is_dir()]
     if len(session_dirs) != 1:
         raise AssertionError(f"Expected exactly one session dir, got {session_dirs!r}")

@@ -1,9 +1,9 @@
-# `kimi mcp` Subcommand
+# `codrus mcp` Subcommand
 
-`kimi mcp` is used to manage MCP (Model Context Protocol) server configurations. For concepts and usage of MCP, see [Model Context Protocol](../customization/mcp.md).
+`codrus mcp` is used to manage MCP (Model Context Protocol) server configurations. For concepts and usage of MCP, see [Model Context Protocol](../customization/mcp.md).
 
 ```sh
-kimi mcp COMMAND [ARGS]
+codrus mcp COMMAND [ARGS]
 ```
 
 ## `add`
@@ -11,7 +11,7 @@ kimi mcp COMMAND [ARGS]
 Add an MCP server configuration.
 
 ```sh
-kimi mcp add [OPTIONS] NAME [TARGET_OR_COMMAND...]
+codrus mcp add [OPTIONS] NAME [TARGET_OR_COMMAND...]
 ```
 
 **Arguments**
@@ -35,7 +35,7 @@ kimi mcp add [OPTIONS] NAME [TARGET_OR_COMMAND...]
 List all configured MCP servers.
 
 ```sh
-kimi mcp list
+codrus mcp list
 ```
 
 Output includes:
@@ -48,7 +48,7 @@ Output includes:
 Remove an MCP server configuration.
 
 ```sh
-kimi mcp remove NAME
+codrus mcp remove NAME
 ```
 
 **Arguments**
@@ -62,10 +62,10 @@ kimi mcp remove NAME
 Authorize an MCP server that uses OAuth.
 
 ```sh
-kimi mcp auth NAME
+codrus mcp auth NAME
 ```
 
-This will open a browser for the OAuth authorization flow. After successful authorization, the token is cached in `~/.kimi/mcp-oauth/` for future use.
+This will open a browser for the OAuth authorization flow. After successful authorization, the token is cached in `~/.codrus/mcp-oauth/` for future use.
 
 **Arguments**
 
@@ -82,7 +82,7 @@ Only servers added with `--auth oauth` require this command.
 Clear the cached OAuth token for an MCP server.
 
 ```sh
-kimi mcp reset-auth NAME
+codrus mcp reset-auth NAME
 ```
 
 **Arguments**
@@ -91,16 +91,16 @@ kimi mcp reset-auth NAME
 |----------|-------------|
 | `NAME` | Name of server to reset authorization |
 
-After clearing, you need to run `kimi mcp auth` again to re-authorize.
+After clearing, you need to run `codrus mcp auth` again to re-authorize.
 
-After upgrading from older versions that used FastMCP 2.x, existing OAuth MCP tokens are not migrated automatically; if `kimi mcp list` shows that authorization is required, run `kimi mcp auth NAME` again.
+After upgrading from older versions that used FastMCP 2.x, existing OAuth MCP tokens are not migrated automatically; if `codrus mcp list` shows that authorization is required, run `codrus mcp auth NAME` again.
 
 ## `test`
 
 Test connection to an MCP server and list available tools.
 
 ```sh
-kimi mcp test NAME
+codrus mcp test NAME
 ```
 
 **Arguments**

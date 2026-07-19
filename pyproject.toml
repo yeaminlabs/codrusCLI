@@ -1,7 +1,7 @@
 [project]
-name = "kimi-cli"
+name = "codrus-cli"
 version = "1.49.0"
-description = "Kimi Code CLI is your next CLI agent."
+description = "CodrusCLI powered by Codrus models is your next enterprise CLI agent."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -54,25 +54,25 @@ requires = ["uv_build>=0.8.5,<0.10.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = ["kimi_cli"]
-source-exclude = ["examples/**/*", "tests/**/*", "src/kimi_cli/deps/**/*"]
+module-name = ["codrus_cli"]
+source-exclude = ["examples/**/*", "tests/**/*", "src/codrus_cli/deps/**/*"]
 
 [tool.uv.workspace]
 members = [
     "packages/kosong",
     "packages/kaos",
-    "packages/kimi-code",
-    "sdks/kimi-sdk",
+    "packages/codrus-code",
+    "sdks/codrus-sdk",
 ]
 
 [tool.uv.sources]
 kosong = { workspace = true }
 pykaos = { workspace = true }
-kimi-cli = { workspace = true }
+codrus-cli = { workspace = true }
 
 [project.scripts]
-kimi = "kimi_cli.__main__:main"
-kimi-cli = "kimi_cli.__main__:main"
+codrus = "codrus_cli.__main__:main"
+codrus-cli = "codrus_cli.__main__:main"
 
 [tool.ruff]
 line-length = 100
@@ -90,7 +90,7 @@ select = [
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["E501"]
 "tests_e2e/**/*.py" = ["E501"]
-"src/kimi_cli/web/api/**/*.py" = ["B008"]  # FastAPI Depends() is standard usage
+"src/codrus_cli/web/api/**/*.py" = ["B008"]  # FastAPI Depends() is standard usage
 
 [tool.pyright]
 typeCheckingMode = "standard"
@@ -101,7 +101,7 @@ include = [
     "tests_ai/scripts/**/*.py",
     "tests_e2e/**/*.py",
 ]
-strict = ["src/kimi_cli/**/*.py"]
+strict = ["src/codrus_cli/**/*.py"]
 
 [tool.ty.environment]
 python-version = "3.14"
@@ -115,7 +115,7 @@ include = [
 ]
 
 [tool.typos.files]
-extend-exclude = ["kimi.spec", "pyinstaller.py"]
+extend-exclude = ["codrus.spec", "pyinstaller.py"]
 
 [tool.typos.default.extend-words]
 datas = "datas"

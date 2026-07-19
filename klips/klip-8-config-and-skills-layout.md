@@ -21,8 +21,8 @@ This proposal unifies skill discovery to be compatible with existing tools.
 
 ## Non-goals
 
-- `~/.kimi/config.toml` and other Kimi-specific config
-- `~/.local/share/kimi/` data directories
+- `~/.codrus/config.toml` and other Codrus-specific config
+- `~/.local/share/codrus/` data directories
 
 ## Skills Discovery
 
@@ -33,7 +33,7 @@ Two-level logic:
 
 **User level** (by priority):
 - `~/.config/agents/skills/` — canonical, recommended
-- `~/.kimi/skills/` — legacy fallback
+- `~/.codrus/skills/` — legacy fallback
 - `~/.claude/skills/` — legacy fallback
 
 **Project level**:

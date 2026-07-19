@@ -1,20 +1,20 @@
 # Changelog
 
-This page documents the changes in each Kimi Code CLI release.
+This page documents the changes in each CodrusCLI powered by Codrus models release.
 
 ## Unreleased
 
 ## 1.49.0 (2026-07-16)
 
-**Highlights**: The completion-token budget for Kimi providers now adapts to the model's remaining context window, reducing context-length overflow errors on long turns
+**Highlights**: The completion-token budget for Codrus providers now adapts to the model's remaining context window, reducing context-length overflow errors on long turns
 
-- LLM: Clamp the Kimi completion-token budget to the model's remaining context window — the CLI no longer sends a fixed `max_tokens=32000` but estimates the remaining context for each request and caps `max_completion_tokens` accordingly. Set the new `KIMI_MODEL_MAX_COMPLETION_TOKENS` env var for an explicit hard cap (`KIMI_MODEL_MAX_TOKENS` remains a compatibility alias; `0` or a negative value disables clamping)
-- Kosong: Stop Kimi from automatically sending the legacy `reasoning_effort` parameter when configuring thinking — requests now use `thinking.type` exclusively while preserving explicit legacy passthrough
+- LLM: Clamp the Codrus completion-token budget to the model's remaining context window — the CLI no longer sends a fixed `max_tokens=32000` but estimates the remaining context for each request and caps `max_completion_tokens` accordingly. Set the new `KIMI_MODEL_MAX_COMPLETION_TOKENS` env var for an explicit hard cap (`KIMI_MODEL_MAX_TOKENS` remains a compatibility alias; `0` or a negative value disables clamping)
+- Kosong: Stop Codrus from automatically sending the legacy `reasoning_effort` parameter when configuring thinking — requests now use `thinking.type` exclusively while preserving explicit legacy passthrough
 - Kosong: Fix empty-string `reasoning_content` from thinking models being dropped from history — a reply that reasoned but ended with empty reasoning was recorded as having no reasoning at all, so Preserved Thinking backends that require `reasoning_content` on every assistant message rejected the next request with a 400
 
 ## 1.47.0 (2026-06-05)
 
-- Shell: Guide users to the new standalone Kimi Code — adds a `/upgrade` command that installs it (migrating your config & sessions automatically), a welcome-screen nudge, and a once-per-day tip shown on exit
+- Shell: Guide users to the new standalone Codrus Code — adds a `/upgrade` command that installs it (migrating your config & sessions automatically), a welcome-screen nudge, and a once-per-day tip shown on exit
 - Shell: Show trailing output in tool error briefs when commands fail
 
 ## 1.46.0 (2026-05-28)
@@ -41,11 +41,11 @@ This page documents the changes in each Kimi Code CLI release.
 - Shell: Restore markdown link highlighting (bright blue underlined text and cyan underlined URLs) and add underline separators to h2-h6 headings; adjust table rendering to use square box borders with visible edges
 - Core: Include completion timestamp and elapsed duration in background task terminal notifications, and add `finished_at` and `duration_s` to the notification payload for easier tracking
 - MCP: Stop FastMCP OAuth startup from printing Authlib deprecation warnings by upgrading the MCP client stack to FastMCP 3.2.4
-- MCP: Store OAuth MCP tokens in `~/.kimi/mcp-oauth/` using FastMCP 3's persistent storage API; users with existing OAuth MCP authorizations may need to run `kimi mcp auth <name>` once after upgrading
+- MCP: Store OAuth MCP tokens in `~/.codrus/mcp-oauth/` using FastMCP 3's persistent storage API; users with existing OAuth MCP authorizations may need to run `codrus mcp auth <name>` once after upgrading
 
 ## 1.42.0 (2026-05-11)
 
-- Shell: Switch the Windows shell backend from PowerShell to Git Bash, so the Shell tool now runs commands through `bash.exe` (POSIX semantics) instead of `powershell.exe`. Windows users get the same Unix-style command syntax (`&&`, `||`, `|`, `/dev/null`, `grep`, `sed`, etc.) as Linux/macOS. **Requires Git for Windows installed**: kimi-cli locates `bash.exe` via the `KIMI_CLI_GIT_BASH_PATH` env override → `where.exe git` → standard install paths (`C:\Program Files\Git\bin\bash.exe`); if none resolve, kimi-cli prints an install hint and exits at startup
+- Shell: Switch the Windows shell backend from PowerShell to Git Bash, so the Shell tool now runs commands through `bash.exe` (POSIX semantics) instead of `powershell.exe`. Windows users get the same Unix-style command syntax (`&&`, `||`, `|`, `/dev/null`, `grep`, `sed`, etc.) as Linux/macOS. **Requires Git for Windows installed**: codrus-cli locates `bash.exe` via the `KIMI_CLI_GIT_BASH_PATH` env override → `where.exe git` → standard install paths (`C:\Program Files\Git\bin\bash.exe`); if none resolve, codrus-cli prints an install hint and exits at startup
 - Shell: Defend against hallucinated CMD-style `2>nul` redirects on Windows by rewriting them to `2>/dev/null` before reaching git-bash — without this defense git-bash would create a file literally named `nul` (a Windows reserved device name) that breaks `git add .` and `git clone`; on Linux/macOS, `>nul` is a legitimate redirect to a file named `nul` and is left untouched
 - File: Accept POSIX-form paths on Windows in `ReadFile`, `WriteFile`, `StrReplaceFile`, `Glob`, and `Grep` — these tools now recognize `/c/Users/foo` (Git Bash style), `/cygdrive/c/Users/foo` (Cygwin style), and `\\server\share` (UNC) in addition to native Windows paths, automatically converting to native form for filesystem operations
 - Shell: Clear partial streamed output when an LLM step is retried — previously, if a step failed mid-stream (e.g. rate limit or server error), the incomplete text and unfinished tool-call blocks from the aborted attempt would remain on screen and be mixed with the new attempt's output. The shell UI now discards the partial state and prints a retry banner showing the reason, attempt count, and wait time; print mode also discards buffered assistant messages on retry
@@ -54,7 +54,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 1.41.0 (2026-04-30)
 
-- Plugin: Support installing plugins directly from a `.zip` URL — `kimi plugin install` now accepts HTTP(S) URLs ending in `.zip` (e.g. GitHub/GitLab archive links like `.../archive/refs/heads/main.zip`) and downloads + extracts them before resolving `plugin.json`, in addition to the existing git URL, local directory, and local zip-file sources
+- Plugin: Support installing plugins directly from a `.zip` URL — `codrus plugin install` now accepts HTTP(S) URLs ending in `.zip` (e.g. GitHub/GitLab archive links like `.../archive/refs/heads/main.zip`) and downloads + extracts them before resolving `plugin.json`, in addition to the existing git URL, local directory, and local zip-file sources
 - Shell: Enable clipboard image paste on headless Linux over SSH — when pyperclip is unavailable (e.g. DISPLAY is not set), Ctrl-V now falls back to xclip or wl-paste so remote clipboard bridges can still inject images; also prevents a UI crash from built-in clipboard shortcuts when pyperclip is broken
 
 ## 1.40.0 (2026-04-28)
@@ -66,7 +66,7 @@ This page documents the changes in each Kimi Code CLI release.
 - Web: Fix AI title generation overwriting a manually-set title when the LLM call finishes after the user has already renamed the session — the final write now reloads state and yields to a `title_generated` flag set by another request
 - Web: Surface session rename, archive, unarchive, and title generation failures as toast notifications instead of only logging to the console
 - Web: Keep tool media previews visible when tool details are collapsed — images and videos returned by tools now render below the tool card instead of inside the collapsible detail area, so preview thumbnails remain accessible after collapsing a tool
-- Kosong: Fix stale API key after OAuth token refresh in Kimi provider — `on_retryable_error` now reads the current `api_key` from the live client instead of the cached `_api_key`, so that OAuth token refreshes applied via `client.api_key` are preserved when the client is rebuilt after a retryable error
+- Kosong: Fix stale API key after OAuth token refresh in Codrus provider — `on_retryable_error` now reads the current `api_key` from the live client instead of the cached `_api_key`, so that OAuth token refreshes applied via `client.api_key` are preserved when the client is rebuilt after a retryable error
 - Core: Approval requests no longer auto-timeout after 5 minutes, which previously surfaced as `Rejected by user`; active foreground and subagent approvals now wait indefinitely for user response
 - Shell: Fix `/usage` remaining quota rendering — the progress bar, warning colors, and `% left` label now all use the remaining quota ratio consistently, so high remaining quota shows as green/full and near-exhausted quota shows as yellow or red
 - Shell: Show active background agent task count in the prompt status bar — the existing `⚙ bash: N` badge only counted background Shell tasks and filtered out background Agent subagents, so when many subagents were running the prompt looked idle and users could not tell work was in progress; the toolbar now renders `⚙ bash: N` and `⚙ agent: N` as two independent badges (each hidden when its count is 0) and drops the agent badge first when the terminal is too narrow to fit both
@@ -77,23 +77,23 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 1.39.0 (2026-04-24)
 
-- Skill: Fix project-scope skills being ignored and user-scope skills silently winning name conflicts — the system prompt now groups discovered skills under `### Project` / `### User` / `### Extra` / `### Built-in` headings so the model can tell where each skill came from, and when the same name exists in multiple scopes the more specific scope wins (Project > User > Extra > Built-in) so a project's own `.kimi/skills/foo` or `.claude/skills/foo` correctly overrides a user-level or bundled `foo` instead of the other way around
+- Skill: Fix project-scope skills being ignored and user-scope skills silently winning name conflicts — the system prompt now groups discovered skills under `### Project` / `### User` / `### Extra` / `### Built-in` headings so the model can tell where each skill came from, and when the same name exists in multiple scopes the more specific scope wins (Project > User > Extra > Built-in) so a project's own `.codrus/skills/foo` or `.claude/skills/foo` correctly overrides a user-level or bundled `foo` instead of the other way around
 - Skill: Accept single-file `<name>.md` skills alongside the canonical `<name>/SKILL.md` subdirectory layout — useful when migrating a flat markdown collection into a skills directory; `name` defaults to the filename stem (frontmatter `name:` still wins if set), description follows the same three-step chain as subdirectory skills (frontmatter `description:` → first non-empty body line, capped at 240 characters → `"No description provided."` placeholder), and if a flat and a subdirectory skill share a name in the same directory the subdirectory wins with a warning
 - Skill: Add `extra_skill_dirs` config field for pulling in custom skill directories on top of the built-in / user / project auto-discovery — each entry may be an absolute path, a `~`-prefixed path (expanded against `$HOME`), or a path relative to the project root (the nearest `.git` ancestor of the work directory, not the current working directory); non-existent entries are silently skipped and symlink/trailing-slash duplicates canonicalize to a single root so a path listed twice or aliased to an already-discovered directory does not render twice in the system prompt
 - Skill: Harden discovery against `OSError` from `is_dir` / `iterdir` (for example when an `extra_skill_dirs` entry points at a directory with restricted permissions) — affected entries are logged and skipped instead of aborting the whole skill-discovery pass
 - Core: Fix DeepSeek V4 (and other OpenAI-compatible thinking-mode backends) returning 400 `The reasoning_content in the thinking mode must be passed back to the API` when a tool call follows a reasoning turn — `openai_legacy` providers now default `reasoning_key` to `"reasoning_content"` so the response's reasoning is stored in history and round-tripped automatically on subsequent turns. An optional `reasoning_key` field is also added to `LLMProvider` to override the field name (e.g. `"reasoning"` for non-standard gateways) or disable round-tripping entirely by setting it to `""`
 - Core: Add `skip_yolo_prompt_injection` config option to suppress the system reminder normally injected when yolo mode is active — useful when building custom applications on top of `KimiSoul` that do not need the non-interactive mode hint
-- Kimi: Add `KIMI_MODEL_THINKING_KEEP` environment variable that forwards its value verbatim to the Moonshot API as `thinking.keep`, enabling Preserved Thinking (e.g. `export KIMI_MODEL_THINKING_KEEP=all` to retain historical `reasoning_content` across turns); effective only for Moonshot models supporting Preserved Thinking (e.g. `kimi-k2.6` / `kimi-k2-thinking`), unset or empty string preserves the previous behavior and omits the field, and the override only applies when the current model is actually in thinking mode so the API never receives a `thinking.keep` without the companion `thinking.type`. Note that `keep=all` increases input tokens and API cost because history reasoning is resent
-- Kosong: Fix `Kimi.with_extra_body` silently dropping previously set `thinking.type` when a later call added another `thinking.*` field — the `thinking` sub-dict is now merged field-by-field instead of shallow-replaced, so composing `with_thinking(...)` with `with_extra_body({"thinking": {...}})` preserves both contributions
-- Kosong: Fix Kimi provider sending empty `content` alongside `tool_calls`, which caused 400 "text content is empty" errors from the Moonshot API. When an assistant message has tool calls and its visible content is effectively empty (no text or only whitespace/think parts), the `content` field is now omitted entirely
+- Codrus: Add `KIMI_MODEL_THINKING_KEEP` environment variable that forwards its value verbatim to the Moonshot API as `thinking.keep`, enabling Preserved Thinking (e.g. `export KIMI_MODEL_THINKING_KEEP=all` to retain historical `reasoning_content` across turns); effective only for Moonshot models supporting Preserved Thinking (e.g. `codrus-k2.6` / `codrus-k2-thinking`), unset or empty string preserves the previous behavior and omits the field, and the override only applies when the current model is actually in thinking mode so the API never receives a `thinking.keep` without the companion `thinking.type`. Note that `keep=all` increases input tokens and API cost because history reasoning is resent
+- Kosong: Fix `Codrus.with_extra_body` silently dropping previously set `thinking.type` when a later call added another `thinking.*` field — the `thinking` sub-dict is now merged field-by-field instead of shallow-replaced, so composing `with_thinking(...)` with `with_extra_body({"thinking": {...}})` preserves both contributions
+- Kosong: Fix Codrus provider sending empty `content` alongside `tool_calls`, which caused 400 "text content is empty" errors from the Moonshot API. When an assistant message has tool calls and its visible content is effectively empty (no text or only whitespace/think parts), the `content` field is now omitted entirely
 - Shell: Fix approval request feedback text cursor rendering — the block cursor now correctly renders at the actual cursor position instead of always being pinned to the end of the line; when the cursor is in the middle of the text, the character under the cursor is drawn with reverse video (mimicking a terminal's native block cursor)
-- Kosong: Fix Moonshot 400 `At path 'properties.X': type is not defined` when an MCP server exposes tools whose parameter schemas have enum-only or otherwise type-less properties (seen with the JetBrains Rider MCP's `truncateMode`) — the Kimi provider now patches each tool's schema in-flight to fill in a JSON Schema `type` (inferred from `enum`/`const` values when possible, else defaulted to `"string"`), so the whole session no longer fails every request with a schema validation error; OpenAI and Anthropic paths are unaffected
-- Skill: Project-scope skill discovery now walks up to the nearest `.git` ancestor before looking for `.kimi/skills` / `.claude/skills` / `.codex/skills` / `.agents/skills`, so skills defined at the repository root are picked up even when kimi-cli is launched from a subdirectory (for example inside a monorepo package). Falls back to the work directory itself when no `.git` marker is found, so we never walk up into an unrelated parent tree.
-- Skill: Change the default of `merge_all_available_skills` from `false` to `true`. kimi-cli now merges all existing user- and project-level brand skill directories (`.kimi/skills`, `.claude/skills`, `.codex/skills`) by default instead of only using the first one found, so users who keep skills in multiple brand directories — for example both `~/.kimi/skills` and `~/.claude/skills` — see every skill out of the box. **Behavior change**: users who previously relied on the first-match default can restore it by setting `merge_all_available_skills = false` in their config.
+- Kosong: Fix Moonshot 400 `At path 'properties.X': type is not defined` when an MCP server exposes tools whose parameter schemas have enum-only or otherwise type-less properties (seen with the JetBrains Rider MCP's `truncateMode`) — the Codrus provider now patches each tool's schema in-flight to fill in a JSON Schema `type` (inferred from `enum`/`const` values when possible, else defaulted to `"string"`), so the whole session no longer fails every request with a schema validation error; OpenAI and Anthropic paths are unaffected
+- Skill: Project-scope skill discovery now walks up to the nearest `.git` ancestor before looking for `.codrus/skills` / `.claude/skills` / `.codex/skills` / `.agents/skills`, so skills defined at the repository root are picked up even when codrus-cli is launched from a subdirectory (for example inside a monorepo package). Falls back to the work directory itself when no `.git` marker is found, so we never walk up into an unrelated parent tree.
+- Skill: Change the default of `merge_all_available_skills` from `false` to `true`. codrus-cli now merges all existing user- and project-level brand skill directories (`.codrus/skills`, `.claude/skills`, `.codex/skills`) by default instead of only using the first one found, so users who keep skills in multiple brand directories — for example both `~/.codrus/skills` and `~/.claude/skills` — see every skill out of the box. **Behavior change**: users who previously relied on the first-match default can restore it by setting `merge_all_available_skills = false` in their config.
 
 ## 1.38.0 (2026-04-22)
 - Shell: Fix `Rejected by user` misleading message when an approval modal times out — after the 300s safety timeout, the tool call now rejects with `Rejected: approval timed out`, so users returning to their session after stepping away can tell the rejection was a timeout rather than a manual rejection. Pass `--yolo`/`-y` to auto-approve tool calls if you regularly leave sessions unattended
-- Auth: Fix OAuth users being forced to `/login` again after an unrelated refresh-token rotation race — when a concurrently-running kimi-cli instance (terminal, VS Code extension, or `kimi -p` one-shot) legitimately rotated the refresh token, the current instance's now-stale refresh request would come back with a 401, and a TOCTOU window between the "did another instance rotate?" disk check and the `delete_tokens` call could wipe the credentials file even though a valid rotated token was about to be written to it; the in-memory cache is still cleared so truly revoked tokens surface on the next request, but the file is preserved so a concurrent instance's freshly-rotated token can be recovered, and an eventual `/login` still overwrites it atomically
+- Auth: Fix OAuth users being forced to `/login` again after an unrelated refresh-token rotation race — when a concurrently-running codrus-cli instance (terminal, VS Code extension, or `codrus -p` one-shot) legitimately rotated the refresh token, the current instance's now-stale refresh request would come back with a 401, and a TOCTOU window between the "did another instance rotate?" disk check and the `delete_tokens` call could wipe the credentials file even though a valid rotated token was about to be written to it; the in-memory cache is still cleared so truly revoked tokens surface on the next request, but the file is preserved so a concurrent instance's freshly-rotated token can be recovered, and an eventual `/login` still overwrites it atomically
 - Kosong: Fix parallel tool results being split into multiple user messages in Anthropic provider — consecutive tool-result-only user messages are now merged into a single message, complying with the Anthropic Messages API spec that all `tool_use` blocks in an assistant turn must be answered within one user message; this fixes 400 errors on strict Anthropic-compatible backends (e.g. DeepSeek `/anthropic` endpoint) and prevents the official backend from silently teaching the model to avoid parallel tool calls
 
 ## 1.37.0 (2026-04-20)
@@ -126,12 +126,12 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 1.33.0 (2026-04-13)
 
-- Shell: Unify managed model display as "Kimi for Code" and drop hardcoded `kimi-k2.5` version references from the welcome screen and `/login` tip
+- Shell: Unify managed model display as "Codrus for Code" and drop hardcoded `codrus-k2.5` version references from the welcome screen and `/login` tip
 
 ## 1.32.0 (2026-04-13)
 
 - Core: Truncate MCP tool output to 100K characters to prevent context overflow — all content types (text and inline media such as image/audio/video data URLs) share a single character budget; tools like Playwright that return full DOMs (500KB+) or large base64 screenshots are now capped with a truncation notice; oversized media parts are dropped; unsupported MCP content types are gracefully handled instead of crashing the turn
-- CLI: Fix PyInstaller binary missing lazy CLI subcommands — `kimi info`, `kimi export`, `kimi mcp`, `kimi plugin`, `kimi vis`, and `kimi web` now work correctly in the standalone binary distribution
+- CLI: Fix PyInstaller binary missing lazy CLI subcommands — `codrus info`, `codrus export`, `codrus mcp`, `codrus plugin`, `codrus vis`, and `codrus web` now work correctly in the standalone binary distribution
 - Shell: Streamline the thinking indicator into a compact single-line layout — shows a `Thinking` label with animated dots, elapsed time, token count, and a live tokens/second pulse; finalises with a `Thought for Xs · N tokens` trace in history
 
 ## 1.31.0 (2026-04-10)
@@ -150,10 +150,10 @@ This page documents the changes in each Kimi Code CLI release.
 - Shell: Add `BtwBegin`/`BtwEnd` wire events for cross-client side question support
 - Shell: Improve elapsed time formatting in spinners — durations over 60 seconds now display as `"1m 23s"` instead of `"83s"`; sub-second durations show `"<1s"`
 - Shell: Fix Rich markup injection in btw panel — user questions containing `[`/`]` characters are now escaped to prevent broken rendering or style injection in spinner text and panel titles
-- Core: Improve error diagnostics — enrich internal logging coverage, include relevant log files and system manifest in `kimi export` archives, and surface actionable error messages for common failures (auth, network, timeout, quota)
+- Core: Improve error diagnostics — enrich internal logging coverage, include relevant log files and system manifest in `codrus export` archives, and surface actionable error messages for common failures (auth, network, timeout, quota)
 - Shell: Gracefully exit with crash report when working directory becomes inaccessible during session — detects CWD loss (external drive unplugged, directory deleted, or filesystem unmounted) and prints a session recovery panel with session ID and work directory before exiting cleanly
 - Shell: Use `git ls-files` for `@` file mention discovery — file completer now queries `git ls-files --recurse-submodules` with a 5-second timeout as the primary discovery mechanism, falling back to `os.walk` for non-git repositories; this fixes large repositories (e.g., apache/superset with 65k+ files) where the 1000-file limit caused late-alphabetical directories to be unreachable (fixes #1375)
-- Core: Add shared `file_filter` module — unifies file mention logic between shell and web UIs via `src/kimi_cli/utils/file_filter.py`, providing consistent path filtering, ignored directory exclusion, and git-aware file discovery
+- Core: Add shared `file_filter` module — unifies file mention logic between shell and web UIs via `src/codrus_cli/utils/file_filter.py`, providing consistent path filtering, ignored directory exclusion, and git-aware file discovery
 - Shell: Prevent path traversal in file mention scope parameter — the `scope` parameter in file completer requests is now validated to prevent directory traversal attacks
 - Web: Restore unfiltered directory listing in file browser API — file browser endpoint no longer applies git-aware filtering, ensuring all files are visible in the web UI file picker
 - Todo: Refactor SetTodoList to persist state and prevent tool call storms — todos are now persisted to session state (root agent) and independent state files (sub-agents); adds query mode (omit `todos` to read current state) and clear mode (pass `[]`); includes anti-storm guidance in tool description to prevent repeated calls without progress (fixes #1710)
@@ -165,22 +165,22 @@ This page documents the changes in each Kimi Code CLI release.
 - Shell: Refine idle background completion auto-trigger — resumed shell sessions no longer auto-start a foreground turn from stale pending background notifications before the user sends a message, and fresh background completions now wait briefly while the user is actively typing to avoid stealing the prompt or breaking CJK IME composition
 - Core: Fix interrupted foreground turns leaving unbalanced wire events — `TurnEnd` is now emitted even when a turn exits via cancellation or step interruption, preventing dirty session wire logs from accumulating across resume cycles
 - Core: Improve session startup resilience — `--continue`/`--resume` now tolerate malformed `context.jsonl` records and corrupted subagent, background-task, or notification artifacts; the CLI skips invalid persisted state where possible instead of failing to restore the session
-- CLI: Improve `kimi export` session export UX — `kimi export` now previews the previous session for the current working directory and asks for confirmation, showing the session ID, title, and last user-message time; adds `--yes` to skip confirmation; also fixes explicit session-ID invocations where `--output` after the argument was incorrectly parsed as a subcommand
+- CLI: Improve `codrus export` session export UX — `codrus export` now previews the previous session for the current working directory and asks for confirmation, showing the session ID, title, and last user-message time; adds `--yes` to skip confirmation; also fixes explicit session-ID invocations where `--output` after the argument was incorrectly parsed as a subcommand
 - Grep: Add `include_ignored` parameter to search files excluded by `.gitignore` — when set to `true`, ripgrep's `--no-ignore` flag is enabled, allowing searches in gitignored artifacts such as build outputs or `node_modules`; sensitive files (like `.env`) remain filtered by the sensitive-file protection layer; defaults to `false` to preserve existing behavior
 - Core: Add sensitive file protection to Grep and Read tools — `.env`, SSH private keys (`id_rsa`, `id_ed25519`, `id_ecdsa`), and cloud credentials (`.aws/credentials`, `.gcp/credentials`) are now detected and blocked; Grep filters them from results with a warning, Read rejects them outright; `.env.example`/`.env.sample`/`.env.template` are exempted
 - Core: Fix parallel foreground subagent approval requests hanging the session — in interactive shell mode, `_set_active_approval_sink` no longer flushes pending approval requests to the live view sink (which cannot render approval modals); requests stay in the pending queue for the prompt modal path; also adds a 300-second timeout to `wait_for_response` so that any unresolved approval request eventually raises `ApprovalCancelledError` instead of hanging forever
 - CLI: Add `--session`/`--resume` (`-S`/`-r`) flag to resume sessions — without an argument opens an interactive session picker (shell UI only); with a session ID resumes that specific session; replaces the reverted `--pick-session`/`--list-sessions` design with a unified optional-value flag
 - CLI: Add CJK-safe `shorten()` utility — replaces all `textwrap.shorten` calls so that CJK text without spaces is truncated gracefully instead of collapsing to just the placeholder
-- Core: Fix skills in brand directories (e.g. `~/.kimi/skills/`) silently disappearing when a generic directory (`~/.config/agents/skills/`) exists but is empty — skill directory discovery now searches brand and generic directory groups independently and merges both results, instead of stopping at the first existing directory across all candidates
-- Core: Add `merge_all_available_skills` config option — when enabled, skills from all existing brand directories (`~/.kimi/skills/`, `~/.claude/skills/`, `~/.codex/skills/`) are loaded and merged instead of using only the first one found; same-name skills follow priority order kimi > claude > codex; disabled by default
-- CLI: Add `--plan` flag and `default_plan_mode` config option — start new sessions in plan mode via `kimi --plan` or by setting `default_plan_mode = true` in `~/.kimi/config.toml`; resumed sessions preserve their existing plan mode state
+- Core: Fix skills in brand directories (e.g. `~/.codrus/skills/`) silently disappearing when a generic directory (`~/.config/agents/skills/`) exists but is empty — skill directory discovery now searches brand and generic directory groups independently and merges both results, instead of stopping at the first existing directory across all candidates
+- Core: Add `merge_all_available_skills` config option — when enabled, skills from all existing brand directories (`~/.codrus/skills/`, `~/.claude/skills/`, `~/.codex/skills/`) are loaded and merged instead of using only the first one found; same-name skills follow priority order codrus > claude > codex; disabled by default
+- CLI: Add `--plan` flag and `default_plan_mode` config option — start new sessions in plan mode via `codrus --plan` or by setting `default_plan_mode = true` in `~/.codrus/config.toml`; resumed sessions preserve their existing plan mode state
 - Shell: Add `/undo` and `/fork` commands for session forking — `/undo` lets you pick a previous turn and fork a new session with the selected message pre-filled for re-editing; `/fork` duplicates the entire session history into a new session; the original session is always preserved
-- CLI: Add `-r` as a short alias for `--session` and print a resume hint (`kimi -r <session-id>`) whenever a session exits — covers normal exit, Ctrl-C, `/undo`, `/fork`, and `/sessions` switch so users can always find their way back
-- Core: Fix `custom_headers` not being passed to non-Kimi providers — OpenAI, Anthropic, Google GenAI, and Vertex AI providers now correctly forward custom headers configured in `providers.*.custom_headers`
+- CLI: Add `-r` as a short alias for `--session` and print a resume hint (`codrus -r <session-id>`) whenever a session exits — covers normal exit, Ctrl-C, `/undo`, `/fork`, and `/sessions` switch so users can always find their way back
+- Core: Fix `custom_headers` not being passed to non-Codrus providers — OpenAI, Anthropic, Google GenAI, and Vertex AI providers now correctly forward custom headers configured in `providers.*.custom_headers`
 
 ## 1.29.0 (2026-04-01)
 
-- Core: Support hierarchical `AGENTS.md` loading — the CLI now discovers and merges `AGENTS.md` files from the git project root down to the working directory, including `.kimi/AGENTS.md` at each level; deeper files take priority under a 32 KiB budget cap, ensuring the most specific instructions are never truncated
+- Core: Support hierarchical `AGENTS.md` loading — the CLI now discovers and merges `AGENTS.md` files from the git project root down to the working directory, including `.codrus/AGENTS.md` at each level; deeper files take priority under a 32 KiB budget cap, ensuring the most specific instructions are never truncated
 - Core: Fix empty sessions lingering on disk after exit — sessions created but never used are now cleaned up on all exit paths (failure exit, session switch, unexpected errors), not just on successful exit
 - Shell: Add `KIMI_CLI_PASTE_CHAR_THRESHOLD` and `KIMI_CLI_PASTE_LINE_THRESHOLD` environment variables to control when pasted text is folded into a placeholder — lowering these thresholds works around CJK input method breakage after multiline paste on some terminals (e.g., XShell over SSH)
 - Shell: Fix diff panel rendering corruption on terminals without truecolor support (e.g. Xshell) — `render_to_ansi` no longer hardcodes 24-bit color; Rich now auto-detects terminal capability via `COLORTERM`/`TERM` environment variables
@@ -208,7 +208,7 @@ This page documents the changes in each Kimi Code CLI release.
 - Grep: Add token efficiency improvements — default `head_limit` of 250 with `offset` pagination, `--hidden` search with VCS directory exclusion, `files_with_matches` sorted by modification time, relative path output, and `--max-columns 500` for non-content modes
 - Grep: `line_number` (`-n`) now defaults to `true` in content mode — line numbers are included by default so the model can reference precise code locations
 - Grep: `count_matches` mode now includes a summary in the message — e.g. "Found 30 total occurrences across 10 files."
-- ACP: Fix `ValueError: list.index(x): x not in list` crash when ACP is launched via `kimi-code` or `kimi-cli` entry-points (e.g. JetBrains AI Assistant)
+- ACP: Fix `ValueError: list.index(x): x not in list` crash when ACP is launched via `codrus-code` or `codrus-cli` entry-points (e.g. JetBrains AI Assistant)
 - Core: Fix OpenAI-compatible APIs (e.g. One API) returning 400 errors in multi-turn conversations when the server returns `reasoning_content` by default — `reasoning_effort` is now auto-set to `"medium"` when history contains thinking content and `reasoning_key` is configured
 - Shell: Add `/theme` command and dark/light theme support — users with light terminal backgrounds can now switch to a light color palette via `/theme light` or `theme = "light"` in `config.toml`; diff highlights, task browser, prompt UI, and MCP status colors all adapt to the selected theme
 - Core: Fix context overflow before compaction — tool result tokens are now estimated and included in the auto-compaction trigger check, preventing "exceeded model token limit" errors when large tool outputs push the context beyond the model limit between API calls
@@ -221,7 +221,7 @@ This page documents the changes in each Kimi Code CLI release.
 - Web: The "Open" button in the workspace header now remembers the last-used application — clicking "Open" directly opens with the previous choice, while the dropdown arrow lets you pick a different app
 - Web: Fix archived sessions count badge showing only the loaded page size — the badge now displays "100+" when more archived sessions exist beyond the first page
 - Shell: Fix pasted text placeholders not expanded in modal answers — clipboard content pasted into approval or question panels is now correctly interpolated before being sent to the model
-- Vis: Add `--network / -n` flag — launch the visualizer on all network interfaces with auto-detected LAN IP display, matching `kimi web` behavior
+- Vis: Add `--network / -n` flag — launch the visualizer on all network interfaces with auto-detected LAN IP display, matching `codrus web` behavior
 - Vis: Add `/vis` slash command — switch from the interactive shell to the tracing visualizer in one step, mirroring the existing `/web` command
 - Vis: Improve session list performance — async backend scanning, request concurrency limiting, and infinite-scroll pagination prevent browser freezes on large session stores
 - Vis: Add 7 missing wire event types — `SteerInput`, `MCPLoadingBegin/End`, `Notification`, `PlanDisplay`, `ToolCallRequest`, and `QuestionRequest` now display with proper colors and summaries
@@ -265,14 +265,14 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 1.25.0 (2026-03-23)
 
-- Core: Add plugin system (Skills + Tools) — plugins extend Kimi Code CLI with custom tools packaged as `plugin.json`; tools are commands that run in isolated subprocesses and return their stdout to the agent; plugins support automatic credential injection via `inject` configuration
-- Core: Support multi-plugin repositories — `kimi plugin install` accepts git URLs with subpath to install a specific plugin from a monorepo (e.g., `https://github.com/org/repo.git/plugins/my-plugin`); when no subpath is provided and no root `plugin.json` exists, the CLI lists available plugins in immediate subdirectories
+- Core: Add plugin system (Skills + Tools) — plugins extend CodrusCLI powered by Codrus models with custom tools packaged as `plugin.json`; tools are commands that run in isolated subprocesses and return their stdout to the agent; plugins support automatic credential injection via `inject` configuration
+- Core: Support multi-plugin repositories — `codrus plugin install` accepts git URLs with subpath to install a specific plugin from a monorepo (e.g., `https://github.com/org/repo.git/plugins/my-plugin`); when no subpath is provided and no root `plugin.json` exists, the CLI lists available plugins in immediate subdirectories
 - Core: Unify plugin credential injection — plugins can declare `inject` fields in `plugin.json` to receive `api_key` and `base_url` from the host's configured LLM provider; works with both OAuth-managed tokens and static API keys
 - Core: Add `Agent` tool for subagent delegation — the agent can now spawn persistent subagent instances with three built-in types (`coder`, `explore`, `plan`) to handle focused subtasks; each instance maintains its own context history within the session and can run in foreground or background with automatic result summarization
 - Core: Unified approval runtime — approval requests from both foreground tool calls and background subagents are now coordinated through a single runtime and surfaced through the root UI channel; rejection responses can include feedback text to guide the model's next attempt
 - Shell: Add interactive approval request panel — a new inline panel displays tool call details (diffs, shell commands) with options to approve once, approve for session, reject, or reject with written feedback to instruct the model on what to do instead
 - Wire: Bump protocol version to 1.6 — `SubagentEvent` now includes `agent_id`, `subagent_type`, and `parent_tool_call_id` fields; `ApprovalRequest` includes source metadata (`source_kind`, `source_id`); `ApprovalResponse` supports a `feedback` field
-- Vis: Add agents panel — new "Agents" tab in `kimi vis` to inspect subagent instances, view their events, and filter the wire timeline by agent scope
+- Vis: Add agents panel — new "Agents" tab in `codrus vis` to inspect subagent instances, view their events, and filter the wire timeline by agent scope
 - Core: Change `TaskOutput` `block` parameter default from `true` to `false` — `TaskOutput` now returns a non-blocking status/output snapshot by default; set `block=true` only when you intentionally want to wait for task completion
 - Shell: Show the current working directory, git branch, dirty state, and ahead/behind sync status directly in the prompt toolbar
 - Shell: Surface active background bash task counts in the toolbar, rotate shortcut tips on a timer, and gracefully truncate the toolbar on narrow terminals to avoid overflow
@@ -288,11 +288,11 @@ This page documents the changes in each Kimi Code CLI release.
 
 - Shell: Increase pasted text placeholder thresholds to 1000 characters or 15 lines (previously 300 characters or 3 lines), making voice/typeless workflows less disruptive
 - Core: Plan mode now supports multiple selectable approach options — when the agent's plan contains distinct alternative paths, `ExitPlanMode` can present 2–3 labeled choices for the user to pick which approach to execute; the chosen option is returned to the agent as the selected approach
-- Core: Persist plan session ID and file path across process restarts — the plan session identifier and file slug are saved to `SessionState`, so restarting Kimi Code mid-plan resumes the same plan file in `~/.kimi/plans/` instead of creating a new one
+- Core: Persist plan session ID and file path across process restarts — the plan session identifier and file slug are saved to `SessionState`, so restarting Codrus Code mid-plan resumes the same plan file in `~/.codrus/plans/` instead of creating a new one
 - Core: Plan mode now supports incremental plan edits — the agent can use `StrReplaceFile` to surgically update sections of the plan file instead of rewriting the entire file with `WriteFile`, and non-plan file edits are now hard-blocked rather than requiring approval
 - Core: Defer MCP startup and surface loading progress — MCP servers now initialize asynchronously after the shell UI starts, with live progress indicators showing connection status; Shell displays connecting and ready states in the status area, Web shows server connection status
 - Core: Optimize lightweight startup paths — implement lazy-loading for CLI subcommands and version metadata, significantly reducing startup time for common commands like `--version` and `--help`
-- Build: Fix Nix `FileCollisionError` for `bin/kimi` — remove duplicate entry point from `kimi-code` package so `kimi-cli` owns `bin/kimi` exclusively
+- Build: Fix Nix `FileCollisionError` for `bin/codrus` — remove duplicate entry point from `codrus-code` package so `codrus-cli` owns `bin/codrus` exclusively
 - Shell: Preserve unsubmitted input across agent turns — text typed in the prompt while the agent is running is no longer lost when the turn ends; the user can press Enter to submit the draft as the next message
 - Shell: Fix Ctrl-C and Ctrl-D not working correctly after an agent run completes — keyboard interrupts and EOF were silently swallowed instead of showing the tip or exiting the shell
 
@@ -319,7 +319,7 @@ This page documents the changes in each Kimi Code CLI release.
 - Shell: Improve session replay with steer inputs — replay now correctly reconstructs and displays steer messages alongside regular turns, and filters out internal system-reminder messages
 - Shell: Fix upgrade command in toast notifications — the upgrade command text is now sourced from a single `UPGRADE_COMMAND` constant for consistency
 - Core: Persist system prompt in `context.jsonl` — the system prompt is now written as the first record of the context file and frozen per session, so visualization tools can read the full conversation context and session restores reuse the original prompt instead of regenerating it
-- Vis: Add session directory shortcuts in `kimi vis` — open the current session folder directly from the session page, copy the raw session directory path with `Copy DIR`, and support opening directories on both macOS and Windows
+- Vis: Add session directory shortcuts in `codrus vis` — open the current session folder directly from the session page, copy the raw session directory path with `Copy DIR`, and support opening directories on both macOS and Windows
 - Shell: Improve API key login UX — show a spinner during key verification, display a helpful hint when a 401 error suggests the wrong platform was selected, show a setup summary on success, and default thinking mode to "on"
 
 ## 1.20.0 (2026-03-11)
@@ -329,14 +329,14 @@ This page documents the changes in each Kimi Code CLI release.
 - Core: Fix StatusUpdate not reflecting plan mode changes triggered by tools — send a corrected `StatusUpdate` after `EnterPlanMode`/`ExitPlanMode` tool execution so the client sees the up-to-date state
 - Core: Fix HTTP header values containing trailing whitespace/newlines on certain Linux systems (e.g. kernel 6.8.0-101) causing connection errors — strip whitespace from ASCII header values before sending
 - Core: Fix OpenAI Responses provider sending implicit `reasoning.effort=null` which breaks Responses-compatible endpoints that require reasoning — reasoning parameters are now omitted unless explicitly set
-- Vis: Add session download, import, export and delete — one-click ZIP download from session explorer and detail page, ZIP import into a dedicated `~/.kimi/imported_sessions/` directory with "Imported" filter toggle, `kimi export <session_id>` CLI command, and delete support for imported sessions with AlertDialog confirmation
+- Vis: Add session download, import, export and delete — one-click ZIP download from session explorer and detail page, ZIP import into a dedicated `~/.codrus/imported_sessions/` directory with "Imported" filter toggle, `codrus export <session_id>` CLI command, and delete support for imported sessions with AlertDialog confirmation
 - Core: Fix context compaction failing when conversation contains media parts (images, audio, video) — switch from blacklist filtering (exclude `ThinkPart`) to whitelist filtering (only keep `TextPart`) to prevent unsupported content types from being sent to the compaction API
 - Web: Fix `@` file mention index not refreshing after switching sessions or when workspace files change — reset index on session switch, auto-refresh after 30s staleness, and support path-prefix search beyond the 500-file limit
 
 ## 1.19.0 (2026-03-10)
 
 - Core: Add plan mode — the agent can enter a planning phase (`EnterPlanMode`) where only read-only tools (Glob, Grep, ReadFile) are available, write a structured plan to a file, and present it for user approval (`ExitPlanMode`) before executing; toggle manually via `/plan` slash command or `Shift-Tab` keyboard shortcut
-- Vis: Add `kimi vis` command for launching an interactive visualization dashboard to inspect session traces — includes wire event timeline, context viewer, session explorer, and usage statistics
+- Vis: Add `codrus vis` command for launching an interactive visualization dashboard to inspect session traces — includes wire event timeline, context viewer, session explorer, and usage statistics
 - Web: Fix session stream state management — guard against null reference errors during state resets and preserve slash commands across session switches to avoid a brief empty gap
 
 ## 1.18.0 (2026-03-09)
@@ -366,7 +366,7 @@ This page documents the changes in each Kimi Code CLI release.
 - Core: Add `--add-dir` CLI option and `/add-dir` slash command to expand the workspace scope with additional directories — added directories are accessible to all file tools (read, write, glob, replace), persisted across sessions, and shown in the system prompt
 - Shell: Add `Ctrl-O` keyboard shortcut to open the current input in an external editor (`$VISUAL`/`$EDITOR`), with auto-detection fallback to VS Code, Vim, Vi, or Nano
 - Shell: Add `/editor` slash command to configure and switch the default external editor, with interactive selection and persistent config storage
-- Shell: Add `/new` slash command to create and switch to a new session without restarting Kimi Code CLI
+- Shell: Add `/new` slash command to create and switch to a new session without restarting CodrusCLI powered by Codrus models
 - Wire: Auto-hide `AskUserQuestion` tool when the client does not support the `supports_question` capability, preventing the LLM from invoking unsupported interactions
 - Core: Estimate context token count after compaction so context usage percentage is not reported as 0%
 - Web: Show context usage percentage with one decimal place for better precision
@@ -379,7 +379,7 @@ This page documents the changes in each Kimi Code CLI release.
 - Shell: Add tab-style navigation for multi-question panels — use Left/Right arrows or Tab to switch between questions, with visual indicators for answered, current, and pending states, and automatic state restoration when revisiting a question
 - Shell: Allow Space key to submit single-select questions in the question panel
 - Web: Add tab-style navigation for multi-question dialogs with clickable tab bar, keyboard navigation, and state restoration when revisiting a question
-- Core: Set process title to "Kimi Code" (visible in `ps` / Activity Monitor / terminal tab title) and label web worker subprocesses as "kimi-code-worker"
+- Core: Set process title to "Codrus Code" (visible in `ps` / Activity Monitor / terminal tab title) and label web worker subprocesses as "codrus-code-worker"
 
 ## 1.14.0 (2026-02-26)
 
@@ -454,7 +454,7 @@ This page documents the changes in each Kimi Code CLI release.
 - Web: Improve auto-scroll behavior in chat for smoother following of new content
 - Web: Update `last_session_id` for work directory when session stream starts
 - Shell: Remove `Ctrl-/` keyboard shortcut that triggered `/help` command
-- Rust: Move the Rust implementation to `MoonshotAI/kimi-agent-rs` with independent releases; binary renamed to `kimi-agent`
+- Rust: Move the Rust implementation to `MoonshotAI/codrus-agent-rs` with independent releases; binary renamed to `codrus-agent`
 - Core: Preserve session id when reloading configuration so the session resumes correctly
 - Shell: Fix session replay showing messages that were cleared by `/clear` or `/reset`
 - Web: Fix approval request states not updating when session is interrupted or cancelled
@@ -467,7 +467,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 1.7.0 (2026-02-05)
 
-- Rust: Add `kagent`, the Rust implementation of Kimi agent kernel with wire-mode support (experimental)
+- Rust: Add `kagent`, the Rust implementation of Codrus agent kernel with wire-mode support (experimental)
 - Auth: Fix OAuth token refresh conflicts when running multiple sessions simultaneously
 - Web: Add file mention menu (`@`) to reference uploaded attachments and workspace files with autocomplete
 - Web: Add slash command menu in chat input with autocomplete, keyboard navigation, and alias support
@@ -501,9 +501,9 @@ This page documents the changes in each Kimi Code CLI release.
 
 - Shell: Merge `/login` and `/setup` commands; `/setup` is now an alias for `/login`
 - Shell: `/usage` now shows remaining quota percentage; add `/status` alias
-- Config: Add `KIMI_SHARE_DIR` environment variable to customize the share directory path (default: `~/.kimi`)
+- Config: Add `KIMI_SHARE_DIR` environment variable to customize the share directory path (default: `~/.codrus`)
 - Web: Add new Web UI for browser-based interaction
-- CLI: Add `kimi web` subcommand to launch the Web UI server
+- CLI: Add `codrus web` subcommand to launch the Web UI server
 - Auth: Fix encoding error when device name or OS version contains non-ASCII characters
 - Auth: OAuth credentials are now stored in files instead of keyring; existing tokens are automatically migrated on startup
 - Auth: Fix authorization failure after the system sleeps or hibernates
@@ -515,16 +515,16 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 1.2 (2026-01-27)
 
-- UI: Show description for `kimi-for-coding` model
+- UI: Show description for `codrus-for-coding` model
 
 ## 1.1 (2026-01-27)
 
-- LLM: Fix `kimi-for-coding` model's capabilities
+- LLM: Fix `codrus-for-coding` model's capabilities
 
 ## 1.0 (2026-01-27)
 
 - Shell: Add `/login` and `/logout` slash commands for login and logout
-- CLI: Add `kimi login` and `kimi logout` subcommands
+- CLI: Add `codrus login` and `codrus logout` subcommands
 - Core: Fix subagent approval request handling
 
 ## 0.88 (2026-01-26)
@@ -571,7 +571,7 @@ This page documents the changes in each Kimi Code CLI release.
 ## 0.82 (2026-01-21)
 
 - Tool: Allow `WriteFile` and `StrReplaceFile` tools to edit/write files outside the working directory when using absolute paths
-- Tool: Upload videos to Kimi files API when using Kimi provider, replacing inline data URLs with `ms://` references
+- Tool: Upload videos to Codrus files API when using Codrus provider, replacing inline data URLs with `ms://` references
 - Config: Add `reserved_context_size` setting to customize auto-compaction trigger threshold (default: 50000 tokens)
 
 ## 0.81 (2026-01-21)
@@ -588,7 +588,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 0.79 (2026-01-19)
 
-- Skills: Add project-level skills support, discovered from `.agents/skills/` (or `.kimi/skills/`, `.claude/skills/`)
+- Skills: Add project-level skills support, discovered from `.agents/skills/` (or `.codrus/skills/`, `.claude/skills/`)
 - Skills: Unified skills discovery with layered loading (builtin → user → project); user-level skills now prefer `~/.config/agents/skills/`
 - Shell: Support fuzzy matching for slash command autocomplete
 - Shell: Enhanced approval request preview with shell command and diff content display, use `Ctrl-E` to expand full content
@@ -625,13 +625,13 @@ This page documents the changes in each Kimi Code CLI release.
 ## 0.75 (2026-01-09)
 
 - Tool: Improve `ReadFile` tool description
-- Skills: Add built-in `kimi-cli-help` skill to answer Kimi Code CLI usage and configuration questions
+- Skills: Add built-in `codrus-cli-help` skill to answer CodrusCLI powered by Codrus models usage and configuration questions
 
 ## 0.74 (2026-01-09)
 
 - ACP: Allow ACP clients to select and switch models (with thinking variants)
 - ACP: Add `terminal-auth` authentication method for setup flow
-- CLI: Deprecate `--acp` option in favor of `kimi acp` subcommand
+- CLI: Deprecate `--acp` option in favor of `codrus acp` subcommand
 - Tool: Support reading image and video files in `ReadFile` tool
 
 ## 0.73 (2026-01-09)
@@ -641,7 +641,7 @@ This page documents the changes in each Kimi Code CLI release.
 - MCP: Ensure MCP tools finish loading before starting the agent loop
 - Wire: Fix Wire mode failing to accept valid `cancel` requests
 - Setup: Allow `/model` to switch between all available models for the selected provider
-- Lib: Re-export all Wire message types from `kimi_cli.wire.types`, as a replacement of `kimi_cli.wire.message`
+- Lib: Re-export all Wire message types from `codrus_cli.wire.types`, as a replacement of `codrus_cli.wire.message`
 - Loop: Add `max_ralph_iterations` loop control config to limit extra Ralph iterations
 - Config: Rename `max_steps_per_run` to `max_steps_per_turn` in loop control config (backward-compatible)
 - CLI: Add `--max-steps-per-turn`, `--max-retries-per-step` and `--max-ralph-iterations` options to override loop control config
@@ -657,8 +657,8 @@ This page documents the changes in each Kimi Code CLI release.
 - ACP: Route file reads/writes and shell commands through ACP clients for synced edits/output
 - Shell: Add `/model` slash command to switch default models and reload when using the default config
 - Skills: Add `/skill:<name>` slash commands to load `SKILL.md` instructions on demand
-- CLI: Add `kimi info` subcommand for version/protocol details (supports `--json`)
-- CLI: Add `kimi term` to launch the Toad terminal UI
+- CLI: Add `codrus info` subcommand for version/protocol details (supports `--json`)
+- CLI: Add `codrus term` to launch the Toad terminal UI
 - Python: Bump the default tooling/CI version to 3.14
 
 ## 0.70 (2025-12-31)
@@ -668,10 +668,10 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 0.69 (2025-12-29)
 
-- Core: Support discovering skills in `~/.kimi/skills` or `~/.claude/skills`
+- Core: Support discovering skills in `~/.codrus/skills` or `~/.claude/skills`
 - Python: Lower the minimum required Python version to 3.12
-- Nix: Add flake packaging; install with `nix profile install .#kimi-cli` or run `nix run .#kimi-cli`
-- CLI: Add `kimi-cli` script alias for invoking the CLI; can be run via `uvx kimi-cli`
+- Nix: Add flake packaging; install with `nix profile install .#codrus-cli` or run `nix run .#codrus-cli`
+- CLI: Add `codrus-cli` script alias for invoking the CLI; can be run via `uvx codrus-cli`
 - Lib: Move LLM config validation into `create_llm` and return `None` when missing config
 
 ## 0.68 (2025-12-24)
@@ -685,11 +685,11 @@ This page documents the changes in each Kimi Code CLI release.
 - ACP: Run shell commands in ACP client terminal if supported
 - Lib: Add `KimiToolset.find` method to find tools by class or name
 - Lib: Add `ToolResultBuilder.display` method to append display blocks to tool results
-- MCP: Add `kimi mcp auth` and related subcommands to manage MCP authorization
+- MCP: Add `codrus mcp auth` and related subcommands to manage MCP authorization
 
 ## 0.67 (2025-12-22)
 
-- ACP: Advertise slash commands in single-session ACP mode (`kimi --acp`)
+- ACP: Advertise slash commands in single-session ACP mode (`codrus --acp`)
 - MCP: Add `mcp.client` config section to configure MCP tool call timeout and other future options
 - Core: Improve default system prompt and `ReadFile` tool
 - UI: Fix Ctrl-C not working in some rare cases
@@ -699,9 +699,9 @@ This page documents the changes in each Kimi Code CLI release.
 - Lib: Provide `token_usage` and `message_id` in `StatusUpdate` Wire message
 - Lib: Add `KimiToolset.load_tools` method to load tools with dependency injection
 - Lib: Add `KimiToolset.load_mcp_tools` method to load MCP tools
-- Lib: Move `MCPTool` from `kimi_cli.tools.mcp` to `kimi_cli.soul.toolset`
+- Lib: Move `MCPTool` from `codrus_cli.tools.mcp` to `codrus_cli.soul.toolset`
 - Lib: Add `InvalidToolError`, `MCPConfigError` and `MCPRuntimeError`
-- Lib: Make the detailed Kimi Code CLI exception classes extend `ValueError` or `RuntimeError`
+- Lib: Make the detailed CodrusCLI powered by Codrus models exception classes extend `ValueError` or `RuntimeError`
 - Lib: Allow passing validated `list[fastmcp.mcp_config.MCPConfig]` as `mcp_configs` for `KimiCLI.create` and `load_agent`
 - Lib: Fix exception raising for `KimiCLI.create`, `load_agent`, `KimiToolset.load_tools` and `KimiToolset.load_mcp_tools`
 - LLM: Add provider type `vertexai` to support Vertex AI
@@ -721,21 +721,21 @@ This page documents the changes in each Kimi Code CLI release.
 - CLI: Delete empty sessions on exit and ignore sessions whose context file is empty when listing
 - UI: Improve session replaying
 - Lib: Add `model_config: LLMModel | None` and `provider_config: LLMProvider | None` properties to `LLM` class
-- MetaCmd: Add `/usage` meta command to show API usage for Kimi Code users
+- MetaCmd: Add `/usage` meta command to show API usage for Codrus Code users
 
 ## 0.64 (2025-12-15)
 
 - UI: Fix UTF-16 surrogate characters input on Windows
 - Core: Add `/sessions` meta command to list existing sessions and switch to a selected one
 - CLI: Add `--session/-S` option to specify session ID to resume
-- MCP: Add `kimi mcp` subcommand group to manage global MCP config file `~/.kimi/mcp.json`
+- MCP: Add `codrus mcp` subcommand group to manage global MCP config file `~/.codrus/mcp.json`
 
 ## 0.63 (2025-12-12)
 
 - Tool: Fix `FetchURL` tool incorrect output when fetching via service fails
 - Tool: Use `bash` instead of `sh` in `Shell` tool for better compatibility
 - Tool: Fix `Grep` tool unicode decoding error on Windows
-- ACP: Support ACP session continuation (list/load sessions) with `kimi acp` subcommand
+- ACP: Support ACP session continuation (list/load sessions) with `codrus acp` subcommand
 - Lib: Add `Session.find` and `Session.list` static methods to find and list sessions
 - ACP: Update agent plans on the client side when `SetTodoList` tool is called
 - UI: Prevent normal messages starting with `/` from being treated as meta commands
@@ -758,16 +758,16 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 0.60 (2025-12-01)
 
-- LLM: Fix interleaved thinking for Kimi and OpenAI-compatible providers
+- LLM: Fix interleaved thinking for Codrus and OpenAI-compatible providers
 
 ## 0.59 (2025-11-28)
 
-- Core: Move context file location to `.kimi/sessions/{workdir_md5}/{session_id}/context.jsonl`
-- Lib: Move `WireMessage` type alias to `kimi_cli.wire.message`
-- Lib: Add `kimi_cli.wire.message.Request` type alias request messages (which currently only includes `ApprovalRequest`)
-- Lib: Add `kimi_cli.wire.message.is_event`, `is_request` and `is_wire_message` utility functions to check the type of wire messages
-- Lib: Add `kimi_cli.wire.serde` module for serialization and deserialization of wire messages
-- Lib: Change `StatusUpdate` Wire message to not using `kimi_cli.soul.StatusSnapshot`
+- Core: Move context file location to `.codrus/sessions/{workdir_md5}/{session_id}/context.jsonl`
+- Lib: Move `WireMessage` type alias to `codrus_cli.wire.message`
+- Lib: Add `codrus_cli.wire.message.Request` type alias request messages (which currently only includes `ApprovalRequest`)
+- Lib: Add `codrus_cli.wire.message.is_event`, `is_request` and `is_wire_message` utility functions to check the type of wire messages
+- Lib: Add `codrus_cli.wire.serde` module for serialization and deserialization of wire messages
+- Lib: Change `StatusUpdate` Wire message to not using `codrus_cli.soul.StatusSnapshot`
 - Core: Record Wire messages to a JSONL file in session directory
 - Core: Introduce `TurnBegin` Wire message to mark the beginning of each agent turn
 - UI: Print user input again with a panel in shell mode
@@ -786,7 +786,7 @@ This page documents the changes in each Kimi Code CLI release.
 - Core: Fix field inheritance of agent spec files when using `extend`
 - Core: Support using MCP tools in subagents
 - Tool: Add `CreateSubagent` tool to create subagents dynamically (not enabled in default agent)
-- Tool: Use MoonshotFetch service in `FetchURL` tool for Kimi Code plan
+- Tool: Use MoonshotFetch service in `FetchURL` tool for Codrus Code plan
 - Tool: Truncate Grep tool output to avoid exceeding token limit
 
 ## 0.57 (2025-11-20)
@@ -795,7 +795,7 @@ This page documents the changes in each Kimi Code CLI release.
 - UI: Improve approval request wordings
 - Tool: Remove `PatchFile` tool
 - Tool: Rename `Bash`/`CMD` tool to `Shell` tool
-- Tool: Move `Task` tool to `kimi_cli.tools.multiagent` module
+- Tool: Move `Task` tool to `codrus_cli.tools.multiagent` module
 
 ## 0.56 (2025-11-19)
 
@@ -803,7 +803,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 0.55 (2025-11-18)
 
-- Lib: Add `kimi_cli.app.enable_logging` function to enable logging when directly using `KimiCLI` class
+- Lib: Add `codrus_cli.app.enable_logging` function to enable logging when directly using `KimiCLI` class
 - Core: Fix relative path resolution in agent spec files
 - Core: Prevent from panic when LLM API connection failed
 - Tool: Optimize `FetchURL` tool for better content extraction
@@ -814,7 +814,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 0.54 (2025-11-13)
 
-- Lib: Move `WireMessage` from `kimi_cli.wire.message` to `kimi_cli.wire`
+- Lib: Move `WireMessage` from `codrus_cli.wire.message` to `codrus_cli.wire`
 - Print: Fix `stream-json` output format missing the last assistant message
 - UI: Add warning when API key is overridden by `KIMI_API_KEY` environment variable
 - UI: Make a bell sound when there's an approval request
@@ -842,7 +842,7 @@ This page documents the changes in each Kimi Code CLI release.
 ## 0.51 (2025-11-08)
 
 - Lib: Rename `Soul.model` to `Soul.model_name`
-- Lib: Rename `LLMModelCapability` to `ModelCapability` and move to `kimi_cli.llm`
+- Lib: Rename `LLMModelCapability` to `ModelCapability` and move to `codrus_cli.llm`
 - Lib: Add `"thinking"` to `ModelCapability`
 - Lib: Remove `LLM.supports_image_in` property
 - Lib: Add required `Soul.model_capabilities` property
@@ -865,7 +865,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 0.48 (2025-11-06)
 
-- Support Kimi K2 thinking mode
+- Support Codrus K2 thinking mode
 
 ## 0.47 (2025-11-05)
 
@@ -997,7 +997,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 - Fix step interrupting by Ctrl-C
 
-- Disable `SendDMail` tool in Kimi Koder agent
+- Disable `SendDMail` tool in Codrus Koder agent
 
 ## 0.28 (2025-10-13)
 
@@ -1018,7 +1018,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 0.25 (2025-10-11)
 
-- Rename package name `ensoul` to `kimi-cli`
+- Rename package name `ensoul` to `codrus-cli`
 - Rename `ENSOUL_*` builtin system prompt arguments to `KIMI_*`
 - Further decouple `App` with `Soul`
 - Split `Soul` protocol and `KimiSoul` implementation for better modularity
@@ -1045,8 +1045,8 @@ This page documents the changes in each Kimi Code CLI release.
 - Add `SearchWeb` tool with `services.moonshot_search` configuration. You need to configure it with `"services": {"moonshot_search": {"api_key": "your-search-api-key"}}` in your config file.
 - Add `FetchURL` tool
 - Add `Think` tool
-- Add `PatchFile` tool, not enabled in Kimi Koder agent
-- Enable `SendDMail` and `Task` tool in Kimi Koder agent with better tool prompts
+- Add `PatchFile` tool, not enabled in Codrus Koder agent
+- Enable `SendDMail` and `Task` tool in Codrus Koder agent with better tool prompts
 - Add `ENSOUL_NOW` builtin system prompt argument
 
 - Better-looking `/release-notes`
@@ -1081,7 +1081,7 @@ This page documents the changes in each Kimi Code CLI release.
 
 ## 0.16.0 (2025-09-26)
 
-- Add `SendDMail` tool (disabled in Kimi Koder, can be enabled in custom agent)
+- Add `SendDMail` tool (disabled in Codrus Koder, can be enabled in custom agent)
 
 - Session history file can be specified via `_history_file` parameter when creating a new session
 
@@ -1155,4 +1155,4 @@ This page documents the changes in each Kimi Code CLI release.
 - Support interrupting the agent loop
 - Support project-level `AGENTS.md`
 - Support custom agent defined with YAML
-- Support oneshot task via `kimi -c`
+- Support oneshot task via `codrus -c`

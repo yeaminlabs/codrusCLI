@@ -1,19 +1,19 @@
-# Kimi SDK
+# Codrus SDK
 
-Kimi SDK provides a convenient way to access the Kimi API and build agent workflows in Python.
+Codrus SDK provides a convenient way to access the Codrus API and build agent workflows in Python.
 
 ## Installation
 
-Kimi SDK requires Python 3.12 or higher. We recommend using uv as the package manager.
+Codrus SDK requires Python 3.12 or higher. We recommend using uv as the package manager.
 
 ```bash
 uv init --python 3.12  # or higher
 ```
 
-Then add Kimi SDK as a dependency:
+Then add Codrus SDK as a dependency:
 
 ```bash
-uv add kimi-sdk
+uv add codrus-sdk
 ```
 
 ## Examples
@@ -23,14 +23,14 @@ uv add kimi-sdk
 ```python
 import asyncio
 
-from kimi_sdk import Kimi, Message, generate
+from kimi_sdk import Codrus, Message, generate
 
 
 async def main() -> None:
-    kimi = Kimi(
+    codrus = Codrus(
         base_url="https://api.moonshot.ai/v1",
         api_key="your_kimi_api_key_here",
-        model="kimi-k2-turbo-preview",
+        model="codrus-k2-turbo-preview",
     )
 
     history = [
@@ -38,7 +38,7 @@ async def main() -> None:
     ]
 
     result = await generate(
-        chat_provider=kimi,
+        chat_provider=codrus,
         system_prompt="You are a helpful assistant.",
         tools=[],
         history=history,
@@ -55,14 +55,14 @@ asyncio.run(main())
 ```python
 import asyncio
 
-from kimi_sdk import Kimi, Message, StreamedMessagePart, generate
+from kimi_sdk import Codrus, Message, StreamedMessagePart, generate
 
 
 async def main() -> None:
-    kimi = Kimi(
+    codrus = Codrus(
         base_url="https://api.moonshot.ai/v1",
         api_key="your_kimi_api_key_here",
-        model="kimi-k2-turbo-preview",
+        model="codrus-k2-turbo-preview",
     )
 
     history = [
@@ -73,7 +73,7 @@ async def main() -> None:
         print(message_part)
 
     result = await generate(
-        chat_provider=kimi,
+        chat_provider=codrus,
         system_prompt="You are a helpful assistant.",
         tools=[],
         history=history,
@@ -91,18 +91,18 @@ asyncio.run(main())
 ```python
 import asyncio
 from pathlib import Path
-from kimi_sdk import Kimi, Message, TextPart, generate
+from kimi_sdk import Codrus, Message, TextPart, generate
 
 
 async def main() -> None:
-    kimi = Kimi(
+    codrus = Codrus(
         base_url="https://api.moonshot.ai/v1",
         api_key="your_kimi_api_key_here",
-        model="kimi-k2-turbo-preview",
+        model="codrus-k2-turbo-preview",
     )
 
     video_path = Path("demo.mp4")
-    video_part = await kimi.files.upload_video(
+    video_part = await codrus.files.upload_video(
         data=video_path.read_bytes(),
         mime_type="video/mp4",
     )
@@ -118,7 +118,7 @@ async def main() -> None:
     ]
 
     result = await generate(
-        chat_provider=kimi,
+        chat_provider=codrus,
         system_prompt="You are a helpful assistant.",
         tools=[],
         history=history,
@@ -137,7 +137,7 @@ import asyncio
 
 from pydantic import BaseModel
 
-from kimi_sdk import CallableTool2, Kimi, Message, SimpleToolset, StepResult, ToolOk, ToolReturnValue, step
+from kimi_sdk import CallableTool2, Codrus, Message, SimpleToolset, StepResult, ToolOk, ToolReturnValue, step
 
 
 class AddToolParams(BaseModel):
@@ -155,10 +155,10 @@ class AddTool(CallableTool2[AddToolParams]):
 
 
 async def main() -> None:
-    kimi = Kimi(
+    codrus = Codrus(
         base_url="https://api.moonshot.ai/v1",
         api_key="your_kimi_api_key_here",
-        model="kimi-k2-turbo-preview",
+        model="codrus-k2-turbo-preview",
     )
 
     toolset = SimpleToolset()
@@ -169,7 +169,7 @@ async def main() -> None:
     ]
 
     result: StepResult = await step(
-        chat_provider=kimi,
+        chat_provider=codrus,
         system_prompt="You are a precise math tutor.",
         toolset=toolset,
         history=history,
@@ -183,5 +183,5 @@ asyncio.run(main())
 
 ## Environment variables
 
-- `KIMI_API_KEY`: API key for the Kimi API.
+- `KIMI_API_KEY`: API key for the Codrus API.
 - `KIMI_BASE_URL`: Override the API base URL (defaults to `https://api.moonshot.ai/v1`).

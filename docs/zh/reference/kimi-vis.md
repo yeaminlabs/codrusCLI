@@ -4,14 +4,14 @@
 Agent Tracing Visualizer 目前为技术预览版（Technical Preview），功能和界面可能在后续版本中发生变化。
 :::
 
-Agent Tracing Visualizer 是一个基于浏览器的可视化仪表板，用于检查和分析 Kimi Code CLI 的会话追踪数据。它可以帮助你理解 Agent 的行为、查看 Wire 事件时间线、分析上下文使用情况，以及浏览历史会话。
+Agent Tracing Visualizer 是一个基于浏览器的可视化仪表板，用于检查和分析 CodrusCLI powered by Codrus models 的会话追踪数据。它可以帮助你理解 Agent 的行为、查看 Wire 事件时间线、分析上下文使用情况，以及浏览历史会话。
 
 ## 启动
 
-在终端中运行 `kimi vis` 命令启动 Visualizer：
+在终端中运行 `codrus vis` 命令启动 Visualizer：
 
 ```sh
-kimi vis
+codrus vis
 ```
 
 服务器启动后会自动打开浏览器。默认地址为 `http://127.0.0.1:5495`。
@@ -34,13 +34,13 @@ kimi vis
 
 ```sh
 # 指定端口
-kimi vis --port 8080
+codrus vis --port 8080
 
 # 不自动打开浏览器
-kimi vis --no-open
+codrus vis --no-open
 
 # 在局域网中共享（自动探测并显示 LAN IP）
-kimi vis -n
+codrus vis -n
 ```
 
 ## 功能
@@ -66,11 +66,11 @@ kimi vis -n
 可以将会话数据导出为 ZIP 文件，方便离线分析或分享。
 
 - **ZIP 下载**：在会话浏览器和会话详情页中点击下载按钮，即可将会话目录打包为 ZIP 文件下载
-- **CLI 导出**：使用 `kimi export [<session_id>]` 命令导出会话为 ZIP 文件；省略 `<session_id>` 时会预览并确认当前工作目录的上一个会话
+- **CLI 导出**：使用 `codrus export [<session_id>]` 命令导出会话为 ZIP 文件；省略 `<session_id>` 时会预览并确认当前工作目录的上一个会话
 
 ### 会话导入
 
-支持将 ZIP 格式的会话数据导入到 Visualizer 中查看。导入的会话存储在独立的 `~/.kimi/imported_sessions/` 目录中，不会与正常会话混淆。
+支持将 ZIP 格式的会话数据导入到 Visualizer 中查看。导入的会话存储在独立的 `~/.codrus/imported_sessions/` 目录中，不会与正常会话混淆。
 
 在会话浏览器中可以通过 "Imported" 筛选器切换查看导入的会话。导入的会话支持删除操作，删除前会弹出确认对话框。
 

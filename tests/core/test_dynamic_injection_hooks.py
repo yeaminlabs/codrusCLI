@@ -8,10 +8,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from kosong.tooling.empty import EmptyToolset
 
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.dynamic_injection import DynamicInjection, DynamicInjectionProvider
-from kimi_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.dynamic_injection import DynamicInjection, DynamicInjectionProvider
+from codrus_cli.soul.kimisoul import KimiSoul
 
 
 class _BoomProvider(DynamicInjectionProvider):
@@ -111,7 +111,7 @@ async def test_compact_context_notifies_injection_providers() -> None:
     soul.add_injection_provider(provider_a)
     soul.add_injection_provider(provider_b)
 
-    with patch("kimi_cli.soul.kimisoul.wire_send"):
+    with patch("codrus_cli.soul.kimisoul.wire_send"):
         await soul.compact_context()
 
     assert provider_a.on_context_compacted_calls == 1
@@ -126,7 +126,7 @@ async def test_compact_context_notifies_surviving_providers_after_failure() -> N
     soul.add_injection_provider(boom)
     soul.add_injection_provider(recorder)
 
-    with patch("kimi_cli.soul.kimisoul.wire_send"):
+    with patch("codrus_cli.soul.kimisoul.wire_send"):
         await soul.compact_context()
 
     assert recorder.on_context_compacted_calls == 1

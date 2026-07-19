@@ -1,9 +1,9 @@
-# Example: Custom Kimi Soul
+# Example: Custom Codrus Soul
 
 This example demonstrates how to extend the `KimiSoul` (builtin agent loop) to customize its behavior and use it with the `Shell` UI.
 
 ```sh
-cd examples/custom-kimi-soul
+cd examples/custom-codrus-soul
 uv sync --reinstall
 uv run main.py
 ```

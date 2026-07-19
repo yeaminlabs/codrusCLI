@@ -1,13 +1,13 @@
 # Web UI
 
-Web UI 提供了基于浏览器的交互界面，让你可以在网页中使用 Kimi Code CLI 的所有功能。相比终端界面，Web UI 提供了更丰富的视觉体验、更灵活的会话管理以及更便捷的文件操作。
+Web UI 提供了基于浏览器的交互界面，让你可以在网页中使用 CodrusCLI powered by Codrus models 的所有功能。相比终端界面，Web UI 提供了更丰富的视觉体验、更灵活的会话管理以及更便捷的文件操作。
 
 ## 启动 Web UI
 
-在终端中运行 `kimi web` 命令启动 Web UI 服务器：
+在终端中运行 `codrus web` 命令启动 Web UI 服务器：
 
 ```sh
-kimi web
+codrus web
 ```
 
 服务器启动后会自动打开浏览器访问 Web UI。默认地址为 `http://127.0.0.1:5494`。
@@ -30,10 +30,10 @@ kimi web
 
 ```sh
 # 绑定到所有网络接口，允许局域网访问
-kimi web --network
+codrus web --network
 
 # 绑定到指定 IP 地址
-kimi web --host 192.168.1.100
+codrus web --host 192.168.1.100
 ```
 
 ::: warning 注意
@@ -49,7 +49,7 @@ kimi web --host 192.168.1.100
 使用 `--no-open` 可以禁止自动打开浏览器：
 
 ```sh
-kimi web --no-open
+codrus web --no-open
 ```
 
 ### 开发选项
@@ -61,7 +61,7 @@ kimi web --no-open
 使用 `--reload` 可以在代码修改后自动重启服务器：
 
 ```sh
-kimi web --reload
+codrus web --reload
 ```
 
 ::: info 说明
@@ -89,7 +89,7 @@ Web UI 提供了多层访问控制机制，确保服务的安全性。
 使用 `--auth-token` 可以设置访问令牌，客户端需要在 HTTP 请求头中携带 `Authorization: Bearer <token>` 才能访问 API：
 
 ```sh
-kimi web --network --auth-token my-secret-token
+codrus web --network --auth-token my-secret-token
 ```
 
 ::: tip 提示
@@ -101,7 +101,7 @@ kimi web --network --auth-token my-secret-token
 使用 `--allowed-origins` 可以限制允许访问 Web UI 的来源域名：
 
 ```sh
-kimi web --network --allowed-origins "https://example.com,https://app.example.com"
+codrus web --network --allowed-origins "https://example.com,https://app.example.com"
 ```
 
 ::: tip 提示
@@ -113,7 +113,7 @@ kimi web --network --allowed-origins "https://example.com,https://app.example.co
 默认情况下，Web UI 使用 `--lan-only` 模式，只允许来自局域网（私有 IP 地址段）的访问。如果需要允许公网访问，可以使用 `--public` 选项：
 
 ```sh
-kimi web --network --public --auth-token my-secret-token
+codrus web --network --public --auth-token my-secret-token
 ```
 
 ::: danger 警告
@@ -129,7 +129,7 @@ kimi web --network --public --auth-token my-secret-token
 - 文件访问限制
 
 ```sh
-kimi web --network --restrict-sensitive-apis
+codrus web --network --restrict-sensitive-apis
 ```
 
 在 `--public` 模式下，`--restrict-sensitive-apis` 默认启用；在 `--lan-only` 模式（默认）下则不启用。
@@ -143,7 +143,7 @@ kimi web --network --restrict-sensitive-apis
 在受信任的私有网络环境中，你可以使用 `--dangerously-omit-auth` 跳过所有认证检查：
 
 ```sh
-kimi web --dangerously-omit-auth
+codrus web --dangerously-omit-auth
 ```
 
 ::: danger 警告
@@ -152,13 +152,13 @@ kimi web --dangerously-omit-auth
 
 ## 从终端切换到 Web UI
 
-如果你正在终端的 Shell 模式中使用 Kimi Code CLI，可以输入 `/web` 命令快速切换到 Web UI：
+如果你正在终端的 Shell 模式中使用 CodrusCLI powered by Codrus models，可以输入 `/web` 命令快速切换到 Web UI：
 
 ```
 /web
 ```
 
-执行后，Kimi Code CLI 会自动启动 Web UI 服务器并在浏览器中打开当前会话。你可以继续在 Web UI 中进行对话，会话历史会保持同步。
+执行后，CodrusCLI powered by Codrus models 会自动启动 Web UI 服务器并在浏览器中打开当前会话。你可以继续在 Web UI 中进行对话，会话历史会保持同步。
 
 ## Web UI 功能特性
 
@@ -324,7 +324,7 @@ http://127.0.0.1:5494?action=create-in-dir&workDir=/path/to/project
 最简单的使用方式，只在本机访问：
 
 ```sh
-kimi web
+codrus web
 ```
 
 ### 局域网共享
@@ -332,7 +332,7 @@ kimi web
 在局域网中共享 Web UI，使用访问令牌保护：
 
 ```sh
-kimi web --network --auth-token $(openssl rand -hex 32)
+codrus web --network --auth-token $(openssl rand -hex 32)
 ```
 
 执行后，终端会显示访问地址和令牌。其他设备可以通过该地址访问，并在浏览器中输入令牌进行认证。
@@ -342,7 +342,7 @@ kimi web --network --auth-token $(openssl rand -hex 32)
 在公网环境中部署 Web UI（需要谨慎配置安全选项）：
 
 ```sh
-kimi web \
+codrus web \
   --host 0.0.0.0 \
   --public \
   --auth-token $(openssl rand -hex 32) \
@@ -355,7 +355,7 @@ kimi web \
 启用自动重载功能，方便开发调试：
 
 ```sh
-kimi web --reload --no-open
+codrus web --reload --no-open
 ```
 
 ## 技术说明
@@ -366,4 +366,4 @@ Web UI 基于以下技术构建：
 - **前端**：React + TypeScript + Vite
 - **API 协议**：符合 OpenAPI 规范，详见 `web/openapi.json`
 
-Web UI 通过 WebSocket 与 Kimi Code CLI 的 Wire 模式通信，实现实时的双向数据传输。
+Web UI 通过 WebSocket 与 CodrusCLI powered by Codrus models 的 Wire 模式通信，实现实时的双向数据传输。

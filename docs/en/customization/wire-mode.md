@@ -1,23 +1,23 @@
 # Wire mode
 
-Wire mode is Kimi Code CLI's low-level communication protocol for structured bidirectional communication with external programs.
+Wire mode is CodrusCLI powered by Codrus models's low-level communication protocol for structured bidirectional communication with external programs.
 
 ## What is Wire
 
-Wire is the message-passing layer used internally by Kimi Code CLI. When you interact via terminal, the Shell UI receives AI output through Wire and displays it; when you integrate with IDEs via ACP, the ACP server also communicates with the agent core through Wire.
+Wire is the message-passing layer used internally by CodrusCLI powered by Codrus models. When you interact via terminal, the Shell UI receives AI output through Wire and displays it; when you integrate with IDEs via ACP, the ACP server also communicates with the agent core through Wire.
 
-Wire mode (`--wire`) exposes this communication protocol, allowing external programs to interact directly with Kimi Code CLI. This is suitable for building custom UIs or embedding Kimi Code CLI into other applications.
+Wire mode (`--wire`) exposes this communication protocol, allowing external programs to interact directly with CodrusCLI powered by Codrus models. This is suitable for building custom UIs or embedding CodrusCLI powered by Codrus models into other applications.
 
 ```sh
-kimi --wire
+codrus --wire
 ```
 
 ## Use cases
 
 Wire mode is mainly used for:
 
-- **Custom UI**: Build web, desktop, or mobile frontends for Kimi Code CLI
-- **Application integration**: Embed Kimi Code CLI into other applications
+- **Custom UI**: Build web, desktop, or mobile frontends for CodrusCLI powered by Codrus models
+- **Application integration**: Embed CodrusCLI powered by Codrus models into other applications
 - **Automated testing**: Programmatic testing of agent behavior
 
 ::: tip
@@ -181,7 +181,7 @@ interface ExternalToolsResult {
 **Success response example**
 
 ```json
-{"jsonrpc": "2.0", "id": "550e8400-e29b-41d4-a716-446655440000", "result": {"protocol_version": "1.7", "server": {"name": "Kimi Code CLI", "version": "1.14.0"}, "slash_commands": [{"name": "init", "description": "Analyze the codebase ...", "aliases": []}], "capabilities": {"supports_question": true}, "external_tools": {"accepted": ["open_in_ide"], "rejected": []}}}
+{"jsonrpc": "2.0", "id": "550e8400-e29b-41d4-a716-446655440000", "result": {"protocol_version": "1.7", "server": {"name": "CodrusCLI powered by Codrus models", "version": "1.14.0"}, "slash_commands": [{"name": "init", "description": "Analyze the codebase ...", "aliases": []}], "capabilities": {"supports_question": true}, "external_tools": {"accepted": ["open_in_ide"], "rejected": []}}}
 ```
 
 If the server does not support the `initialize` method, the client will receive a `-32601 method not found` error and should automatically fall back to no-handshake mode.
@@ -1133,83 +1133,83 @@ interface ShellDisplayBlock {
 }
 ```
 
-## Kimi Agent (Rust) Wire server
+## Codrus Agent (Rust) Wire server
 
 ::: warning Note
-Kimi Agent is currently experimental. APIs and behavior may change in future releases.
+Codrus Agent is currently experimental. APIs and behavior may change in future releases.
 :::
 
-Kimi Agent (Rust) is the Rust implementation of the Kimi Code CLI kernel, designed specifically for Wire mode. If you only need the Wire protocol service, Kimi Agent (Rust) offers a more lightweight alternative. The Rust implementation lives in [`MoonshotAI/kimi-agent-rs`](https://github.com/MoonshotAI/kimi-agent-rs).
+Codrus Agent (Rust) is the Rust implementation of the CodrusCLI powered by Codrus models kernel, designed specifically for Wire mode. If you only need the Wire protocol service, Codrus Agent (Rust) offers a more lightweight alternative. The Rust implementation lives in [`MoonshotAI/codrus-agent-rs`](https://github.com/MoonshotAI/codrus-agent-rs).
 
 ### Features
 
-- **Full Wire protocol compatibility**: Uses the same Wire protocol as Python's `kimi --wire`, existing clients need no modifications
+- **Full Wire protocol compatibility**: Uses the same Wire protocol as Python's `codrus --wire`, existing clients need no modifications
 - **Smaller footprint**: Single statically-linked binary, no Python runtime required
 - **Faster startup**: Native compilation provides faster startup times
-- **Same configuration**: Uses the same config file (`~/.kimi/config.toml`) and session directories
+- **Same configuration**: Uses the same config file (`~/.codrus/config.toml`) and session directories
 
 ### Limitations
 
 - **Wire mode only**: No Shell/Print/ACP UI
-- **Kimi provider only**: Does not support OpenAI, Anthropic, or other providers
-- **No Kimi account login**: No `login`/`logout` subcommands or `/login`, `/logout` slash commands; requires manual API key configuration
+- **Codrus provider only**: Does not support OpenAI, Anthropic, or other providers
+- **No Codrus account login**: No `login`/`logout` subcommands or `/login`, `/logout` slash commands; requires manual API key configuration
 - **No `--prompt`/`--command`**: Wire server does not accept initial prompts
 - **Local execution only**: No SSH Kaos support
-- **Different MCP OAuth storage**: Kimi Agent stores credentials in `~/.kimi/credentials/mcp_auth.json`, while the Python version uses `~/.kimi/mcp-oauth/`; they are incompatible
+- **Different MCP OAuth storage**: Codrus Agent stores credentials in `~/.codrus/credentials/mcp_auth.json`, while the Python version uses `~/.codrus/mcp-oauth/`; they are incompatible
 
 ### Installation
 
-Download pre-built binaries from [GitHub Releases](https://github.com/MoonshotAI/kimi-agent-rs/releases):
+Download pre-built binaries from [GitHub Releases](https://github.com/MoonshotAI/codrus-agent-rs/releases):
 
 ```sh
 # macOS (Apple Silicon)
-curl -L https://github.com/MoonshotAI/kimi-agent-rs/releases/latest/download/kimi-agent-aarch64-apple-darwin.tar.gz | tar xz
-sudo mv kimi-agent /usr/local/bin/
+curl -L https://github.com/MoonshotAI/codrus-agent-rs/releases/latest/download/codrus-agent-aarch64-apple-darwin.tar.gz | tar xz
+sudo mv codrus-agent /usr/local/bin/
 
 # Linux (x86_64)
-curl -L https://github.com/MoonshotAI/kimi-agent-rs/releases/latest/download/kimi-agent-x86_64-unknown-linux-gnu.tar.gz | tar xz
-sudo mv kimi-agent /usr/local/bin/
+curl -L https://github.com/MoonshotAI/codrus-agent-rs/releases/latest/download/codrus-agent-x86_64-unknown-linux-gnu.tar.gz | tar xz
+sudo mv codrus-agent /usr/local/bin/
 ```
 
 ### Usage
 
-Kimi Agent runs in Wire mode by default:
+Codrus Agent runs in Wire mode by default:
 
 ```sh
-kimi-agent
+codrus-agent
 ```
 
-Common options are the same as the `kimi` command:
+Common options are the same as the `codrus` command:
 
 ```sh
 # Specify work directory
-kimi-agent --work-dir /path/to/project
+codrus-agent --work-dir /path/to/project
 
 # Continue previous session
-kimi-agent --continue
+codrus-agent --continue
 
 # Use specific session
-kimi-agent --session <session-id>
+codrus-agent --session <session-id>
 
 # Use specific model
-kimi-agent --model k2
+codrus-agent --model k2
 
 # YOLO mode (skip approvals)
-kimi-agent --yolo
+codrus-agent --yolo
 ```
 
 Subcommands:
 
 ```sh
 # Show version and environment info
-kimi-agent info
+codrus-agent info
 
 # Manage MCP servers
-kimi-agent mcp list
-kimi-agent mcp add <name> <command> [args...]
-kimi-agent mcp remove <name>
+codrus-agent mcp list
+codrus-agent mcp add <name> <command> [args...]
+codrus-agent mcp remove <name>
 ```
 
 ### Version synchronization
 
-Kimi Agent is released independently from Kimi Code CLI. See `MoonshotAI/kimi-agent-rs` release notes for compatibility and sync status.
+Codrus Agent is released independently from CodrusCLI powered by Codrus models. See `MoonshotAI/codrus-agent-rs` release notes for compatibility and sync status.

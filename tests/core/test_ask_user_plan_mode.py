@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.soul.toolset import KimiToolset
-from kimi_cli.tools.ask_user import _BASE_DESCRIPTION, AskUserQuestion
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.toolset import KimiToolset
+from codrus_cli.tools.ask_user import _BASE_DESCRIPTION, AskUserQuestion
 
 
 class TestAskUserDescriptionStability:

@@ -1,10 +1,10 @@
 # Sessions and Context
 
-Kimi Code CLI automatically saves your conversation history, allowing you to continue previous work at any time.
+CodrusCLI powered by Codrus models automatically saves your conversation history, allowing you to continue previous work at any time.
 
 ## Session resuming
 
-Each time you start Kimi Code CLI, a new session is created. While running, you can also enter the `/new` command to create and switch to a new session at any time, without exiting the program.
+Each time you start CodrusCLI powered by Codrus models, a new session is created. While running, you can also enter the `/new` command to create and switch to a new session at any time, without exiting the program.
 
 If you want to continue a previous conversation, there are several ways:
 
@@ -13,7 +13,7 @@ If you want to continue a previous conversation, there are several ways:
 Use the `--continue` flag to continue the most recent session in the current working directory:
 
 ```sh
-kimi --continue
+codrus --continue
 ```
 
 **Interactively pick a session**
@@ -21,7 +21,7 @@ kimi --continue
 Use `--session` (or `--resume`, `-S`, `-r`) without an argument to open an interactive session picker, where you can use arrow keys to select the session to resume:
 
 ```sh
-kimi --session
+codrus --session
 ```
 
 > The interactive picker is only available in shell mode.
@@ -31,7 +31,7 @@ kimi --session
 Use `--session` (or `--resume`) with a session ID to resume that specific session:
 
 ```sh
-kimi -r abc123
+codrus -r abc123
 ```
 
 If the specified session ID does not exist, a new session is created automatically.
@@ -48,21 +48,21 @@ The list shows each session's title and last update time, helping you find the c
 
 **Resume hint on exit**
 
-When a session exits — whether through normal exit, `Ctrl-C` interruption, `/undo`, `/fork`, `/sessions` switch, or other scenarios — Kimi Code CLI automatically prints a resume command hint:
+When a session exits — whether through normal exit, `Ctrl-C` interruption, `/undo`, `/fork`, `/sessions` switch, or other scenarios — CodrusCLI powered by Codrus models automatically prints a resume command hint:
 
 ```
-To resume this session: kimi -r <session-id>
+To resume this session: codrus -r <session-id>
 ```
 
 You can copy this command directly and run it in your terminal next time to quickly resume the session. Empty sessions do not show this hint.
 
 **Startup replay**
 
-When you continue an existing session, Kimi Code CLI will replay the previous conversation history so you can quickly understand the context. During replay, previous messages and AI responses will be displayed.
+When you continue an existing session, CodrusCLI powered by Codrus models will replay the previous conversation history so you can quickly understand the context. During replay, previous messages and AI responses will be displayed.
 
 ## Session state persistence
 
-In addition to conversation history, Kimi Code CLI also automatically saves and restores the session's runtime state. When you resume a session, the following states are automatically restored:
+In addition to conversation history, CodrusCLI powered by Codrus models also automatically saves and restores the session's runtime state. When you resume a session, the following states are automatically restored:
 
 - **Approval decisions**: YOLO and AFK mode on/off status, operation types approved via "allow for this session"
 - **Plan mode**: Plan mode on/off status
@@ -73,7 +73,7 @@ This means you don't need to reconfigure these settings each time you resume a s
 
 ## Export and import
 
-Kimi Code CLI supports exporting session context to a file, or importing context from external files and other sessions.
+CodrusCLI powered by Codrus models supports exporting session context to a file, or importing context from external files and other sessions.
 
 **Export a session**
 
@@ -106,7 +106,7 @@ Exported files may contain sensitive information (such as code snippets, file pa
 
 ## Clear and compact
 
-As the conversation progresses, the context grows longer. Kimi Code CLI will automatically compress the context when needed to ensure the conversation can continue.
+As the conversation progresses, the context grows longer. CodrusCLI powered by Codrus models will automatically compress the context when needed to ensure the conversation can continue.
 
 You can also manually manage the context using slash commands:
 

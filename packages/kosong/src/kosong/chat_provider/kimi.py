@@ -47,9 +47,9 @@ from kosong.utils.jsonschema import JsonDict, ensure_property_types
 
 if TYPE_CHECKING:
 
-    def type_check(kimi: "Kimi"):
-        _: ChatProvider = kimi
-        _: RetryableChatProvider = kimi
+    def type_check(codrus: "Codrus"):
+        _: ChatProvider = codrus
+        _: RetryableChatProvider = codrus
 
 
 class ThinkingConfig(TypedDict, total=False):
@@ -64,22 +64,22 @@ class ExtraBody(TypedDict, total=False, extra_items=Any):
     thinking: ThinkingConfig
 
 
-class Kimi:
+class Codrus:
     """
-    A chat provider that uses the Kimi API.
+    A chat provider that uses the Codrus API.
 
-    >>> chat_provider = Kimi(model="kimi-k2-turbo-preview", api_key="sk-1234567890")
+    >>> chat_provider = Codrus(model="codrus-k2-turbo-preview", api_key="sk-1234567890")
     >>> chat_provider.name
-    'kimi'
+    'codrus'
     >>> chat_provider.model_name
-    'kimi-k2-turbo-preview'
+    'codrus-k2-turbo-preview'
     >>> chat_provider.with_generation_kwargs(temperature=0)._generation_kwargs
     {'temperature': 0}
     >>> chat_provider._generation_kwargs
     {}
     """
 
-    name = "kimi"
+    name = "codrus"
 
     class GenerationKwargs(TypedDict, total=False):
         """
@@ -131,7 +131,7 @@ class Kimi:
             client_kwargs=self._client_kwargs,
         )
         """The underlying `AsyncOpenAI` client."""
-        self._generation_kwargs: Kimi.GenerationKwargs = {}
+        self._generation_kwargs: Codrus.GenerationKwargs = {}
         self._thinking_effort: ThinkingEffort | None = None
         """Thinking state kept separately from parameters serialized onto the wire."""
 
@@ -160,7 +160,7 @@ class Kimi:
         if generation_overrides:
             generation_kwargs.update(
                 _normalize_generation_kwargs(
-                    cast(Kimi.GenerationKwargs, dict(generation_overrides))
+                    cast(Codrus.GenerationKwargs, dict(generation_overrides))
                 )
             )
         if generation_kwargs.get("max_completion_tokens") is None:
@@ -279,7 +279,7 @@ class KimiFiles:
         self._client = client
 
     async def upload_video(self, *, data: bytes, mime_type: str) -> VideoURLPart:
-        """Upload a video to Kimi files API and return a video URL content part."""
+        """Upload a video to Codrus files API and return a video URL content part."""
         if not mime_type.startswith("video/"):
             raise ChatProviderError(f"Expected a video mime type, got {mime_type}")
         url = await self._upload_file(data=data, mime_type=mime_type, purpose="video")
@@ -314,13 +314,13 @@ def _guess_filename(mime_type: str) -> str:
     return f"upload{extension}"
 
 
-def _normalize_generation_kwargs(kwargs: Kimi.GenerationKwargs) -> Kimi.GenerationKwargs:
+def _normalize_generation_kwargs(kwargs: Codrus.GenerationKwargs) -> Codrus.GenerationKwargs:
     normalized: dict[str, Any] = dict(kwargs)
     if "max_tokens" in normalized:
         max_tokens = normalized.pop("max_tokens")
         if "max_completion_tokens" not in normalized:
             normalized["max_completion_tokens"] = max_tokens
-    return cast(Kimi.GenerationKwargs, normalized)
+    return cast(Codrus.GenerationKwargs, normalized)
 
 
 def _convert_message(message: Message) -> ChatCompletionMessageParam:
@@ -342,7 +342,7 @@ def _convert_message(message: Message) -> ChatCompletionMessageParam:
         and _is_effectively_empty_content_parts(content)
     ):
         # OpenAI-compatible APIs allow assistant tool-call messages to omit
-        # `content`, but the Kimi-for-Coding compat layer rejects a content
+        # `content`, but the Codrus-for-Coding compat layer rejects a content
         # list that contains an empty text part (observed: `content:
         # [{"type": "text", "text": ""}]` -> 400 "text content is empty").
         # Dropping `content` entirely is always accepted, so do that whenever
@@ -364,7 +364,7 @@ def _is_effectively_empty_content_parts(content: Sequence[ContentPart]) -> bool:
 
 def _convert_tool(tool: Tool) -> ChatCompletionToolParam:
     if tool.name.startswith("$"):
-        # Kimi builtin functions start with `$`
+        # Codrus builtin functions start with `$`
         return cast(
             ChatCompletionToolParam,
             {
@@ -378,7 +378,7 @@ def _convert_tool(tool: Tool) -> ChatCompletionToolParam:
     converted = tool_to_openai(tool)
     # Moonshot's API rejects parameter schemas whose nested properties omit
     # `type` (e.g. enum-only properties exposed by some MCP servers). Patch
-    # the schema locally so such tools keep working against Kimi without
+    # the schema locally so such tools keep working against Codrus without
     # requiring every MCP server author to tighten their schemas.
     function = converted["function"]
     parameters = function.get("parameters")
@@ -389,7 +389,7 @@ def _convert_tool(tool: Tool) -> ChatCompletionToolParam:
 
 
 class KimiStreamedMessage:
-    """The streamed message of the Kimi chat provider."""
+    """The streamed message of the Codrus chat provider."""
 
     def __init__(
         self,
@@ -536,7 +536,7 @@ def extract_usage_from_chunk(chunk: ChatCompletionChunk) -> CompletionUsage | No
 if __name__ == "__main__":
 
     async def _dev_main():
-        chat = Kimi(model="kimi-k2-turbo-preview", stream=False)
+        chat = Codrus(model="codrus-k2-turbo-preview", stream=False)
         system_prompt = ""
         history = [
             Message(role="user", content="Hello, who is Confucius?"),

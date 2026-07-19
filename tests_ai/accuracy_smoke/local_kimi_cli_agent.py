@@ -4,16 +4,16 @@ import os
 import shlex
 from pathlib import Path
 
-from harbor.agents.installed.kimi_cli import KimiCli
+from harbor.agents.installed.codrus_cli import KimiCli
 from harbor.environments.base import BaseEnvironment
 
 
 class LocalKimiCli(KimiCli):
-    """Harbor Kimi agent that installs kimi-cli from a local wheel."""
+    """Harbor Codrus agent that installs codrus-cli from a local wheel."""
 
     @staticmethod
     def name() -> str:
-        return "kimi-cli-local"
+        return "codrus-cli-local"
 
     async def install(self, environment: BaseEnvironment) -> None:
         wheel_path = os.environ.get("KIMI_CLI_WHEEL_PATH")
@@ -33,7 +33,7 @@ class LocalKimiCli(KimiCli):
                 "curl -LsSf https://astral.sh/uv/install.sh | bash && "
                 'export PATH="$HOME/.local/bin:$PATH" && '
                 f"uv tool install --python 3.13 {shlex.quote(wheel_target)} && "
-                "kimi --version"
+                "codrus --version"
             )
             await self.exec_as_agent(environment, command=install_cmd)
             return

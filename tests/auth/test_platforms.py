@@ -6,14 +6,14 @@ import aiohttp
 import pytest
 from pydantic import SecretStr
 
-from kimi_cli.auth.platforms import (
+from codrus_cli.auth.platforms import (
     ModelInfo,
     _apply_models,
     _list_models,
     refresh_managed_models,
 )
-from kimi_cli.config import Config, LLMModel, LLMProvider, OAuthRef, Services
-from kimi_cli.llm import model_display_name
+from codrus_cli.config import Config, LLMModel, LLMProvider, OAuthRef, Services
+from codrus_cli.llm import model_display_name
 
 
 def _make_config_with_model(
@@ -22,21 +22,21 @@ def _make_config_with_model(
     api_key: str = "",
 ) -> Config:
     provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://api.test/v1",
         api_key=SecretStr(api_key),
-        oauth=OAuthRef(storage="file", key="oauth/kimi-code"),
+        oauth=OAuthRef(storage="file", key="oauth/codrus-code"),
     )
     model = LLMModel(
-        provider="managed:kimi-code",
-        model="kimi-for-coding",
+        provider="managed:codrus-code",
+        model="codrus-for-coding",
         max_context_size=100_000,
         display_name=display_name,
     )
     return Config(
-        default_model="kimi-code/kimi-for-coding",
-        providers={"managed:kimi-code": provider},
-        models={"kimi-code/kimi-for-coding": model},
+        default_model="codrus-code/codrus-for-coding",
+        providers={"managed:codrus-code": provider},
+        models={"codrus-code/codrus-for-coding": model},
         services=Services(),
     )
 
@@ -50,7 +50,7 @@ async def test_list_models_parses_display_name():
     api_payload = {
         "data": [
             {
-                "id": "kimi-for-coding",
+                "id": "codrus-for-coding",
                 "context_length": 262_144,
                 "supports_reasoning": True,
                 "supports_image_in": True,
@@ -84,7 +84,7 @@ async def test_list_models_display_name_absent_is_none():
     api_payload = {
         "data": [
             {
-                "id": "kimi-for-coding",
+                "id": "codrus-for-coding",
                 "context_length": 262_144,
                 "supports_reasoning": False,
                 "supports_image_in": False,
@@ -118,7 +118,7 @@ def test_apply_models_writes_display_name_on_insert():
     config = Config(services=Services())
     models = [
         ModelInfo(
-            id="kimi-for-coding",
+            id="codrus-for-coding",
             context_length=262_144,
             supports_reasoning=True,
             supports_image_in=True,
@@ -127,10 +127,10 @@ def test_apply_models_writes_display_name_on_insert():
         )
     ]
 
-    changed = _apply_models(config, "managed:kimi-code", "kimi-code", models)
+    changed = _apply_models(config, "managed:codrus-code", "codrus-code", models)
 
     assert changed is True
-    entry = config.models["kimi-code/kimi-for-coding"]
+    entry = config.models["codrus-code/codrus-for-coding"]
     assert entry.display_name == "k2.6-code-preview"
 
 
@@ -139,7 +139,7 @@ def test_apply_models_updates_display_name_on_change():
     config = _make_config_with_model(display_name="old-name")
     models = [
         ModelInfo(
-            id="kimi-for-coding",
+            id="codrus-for-coding",
             context_length=100_000,
             supports_reasoning=False,
             supports_image_in=False,
@@ -148,10 +148,10 @@ def test_apply_models_updates_display_name_on_change():
         )
     ]
 
-    changed = _apply_models(config, "managed:kimi-code", "kimi-code", models)
+    changed = _apply_models(config, "managed:codrus-code", "codrus-code", models)
 
     assert changed is True
-    assert config.models["kimi-code/kimi-for-coding"].display_name == "k2.6-code-preview"
+    assert config.models["codrus-code/codrus-for-coding"].display_name == "k2.6-code-preview"
 
 
 def test_apply_models_clears_display_name_when_api_drops_it():
@@ -159,7 +159,7 @@ def test_apply_models_clears_display_name_when_api_drops_it():
     config = _make_config_with_model(display_name="old-name")
     models = [
         ModelInfo(
-            id="kimi-for-coding",
+            id="codrus-for-coding",
             context_length=100_000,
             supports_reasoning=False,
             supports_image_in=False,
@@ -168,10 +168,10 @@ def test_apply_models_clears_display_name_when_api_drops_it():
         )
     ]
 
-    changed = _apply_models(config, "managed:kimi-code", "kimi-code", models)
+    changed = _apply_models(config, "managed:codrus-code", "codrus-code", models)
 
     assert changed is True
-    assert config.models["kimi-code/kimi-for-coding"].display_name is None
+    assert config.models["codrus-code/codrus-for-coding"].display_name is None
 
 
 # ── model_display_name: prefers LLMModel.display_name ────────────
@@ -180,27 +180,27 @@ def test_apply_models_clears_display_name_when_api_drops_it():
 def test_model_display_name_prefers_config_display_name():
     """When LLMModel has a display_name, use it instead of hard-coded mapping."""
     model = LLMModel(
-        provider="managed:kimi-code",
-        model="kimi-for-coding",
+        provider="managed:codrus-code",
+        model="codrus-for-coding",
         max_context_size=100_000,
         display_name="k2.6-code-preview",
     )
-    assert model_display_name("kimi-for-coding", model) == "k2.6-code-preview"
+    assert model_display_name("codrus-for-coding", model) == "k2.6-code-preview"
 
 
 def test_model_display_name_falls_back_to_hardcoded_when_missing():
     """Without display_name, fall back to the legacy hard-coded mapping."""
     model = LLMModel(
-        provider="managed:kimi-code",
-        model="kimi-for-coding",
+        provider="managed:codrus-code",
+        model="codrus-for-coding",
         max_context_size=100_000,
     )
-    assert model_display_name("kimi-for-coding", model) == "kimi-for-coding"
+    assert model_display_name("codrus-for-coding", model) == "codrus-for-coding"
 
 
 def test_model_display_name_no_model_uses_raw_name():
     """When no LLMModel is provided, use the raw model name."""
-    assert model_display_name("kimi-k2-turbo-preview") == "kimi-k2-turbo-preview"
+    assert model_display_name("codrus-k2-turbo-preview") == "codrus-k2-turbo-preview"
 
 
 def test_model_display_name_empty_returns_empty():
@@ -215,7 +215,7 @@ async def test_refresh_managed_models_retries_after_oauth_401():
 
     models = [
         ModelInfo(
-            id="kimi-for-coding",
+            id="codrus-for-coding",
             context_length=100_000,
             supports_reasoning=False,
             supports_image_in=False,
@@ -232,15 +232,15 @@ async def test_refresh_managed_models_retries_after_oauth_401():
 
     with (
         patch(
-            "kimi_cli.auth.platforms.list_models",
+            "codrus_cli.auth.platforms.list_models",
             AsyncMock(side_effect=[unauthorized, models]),
         ) as list_models_mock,
         patch(
-            "kimi_cli.auth.oauth.OAuthManager.ensure_fresh",
+            "codrus_cli.auth.oauth.OAuthManager.ensure_fresh",
             new=AsyncMock(),
         ) as ensure_fresh_mock,
         patch(
-            "kimi_cli.auth.oauth.OAuthManager.resolve_api_key",
+            "codrus_cli.auth.oauth.OAuthManager.resolve_api_key",
             side_effect=["stale-access-token", "fresh-access-token"],
         ),
     ):
@@ -260,7 +260,7 @@ async def test_refresh_managed_models_401_falls_back_to_static_api_key_when_refr
 
     models = [
         ModelInfo(
-            id="kimi-for-coding",
+            id="codrus-for-coding",
             context_length=100_000,
             supports_reasoning=False,
             supports_image_in=False,
@@ -277,15 +277,15 @@ async def test_refresh_managed_models_401_falls_back_to_static_api_key_when_refr
 
     with (
         patch(
-            "kimi_cli.auth.platforms.list_models",
+            "codrus_cli.auth.platforms.list_models",
             AsyncMock(side_effect=[unauthorized, models]),
         ) as list_models_mock,
         patch(
-            "kimi_cli.auth.oauth.OAuthManager.ensure_fresh",
+            "codrus_cli.auth.oauth.OAuthManager.ensure_fresh",
             new=AsyncMock(side_effect=[None, RuntimeError("refresh failed")]),
         ) as ensure_fresh_mock,
         patch(
-            "kimi_cli.auth.oauth.OAuthManager.resolve_api_key",
+            "codrus_cli.auth.oauth.OAuthManager.resolve_api_key",
             side_effect=["oauth-access-token", "oauth-access-token"],
         ),
     ):
@@ -307,7 +307,7 @@ async def test_refresh_managed_models_401_tries_static_api_key_after_refreshed_o
 
     models = [
         ModelInfo(
-            id="kimi-for-coding",
+            id="codrus-for-coding",
             context_length=100_000,
             supports_reasoning=False,
             supports_image_in=False,
@@ -324,15 +324,15 @@ async def test_refresh_managed_models_401_tries_static_api_key_after_refreshed_o
 
     with (
         patch(
-            "kimi_cli.auth.platforms.list_models",
+            "codrus_cli.auth.platforms.list_models",
             AsyncMock(side_effect=[unauthorized, unauthorized, models]),
         ) as list_models_mock,
         patch(
-            "kimi_cli.auth.oauth.OAuthManager.ensure_fresh",
+            "codrus_cli.auth.oauth.OAuthManager.ensure_fresh",
             new=AsyncMock(side_effect=[None, None]),
         ) as ensure_fresh_mock,
         patch(
-            "kimi_cli.auth.oauth.OAuthManager.resolve_api_key",
+            "codrus_cli.auth.oauth.OAuthManager.resolve_api_key",
             side_effect=["stale-oauth-token", "fresh-oauth-token"],
         ),
     ):

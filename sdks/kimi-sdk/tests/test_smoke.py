@@ -3,7 +3,7 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from kimi_sdk import Kimi, Message, generate
+from kimi_sdk import Codrus, Message, generate
 
 
 def _chat_completion_response() -> dict[str, object]:
@@ -11,7 +11,7 @@ def _chat_completion_response() -> dict[str, object]:
         "id": "chatcmpl-test123",
         "object": "chat.completion",
         "created": 1234567890,
-        "model": "kimi-k2-turbo-preview",
+        "model": "codrus-k2-turbo-preview",
         "choices": [
             {
                 "index": 0,
@@ -31,14 +31,14 @@ async def test_generate_smoke() -> None:
 
     transport = httpx.MockTransport(handler)
     async with httpx.AsyncClient(transport=transport) as http_client:
-        kimi = Kimi(
-            model="kimi-k2-turbo-preview",
+        codrus = Codrus(
+            model="codrus-k2-turbo-preview",
             api_key="test-key",
             stream=False,
             http_client=http_client,
         )
         result = await generate(
-            chat_provider=kimi,
+            chat_provider=codrus,
             system_prompt="You are helpful.",
             tools=[],
             history=[Message(role="user", content="Hi")],

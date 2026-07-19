@@ -1,5 +1,5 @@
 """
-kimi-psql: AI-assisted PostgreSQL interactive terminal.
+codrus-psql: AI-assisted PostgreSQL interactive terminal.
 
 Usage:
     uv run main.py -h localhost -p 5432 -U postgres -d mydb
@@ -32,16 +32,16 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 
-from kimi_cli.auth.oauth import OAuthManager
-from kimi_cli.config import LLMModel, LLMProvider
-from kimi_cli.llm import LLM, create_llm
-from kimi_cli.session import Session
-from kimi_cli.soul import LLMNotSet, LLMNotSupported, MaxStepsReached, RunCancelled, run_soul
-from kimi_cli.soul.agent import Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.ui.shell.visualize import visualize
-from kimi_cli.wire.types import StatusUpdate
+from codrus_cli.auth.oauth import OAuthManager
+from codrus_cli.config import LLMModel, LLMProvider
+from codrus_cli.llm import LLM, create_llm
+from codrus_cli.session import Session
+from codrus_cli.soul import LLMNotSet, LLMNotSupported, MaxStepsReached, RunCancelled, run_soul
+from codrus_cli.soul.agent import Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.ui.shell.visualize import visualize
+from codrus_cli.wire.types import StatusUpdate
 
 
 class ExecuteSqlParams(BaseModel):
@@ -262,12 +262,12 @@ class PsqlMode(Enum):
 
 async def create_psql_soul(llm: LLM | None, conninfo: str) -> KimiSoul:
     """Create a KimiSoul configured for PostgreSQL with ExecuteSql tool
-    and standard kimi-cli tools."""
+    and standard codrus-cli tools."""
     from typing import cast
 
-    from kimi_cli.config import load_config
-    from kimi_cli.soul.agent import load_agent
-    from kimi_cli.soul.toolset import KimiToolset
+    from codrus_cli.config import load_config
+    from codrus_cli.soul.agent import load_agent
+    from codrus_cli.soul.toolset import KimiToolset
 
     config = load_config()
     kaos_work_dir = KaosPath.cwd()
@@ -297,7 +297,7 @@ async def create_psql_soul(llm: LLM | None, conninfo: str) -> KimiSoul:
 
 
 class PsqlShell:
-    """Main TUI orchestrator for kimi-psql."""
+    """Main TUI orchestrator for codrus-psql."""
 
     PROMPT_SYMBOL_AI = "✨"
     PROMPT_SYMBOL_PSQL = "$"
@@ -322,7 +322,7 @@ class PsqlShell:
 
         def get_prompt() -> FormattedText:
             symbol = self.PROMPT_SYMBOL_AI if self._mode == PsqlMode.AI else self.PROMPT_SYMBOL_PSQL
-            return FormattedText([("bold fg:blue", f"kimi-psql{symbol} ")])
+            return FormattedText([("bold fg:blue", f"codrus-psql{symbol} ")])
 
         def get_bottom_toolbar() -> FormattedText:
             mode_str = self._mode.value.upper()
@@ -363,7 +363,7 @@ class PsqlShell:
         console.print(
             Panel(
                 Text.from_markup(
-                    "[bold]Welcome to kimi-psql![/bold]\n"
+                    "[bold]Welcome to codrus-psql![/bold]\n"
                     "[grey50]AI-assisted PostgreSQL interactive terminal[/grey50]\n\n"
                     "[cyan]Ctrl-X[/cyan]: Switch between AI and PSQL mode\n"
                     "[cyan]Ctrl-D[/cyan]: Exit"
@@ -403,7 +403,7 @@ class PsqlShell:
         if user_input.lower() in ["exit", "quit", "\\q"]:
             raise KeyboardInterrupt
 
-        # Run soul with visualize (same as kimi-cli shell)
+        # Run soul with visualize (same as codrus-cli shell)
         cancel_event = asyncio.Event()
 
         try:
@@ -418,7 +418,7 @@ class PsqlShell:
                 cancel_event,
             )
         except LLMNotSet:
-            console.print("[red]LLM not set, run `kimi /setup` to configure[/red]")
+            console.print("[red]LLM not set, run `codrus /setup` to configure[/red]")
         except LLMNotSupported as e:
             console.print(f"[red]{e}[/red]")
         except MaxStepsReached as e:
@@ -508,7 +508,7 @@ class PsqlShell:
 # ============================================================================
 
 app = typer.Typer(
-    name="kimi-psql",
+    name="codrus-psql",
     help="AI-assisted PostgreSQL interactive terminal",
     add_completion=False,
 )
@@ -527,13 +527,13 @@ def main(
     ),
 ) -> None:
     """
-    Start kimi-psql: AI-assisted PostgreSQL interactive terminal.
+    Start codrus-psql: AI-assisted PostgreSQL interactive terminal.
 
     Usage is compatible with psql:
-      kimi-psql mydb
-      kimi-psql mydb postgres
-      kimi-psql -h localhost -U postgres -d mydb
-      kimi-psql --conninfo postgresql://user:pass@host/db
+      codrus-psql mydb
+      codrus-psql mydb postgres
+      codrus-psql -h localhost -U postgres -d mydb
+      codrus-psql --conninfo postgresql://user:pass@host/db
     """
     # Resolve dbname and username (positional takes precedence over options)
     final_dbname = dbname or dbname_opt
@@ -551,8 +551,8 @@ async def _run_async(
     config_file: Path | None = None,
 ) -> None:
     """Async entry point."""
-    from kimi_cli.config import load_config
-    from kimi_cli.llm import augment_provider_with_env_vars
+    from codrus_cli.config import load_config
+    from codrus_cli.llm import augment_provider_with_env_vars
 
     # If conninfo URL is provided, use it directly
     if conninfo:
@@ -584,7 +584,7 @@ async def _run_async(
             conninfo_parts.append(f"dbname={dbname}")
         conninfo_str = " ".join(conninfo_parts)
 
-    # Load config (same as kimi-cli)
+    # Load config (same as codrus-cli)
     config = load_config(config_file)
 
     model: LLMModel | None = None
@@ -598,15 +598,15 @@ async def _run_async(
 
     # Fallback to defaults
     if not model:
-        model = LLMModel(provider="kimi", model="", max_context_size=250_000)
+        model = LLMModel(provider="codrus", model="", max_context_size=250_000)
     if not provider:
-        provider = LLMProvider(type="kimi", base_url="", api_key=SecretStr(""))
+        provider = LLMProvider(type="codrus", base_url="", api_key=SecretStr(""))
 
     # Override with environment variables
     env_overrides = augment_provider_with_env_vars(provider, model)
 
     if not provider.base_url or not model.model:
-        console.print("[red]LLM not configured. Run `kimi /setup` to configure.[/red]")
+        console.print("[red]LLM not configured. Run `codrus /setup` to configure.[/red]")
         return
 
     if env_overrides:

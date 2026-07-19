@@ -4,9 +4,9 @@ from inline_snapshot import snapshot
 from kosong.message import Message
 from kosong.tooling import ToolError, ToolOk
 
-from kimi_cli.llm import ModelCapability
-from kimi_cli.soul.message import check_message, system, tool_result_to_message
-from kimi_cli.wire.types import (
+from codrus_cli.llm import ModelCapability
+from codrus_cli.soul.message import check_message, system, tool_result_to_message
+from codrus_cli.wire.types import (
     AudioURLPart,
     ImageURLPart,
     TextPart,

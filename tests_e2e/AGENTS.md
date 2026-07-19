@@ -1,15 +1,15 @@
 # tests_e2e Wire E2E Guide
 
 ## Goals and Scope
-- Test only `kimi --wire` JSON-RPC + wire messages; no Shell UI/Print/ACP/Term/shortcuts.
+- Test only `codrus --wire` JSON-RPC + wire messages; no Shell UI/Print/ACP/Term/shortcuts.
 - Do not test `--agent okabe`.
 - Do not test: W-23, W-26, W-29, W-27 (env overrides).
 
 ## Execution Rules
-- Tests run via `uv run kimi` by default; set `KIMI_E2E_WIRE_CMD` to override the base command
-  (e.g. `../kimi-agent-rs/target/debug/kimi-agent` or `kimi-agent` on PATH). `--wire` is appended if missing.
+- Tests run via `uv run codrus` by default; set `KIMI_E2E_WIRE_CMD` to override the base command
+  (e.g. `../codrus-agent-rs/target/debug/codrus-agent` or `codrus-agent` on PATH). `--wire` is appended if missing.
 - Always isolate `HOME`, `USERPROFILE`, and `KIMI_SHARE_DIR`, and use a temporary `--work-dir` to
-  avoid touching real `~/.kimi`.
+  avoid touching real `~/.codrus`.
 - Use `inline_snapshot` for snapshot testing; snapshots can start empty and be updated later.
 - Wire traffic is line-delimited JSON; `event`/`request`/responses may interleave.
 

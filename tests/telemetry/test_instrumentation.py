@@ -17,10 +17,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-import kimi_cli.telemetry as telemetry_mod
-from kimi_cli.telemetry import attach_sink, disable, set_context, track
-from kimi_cli.telemetry.sink import EventSink
-from kimi_cli.telemetry.transport import AsyncTransport
+import codrus_cli.telemetry as telemetry_mod
+from codrus_cli.telemetry import attach_sink, disable, set_context, track
+from codrus_cli.telemetry.sink import EventSink
+from codrus_cli.telemetry.transport import AsyncTransport
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -194,72 +194,72 @@ class TestAPIErrorClassification:
         return exc
 
     def test_429_maps_to_rate_limit(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, sc = classify_api_error(self._mk_status_error(429))
         assert et == "rate_limit"
         assert sc == 429
 
     def test_401_maps_to_auth(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, sc = classify_api_error(self._mk_status_error(401))
         assert et == "auth"
         assert sc == 401
 
     def test_403_maps_to_auth(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, _ = classify_api_error(self._mk_status_error(403))
         assert et == "auth"
 
     def test_500_maps_to_5xx_server(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, sc = classify_api_error(self._mk_status_error(500))
         assert et == "5xx_server"
         assert sc == 500
 
     def test_502_maps_to_5xx_server(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, _ = classify_api_error(self._mk_status_error(502))
         assert et == "5xx_server"
 
     def test_529_maps_to_overloaded(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, sc = classify_api_error(self._mk_status_error(529))
         assert et == "overloaded"
         assert sc == 529
 
     def test_400_maps_to_4xx_client(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, sc = classify_api_error(self._mk_status_error(400))
         assert et == "4xx_client"
         assert sc == 400
 
     def test_422_maps_to_4xx_client(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, _ = classify_api_error(self._mk_status_error(422))
         assert et == "4xx_client"
 
     def test_400_with_context_length_maps_to_context_overflow(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, _ = classify_api_error(self._mk_status_error(400, "Context length exceeded"))
         assert et == "context_overflow"
 
     def test_400_with_max_tokens_maps_to_context_overflow(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, _ = classify_api_error(self._mk_status_error(400, "Exceeded max tokens"))
         assert et == "context_overflow"
 
     def test_400_with_maximum_context_maps_to_context_overflow(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, _ = classify_api_error(self._mk_status_error(422, "Maximum context window exceeded"))
         assert et == "context_overflow"
@@ -267,7 +267,7 @@ class TestAPIErrorClassification:
     def test_connection_error_maps_to_network(self):
         from kosong.chat_provider import APIConnectionError
 
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, sc = classify_api_error(APIConnectionError.__new__(APIConnectionError))
         assert et == "network"
@@ -276,13 +276,13 @@ class TestAPIErrorClassification:
     def test_api_timeout_maps_to_timeout(self):
         from kosong.chat_provider import APITimeoutError
 
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, _ = classify_api_error(APITimeoutError.__new__(APITimeoutError))
         assert et == "timeout"
 
     def test_builtin_timeout_maps_to_timeout(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, _ = classify_api_error(TimeoutError("timed out"))
         assert et == "timeout"
@@ -290,14 +290,14 @@ class TestAPIErrorClassification:
     def test_empty_response_maps_to_empty_response(self):
         from kosong.chat_provider import APIEmptyResponseError
 
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, sc = classify_api_error(APIEmptyResponseError.__new__(APIEmptyResponseError))
         assert et == "empty_response"
         assert sc is None
 
     def test_generic_exception_maps_to_other(self):
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         et, sc = classify_api_error(RuntimeError("unexpected"))
         assert et == "other"
@@ -305,7 +305,7 @@ class TestAPIErrorClassification:
 
     def test_status_code_is_none_for_non_http_errors(self):
         """Only APIStatusError should produce a non-None status_code."""
-        from kimi_cli.soul.kimisoul import classify_api_error
+        from codrus_cli.soul.kimisoul import classify_api_error
 
         _, sc = classify_api_error(RuntimeError("other"))
         assert sc is None
@@ -335,30 +335,30 @@ class TestRetryableClassification:
         return APIStatusError(status, "err")
 
     def test_529_overloaded_is_retryable(self):
-        from kimi_cli.soul.kimisoul import is_retryable_api_error
+        from codrus_cli.soul.kimisoul import is_retryable_api_error
 
         assert is_retryable_api_error(self._status(529)) is True
 
     def test_408_409_are_retryable(self):
-        from kimi_cli.soul.kimisoul import is_retryable_api_error
+        from codrus_cli.soul.kimisoul import is_retryable_api_error
 
         assert is_retryable_api_error(self._status(408)) is True
         assert is_retryable_api_error(self._status(409)) is True
 
     def test_400_is_not_retryable(self):
-        from kimi_cli.soul.kimisoul import is_retryable_api_error
+        from codrus_cli.soul.kimisoul import is_retryable_api_error
 
         assert is_retryable_api_error(self._status(400)) is False
 
     def test_network_error_is_retryable(self):
         from kosong.chat_provider import APIConnectionError
 
-        from kimi_cli.soul.kimisoul import is_retryable_api_error
+        from codrus_cli.soul.kimisoul import is_retryable_api_error
 
         assert is_retryable_api_error(APIConnectionError("lost")) is True
 
     def test_non_provider_error_is_not_retryable(self):
-        from kimi_cli.soul.kimisoul import is_retryable_api_error
+        from codrus_cli.soul.kimisoul import is_retryable_api_error
 
         assert is_retryable_api_error(RuntimeError("x")) is False
 
@@ -462,7 +462,7 @@ class TestInfrastructureEdgeCases:
     @pytest.mark.asyncio
     async def test_transport_send_falls_back_to_disk_on_transient_error(self):
         """Transient HTTP errors trigger disk fallback via send()."""
-        from kimi_cli.telemetry.transport import _TransientError
+        from codrus_cli.telemetry.transport import _TransientError
 
         transport = AsyncTransport(endpoint="https://mock.test/events", retry_backoffs_s=())
         with (
@@ -500,7 +500,7 @@ class TestInfrastructureEdgeCases:
 
         transport = AsyncTransport(endpoint="https://mock.test/events")
         with (
-            patch("kimi_cli.telemetry.transport._telemetry_dir", return_value=tmp_path),
+            patch("codrus_cli.telemetry.transport._telemetry_dir", return_value=tmp_path),
             patch.object(transport, "_send_http", new_callable=AsyncMock) as mock_send,
         ):
             await transport.retry_disk_events()
@@ -638,9 +638,9 @@ class TestEventPropertyCorrectness:
 
     def test_model_switch_has_model_string(self):
         """model_switch.model is a string."""
-        track("model_switch", model="kimi-k2.5")
+        track("model_switch", model="codrus-k2.5")
         event = _collect_events()[-1]
-        assert event["properties"]["model"] == "kimi-k2.5"
+        assert event["properties"]["model"] == "codrus-k2.5"
 
     def test_hook_triggered_properties(self):
         """hook_triggered has event_type and action."""
@@ -700,8 +700,8 @@ class TestEventPropertyCorrectness:
 
     def test_background_task_no_event_without_start_time(self):
         """_mark_task_completed must NOT emit track when started_at is None."""
-        from kimi_cli.background.manager import BackgroundTaskManager
-        from kimi_cli.background.models import TaskRuntime
+        from codrus_cli.background.manager import BackgroundTaskManager
+        from codrus_cli.background.models import TaskRuntime
 
         runtime = TaskRuntime(status="running", started_at=None)
         mock_store = MagicMock()
@@ -710,15 +710,15 @@ class TestEventPropertyCorrectness:
         manager = object.__new__(BackgroundTaskManager)
         manager._store = mock_store
 
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
             manager._mark_task_completed("task-no-start")
 
         mock_track.assert_not_called()
 
     def test_mark_task_killed_emits_completed_event(self):
         """_mark_task_killed must emit background_task_completed(success=False)."""
-        from kimi_cli.background.manager import BackgroundTaskManager
-        from kimi_cli.background.models import TaskRuntime
+        from codrus_cli.background.manager import BackgroundTaskManager
+        from codrus_cli.background.models import TaskRuntime
 
         runtime = TaskRuntime(status="running", started_at=1000.0)
 
@@ -728,7 +728,7 @@ class TestEventPropertyCorrectness:
         manager = object.__new__(BackgroundTaskManager)
         manager._store = mock_store
 
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
             manager._mark_task_killed("task-123", "Killed by user")
 
         mock_track.assert_called_once()
@@ -739,8 +739,8 @@ class TestEventPropertyCorrectness:
 
     def test_mark_task_killed_no_event_without_start_time(self):
         """_mark_task_killed must NOT emit track when started_at is None."""
-        from kimi_cli.background.manager import BackgroundTaskManager
-        from kimi_cli.background.models import TaskRuntime
+        from codrus_cli.background.manager import BackgroundTaskManager
+        from codrus_cli.background.models import TaskRuntime
 
         runtime = TaskRuntime(status="running", started_at=None)
         mock_store = MagicMock()
@@ -749,7 +749,7 @@ class TestEventPropertyCorrectness:
         manager = object.__new__(BackgroundTaskManager)
         manager._store = mock_store
 
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
             manager._mark_task_killed("task-no-start", "Killed by user")
 
         mock_track.assert_not_called()
@@ -838,7 +838,7 @@ class TestSessionStarted:
 
     def test_context_never_contains_client_info(self):
         """Client attribution belongs on session_started properties, not context."""
-        from kimi_cli.telemetry import set_client_info
+        from codrus_cli.telemetry import set_client_info
 
         set_client_info(name="vscode", version="1.90.0")
         sink, transport = self._make_sink()
@@ -848,7 +848,7 @@ class TestSessionStarted:
 
     def test_set_client_info_empty_name_is_ignored(self):
         """Empty string name must not overwrite any previously set info."""
-        from kimi_cli.telemetry import set_client_info
+        from codrus_cli.telemetry import set_client_info
 
         set_client_info(name="cursor", version="0.40.0")
         set_client_info(name="", version="anything")
@@ -856,7 +856,7 @@ class TestSessionStarted:
 
     def test_set_client_info_overwrites_previous(self):
         """Non-empty set_client_info replaces the tuple atomically."""
-        from kimi_cli.telemetry import set_client_info
+        from codrus_cli.telemetry import set_client_info
 
         set_client_info(name="vscode", version="1.90.0")
         set_client_info(name="zed", version="0.180.0")
@@ -864,13 +864,13 @@ class TestSessionStarted:
 
     def test_client_info_stored_as_tuple(self):
         """_client_info is stored as a tuple so readers never see a half-update."""
-        from kimi_cli.telemetry import set_client_info
+        from codrus_cli.telemetry import set_client_info
 
-        set_client_info(name="kimi-web", version="2.0.0")
-        assert telemetry_mod._client_info == ("kimi-web", "2.0.0")
+        set_client_info(name="codrus-web", version="2.0.0")
+        assert telemetry_mod._client_info == ("codrus-web", "2.0.0")
 
     def test_track_session_started_shell(self):
-        from kimi_cli.telemetry import track_session_started_once
+        from codrus_cli.telemetry import track_session_started_once
 
         set_context(device_id="dev", session_id="sess-shell")
         track_session_started_once(ui_mode="shell", resumed=False)
@@ -883,7 +883,7 @@ class TestSessionStarted:
         assert event["properties"]["resumed"] is False
 
     def test_track_session_started_wire_uses_current_client_info(self):
-        from kimi_cli.telemetry import set_client_info, track_session_started_once
+        from codrus_cli.telemetry import set_client_info, track_session_started_once
 
         set_context(device_id="dev", session_id="sess-wire")
         set_client_info(name="kiwi", version="1.2.3")
@@ -897,7 +897,7 @@ class TestSessionStarted:
         assert event["properties"]["resumed"] is True
 
     def test_track_session_started_once_per_session(self):
-        from kimi_cli.telemetry import track_session_started_once
+        from codrus_cli.telemetry import track_session_started_once
 
         set_context(device_id="dev", session_id="sess-once")
         track_session_started_once(ui_mode="wire", resumed=False, client_name="kiwi")
@@ -908,19 +908,19 @@ class TestSessionStarted:
         assert events[0]["properties"]["client_name"] == "kiwi"
 
     def test_track_session_started_explicit_client_info_wins(self):
-        from kimi_cli.telemetry import set_client_info, track_session_started_once
+        from codrus_cli.telemetry import set_client_info, track_session_started_once
 
         set_context(device_id="dev", session_id="sess-explicit")
         set_client_info(name="kiwi", version="1.2.3")
         track_session_started_once(
             ui_mode="wire",
             resumed=False,
-            client_name="kimi-code-for-vs-code",
+            client_name="codrus-code-for-vs-code",
             client_version="1.90.0",
         )
 
         event = _collect_events()[-1]
-        assert event["properties"]["client_name"] == "kimi-code-for-vs-code"
+        assert event["properties"]["client_name"] == "codrus-code-for-vs-code"
         assert event["properties"]["client_version"] == "1.90.0"
 
 
@@ -934,7 +934,7 @@ class TestCompactionTracking:
 
     def _make_soul(self, *, before_tokens: int, estimated_after: int) -> Any:
         """Construct a minimal KimiSoul stub bypassing __init__."""
-        from kimi_cli.soul.kimisoul import KimiSoul
+        from codrus_cli.soul.kimisoul import KimiSoul
 
         soul = object.__new__(KimiSoul)
 
@@ -986,8 +986,8 @@ class TestCompactionTracking:
         soul = self._make_soul(before_tokens=12000, estimated_after=3000)
 
         with (
-            patch("kimi_cli.soul.kimisoul.wire_send"),
-            patch("kimi_cli.telemetry.track") as mock_track,
+            patch("codrus_cli.soul.kimisoul.wire_send"),
+            patch("codrus_cli.telemetry.track") as mock_track,
         ):
             await soul.compact_context()
 
@@ -1014,8 +1014,8 @@ class TestCompactionTracking:
         soul = self._make_soul(before_tokens=8000, estimated_after=2000)
 
         with (
-            patch("kimi_cli.soul.kimisoul.wire_send"),
-            patch("kimi_cli.telemetry.track") as mock_track,
+            patch("codrus_cli.soul.kimisoul.wire_send"),
+            patch("codrus_cli.telemetry.track") as mock_track,
         ):
             await soul.compact_context(manual=True)
 
@@ -1031,8 +1031,8 @@ class TestCompactionTracking:
         soul = self._make_soul(before_tokens=8000, estimated_after=2000)
 
         with (
-            patch("kimi_cli.soul.kimisoul.wire_send"),
-            patch("kimi_cli.telemetry.track") as mock_track,
+            patch("codrus_cli.soul.kimisoul.wire_send"),
+            patch("codrus_cli.telemetry.track") as mock_track,
         ):
             await soul.compact_context(manual=True, custom_instruction="focus on auth")
 
@@ -1050,8 +1050,8 @@ class TestCompactionTracking:
         soul._run_with_connection_recovery = AsyncMock(side_effect=RuntimeError("compaction boom"))
 
         with (
-            patch("kimi_cli.soul.kimisoul.wire_send"),
-            patch("kimi_cli.telemetry.track") as mock_track,
+            patch("codrus_cli.soul.kimisoul.wire_send"),
+            patch("codrus_cli.telemetry.track") as mock_track,
             pytest.raises(RuntimeError, match="compaction boom"),
         ):
             await soul.compact_context()
@@ -1071,19 +1071,19 @@ class TestCompactionTracking:
     async def test_compaction_api_failure_emits_complete_api_error(self):
         from kosong.chat_provider import APIConnectionError
 
-        from kimi_cli.telemetry import set_current_trace_id
+        from codrus_cli.telemetry import set_current_trace_id
 
         soul = self._make_soul(before_tokens=50000, estimated_after=0)
         soul._runtime.llm.model_name = "test-model"
-        soul._runtime.llm.provider_config.type = "kimi"
+        soul._runtime.llm.provider_config.type = "codrus"
         soul._run_with_connection_recovery = AsyncMock(
             side_effect=APIConnectionError("stream disconnected")
         )
         set_current_trace_id("trace-compaction")
 
         with (
-            patch("kimi_cli.soul.kimisoul.wire_send"),
-            patch("kimi_cli.telemetry.track") as mock_track,
+            patch("codrus_cli.soul.kimisoul.wire_send"),
+            patch("codrus_cli.telemetry.track") as mock_track,
             pytest.raises(APIConnectionError, match="stream disconnected"),
         ):
             await soul.compact_context()
@@ -1092,8 +1092,8 @@ class TestCompactionTracking:
         assert len(api_calls) == 1
         api_kwargs = api_calls[0][1]
         assert api_kwargs["model"] == "test-model"
-        assert api_kwargs["provider_type"] == "kimi"
-        assert api_kwargs["protocol"] == "kimi"
+        assert api_kwargs["provider_type"] == "codrus"
+        assert api_kwargs["protocol"] == "codrus"
         assert api_kwargs["duration_ms"] >= 0
         assert api_kwargs["input_tokens"] == 50000
         assert api_kwargs["trace_id"] == "trace-compaction"
@@ -1206,12 +1206,12 @@ class TestTraceIdHolder:
     """Verify the two-level trace id holder used by trace_id event properties."""
 
     def teardown_method(self):
-        from kimi_cli.telemetry import set_current_trace_id
+        from codrus_cli.telemetry import set_current_trace_id
 
         set_current_trace_id(None)
 
     def test_set_get_current_trace_id(self):
-        from kimi_cli.telemetry import get_current_trace_id, set_current_trace_id
+        from codrus_cli.telemetry import get_current_trace_id, set_current_trace_id
 
         set_current_trace_id("t-1")
         assert get_current_trace_id() == "t-1"
@@ -1219,7 +1219,7 @@ class TestTraceIdHolder:
         assert get_current_trace_id() is None
 
     def test_ui_trace_getters_are_session_bound(self):
-        from kimi_cli.ui.shell.visualize._live_view import _LiveView
+        from codrus_cli.ui.shell.visualize._live_view import _LiveView
 
         trace_ids = {"a": "t-a", "b": "t-b"}
         view_a = object.__new__(_LiveView)
@@ -1239,7 +1239,7 @@ class TestTraceIdHolder:
         """Tool tasks created after the request see the request's trace id."""
         import asyncio
 
-        from kimi_cli.telemetry import get_current_trace_id, set_current_trace_id
+        from codrus_cli.telemetry import get_current_trace_id, set_current_trace_id
 
         set_current_trace_id("t-parent")
 
@@ -1253,7 +1253,7 @@ class TestTraceIdHolder:
         """A subagent turn setting its own trace id must not affect the parent."""
         import asyncio
 
-        from kimi_cli.telemetry import get_current_trace_id, set_current_trace_id
+        from codrus_cli.telemetry import get_current_trace_id, set_current_trace_id
 
         set_current_trace_id("t-parent")
 
@@ -1273,8 +1273,8 @@ class TestTraceIdHolder:
         from kosong.message import Message
         from kosong.tooling import Tool
 
-        from kimi_cli.llm import with_trace_callback
-        from kimi_cli.telemetry import get_current_trace_id, set_current_trace_id
+        from codrus_cli.llm import with_trace_callback
+        from codrus_cli.telemetry import get_current_trace_id, set_current_trace_id
 
         class FailingProvider:
             name = "failing"
@@ -1315,8 +1315,8 @@ class TestTraceIdHolder:
         from kosong.message import Message
         from kosong.tooling import Tool
 
-        from kimi_cli.llm import with_trace_callback
-        from kimi_cli.telemetry import get_current_trace_id, set_current_trace_id
+        from codrus_cli.llm import with_trace_callback
+        from codrus_cli.telemetry import get_current_trace_id, set_current_trace_id
 
         class FailingStream:
             def __aiter__(self) -> AsyncIterator[StreamedMessagePart]:

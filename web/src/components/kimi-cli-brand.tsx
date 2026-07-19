@@ -20,20 +20,20 @@ export function KimiCliBrand({
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <a
-        href="https://www.kimi.com/code"
+        href="https://www.codrus.com/code"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
       >
         <img
           src="/logo.png"
-          alt="Kimi"
+          alt="Codrus"
           width={logoPx}
           height={logoPx}
           className={logoSize}
         />
         <span className={cn(textSizeClass, "font-semibold text-foreground")}>
-          Kimi Code
+          Codrus Code
         </span>
       </a>
       {showVersion && (

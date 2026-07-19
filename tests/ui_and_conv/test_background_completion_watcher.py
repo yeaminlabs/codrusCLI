@@ -9,8 +9,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from kimi_cli.soul import Soul
-from kimi_cli.ui.shell import Shell, _BackgroundCompletionWatcher, _PromptEvent
+from codrus_cli.soul import Soul
+from codrus_cli.ui.shell import Shell, _BackgroundCompletionWatcher, _PromptEvent
 
 
 def _make_watcher(

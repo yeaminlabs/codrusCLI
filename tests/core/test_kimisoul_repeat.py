@@ -10,12 +10,12 @@ from kosong.message import Message, ToolCall
 from kosong.tooling import CallableTool2, Tool, ToolOk, ToolReturnValue
 from pydantic import BaseModel
 
-import kimi_cli.soul.kimisoul as kimisoul_module
-from kimi_cli.llm import LLM
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.soul.toolset import KimiToolset
+import codrus_cli.soul.kimisoul as kimisoul_module
+from codrus_cli.llm import LLM
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.toolset import KimiToolset
 
 
 class _Params(BaseModel):

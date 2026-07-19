@@ -1,0 +1,22 @@
+version: 1
+agent:
+  extend: default
+  tools:
+    - "codrus_cli.tools.agent:Agent"
+    - "codrus_cli.tools.dmail:SendDMail"
+    - "codrus_cli.tools.ask_user:AskUserQuestion"
+    - "codrus_cli.tools.todo:SetTodoList"
+    - "codrus_cli.tools.shell:Shell"
+    - "codrus_cli.tools.background:TaskList"
+    - "codrus_cli.tools.background:TaskOutput"
+    - "codrus_cli.tools.background:TaskStop"
+    - "codrus_cli.tools.file:ReadFile"
+    - "codrus_cli.tools.file:ReadMediaFile"
+    - "codrus_cli.tools.file:Glob"
+    - "codrus_cli.tools.file:Grep"
+    - "codrus_cli.tools.file:WriteFile"
+    - "codrus_cli.tools.file:StrReplaceFile"
+    - "codrus_cli.tools.web:SearchWeb"
+    - "codrus_cli.tools.web:FetchURL"
+    - "codrus_cli.tools.plan:ExitPlanMode"
+    - "codrus_cli.tools.plan.enter:EnterPlanMode"

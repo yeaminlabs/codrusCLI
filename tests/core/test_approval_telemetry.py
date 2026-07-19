@@ -6,8 +6,8 @@ from unittest.mock import patch
 import pytest
 from kosong.message import ToolCall
 
-from kimi_cli.soul.approval import Approval
-from kimi_cli.soul.toolset import KimiToolset, current_tool_call
+from codrus_cli.soul.approval import Approval
+from codrus_cli.soul.toolset import KimiToolset, current_tool_call
 
 
 def _tool_call(name: str = "Bash", *, call_id: str = "tc-1") -> ToolCall:
@@ -24,7 +24,7 @@ async def test_yolo_auto_approve_emits_permission_result():
     KimiToolset().begin_step([], step_no=3)
     token = current_tool_call.set(_tool_call())
     try:
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
             result = await approval.request("Bash", "bash:ls", "list files")
     finally:
         current_tool_call.reset(token)
@@ -46,12 +46,12 @@ async def test_yolo_auto_approve_emits_permission_result():
 
 @pytest.mark.asyncio
 async def test_afk_auto_approve_maps_to_auto_mode():
-    from kimi_cli.soul.approval import ApprovalState
+    from codrus_cli.soul.approval import ApprovalState
 
     approval = Approval(state=ApprovalState(afk=True))
     token = current_tool_call.set(_tool_call())
     try:
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
             result = await approval.request("Bash", "bash:ls", "list files")
     finally:
         current_tool_call.reset(token)
@@ -68,7 +68,7 @@ async def test_manual_approve_emits_permission_result():
     approval = Approval()
     token = current_tool_call.set(_tool_call())
     try:
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
 
             async def resolve_later():
                 await asyncio.sleep(0.02)
@@ -95,7 +95,7 @@ async def test_manual_approve_for_session_writes_cache():
     approval = Approval()
     token = current_tool_call.set(_tool_call())
     try:
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
 
             async def resolve_later():
                 await asyncio.sleep(0.02)
@@ -122,7 +122,7 @@ async def test_manual_reject_with_feedback():
     approval = Approval()
     token = current_tool_call.set(_tool_call())
     try:
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
 
             async def resolve_later():
                 await asyncio.sleep(0.02)
@@ -146,12 +146,12 @@ async def test_manual_reject_with_feedback():
 
 @pytest.mark.asyncio
 async def test_session_cached_action_emits_auto_mode():
-    from kimi_cli.soul.approval import ApprovalState
+    from codrus_cli.soul.approval import ApprovalState
 
     approval = Approval(state=ApprovalState(auto_approve_actions={"bash:ls"}))
     token = current_tool_call.set(_tool_call())
     try:
-        with patch("kimi_cli.telemetry.track") as mock_track:
+        with patch("codrus_cli.telemetry.track") as mock_track:
             result = await approval.request("Bash", "bash:ls", "list files")
     finally:
         current_tool_call.reset(token)
@@ -176,7 +176,7 @@ async def test_session_approval_marks_other_pending_requests_as_cache_approved()
         finally:
             current_tool_call.reset(token)
 
-    with patch("kimi_cli.telemetry.track") as mock_track:
+    with patch("codrus_cli.telemetry.track") as mock_track:
         first = asyncio.create_task(request("tc-1"))
         second = asyncio.create_task(request("tc-2"))
         await asyncio.sleep(0)

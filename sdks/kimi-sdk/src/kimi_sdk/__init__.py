@@ -1,5 +1,5 @@
 """
-Kimi SDK provides a convenient way to access the Kimi API and build agent workflows.
+Codrus SDK provides a convenient way to access the Codrus API and build agent workflows.
 
 Key features:
 
@@ -13,7 +13,7 @@ Example (minimal agent loop):
 ```python
 import asyncio
 
-from kimi_sdk import Kimi, Message, SimpleToolset, StepResult, ToolResult, step
+from kimi_sdk import Codrus, Message, SimpleToolset, StepResult, ToolResult, step
 
 
 def tool_result_to_message(result: ToolResult) -> Message:
@@ -25,10 +25,10 @@ def tool_result_to_message(result: ToolResult) -> Message:
 
 
 async def agent_loop() -> None:
-    kimi = Kimi(
+    codrus = Codrus(
         base_url="https://api.moonshot.ai/v1",
         api_key="your_kimi_api_key_here",
-        model="kimi-k2-turbo-preview",
+        model="codrus-k2-turbo-preview",
     )
 
     toolset = SimpleToolset()
@@ -46,7 +46,7 @@ async def agent_loop() -> None:
 
         while True:
             result: StepResult = await step(
-                chat_provider=kimi,
+                chat_provider=codrus,
                 system_prompt=system_prompt,
                 toolset=toolset,
                 history=history,
@@ -81,7 +81,7 @@ from kosong.chat_provider import (
     ThinkingEffort,
     TokenUsage,
 )
-from kosong.chat_provider.kimi import Kimi, KimiFiles, KimiStreamedMessage
+from kosong.chat_provider.codrus import Codrus, KimiFiles, KimiStreamedMessage
 from kosong.message import (
     AudioURLPart,
     ContentPart,
@@ -112,7 +112,7 @@ from kosong.tooling.simple import SimpleToolset
 
 __all__ = [
     # providers
-    "Kimi",
+    "Codrus",
     "KimiFiles",
     "KimiStreamedMessage",
     "StreamedMessagePart",

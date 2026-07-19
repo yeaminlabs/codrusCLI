@@ -8,15 +8,15 @@ from kosong.tooling import CallableTool2, ToolError, ToolOk, Toolset
 from kosong.tooling.simple import SimpleToolset
 from pydantic import BaseModel, Field, SecretStr
 
-from kimi_cli.auth.oauth import OAuthManager
-from kimi_cli.config import LLMModel, LLMProvider, get_default_config
-from kimi_cli.llm import LLM, create_llm
-from kimi_cli.session import Session
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.ui.shell import Shell
-from kimi_cli.wire.types import ContentPart, ToolReturnValue
+from codrus_cli.auth.oauth import OAuthManager
+from codrus_cli.config import LLMModel, LLMProvider, get_default_config
+from codrus_cli.llm import LLM, create_llm
+from codrus_cli.session import Session
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.ui.shell import Shell
+from codrus_cli.wire.types import ContentPart, ToolReturnValue
 
 
 class HakimiSoul(KimiSoul):
@@ -93,13 +93,13 @@ async def main():
     soul = await HakimiSoul.create(
         llm=create_llm(
             LLMProvider(
-                type="kimi",
+                type="codrus",
                 base_url=os.getenv("KIMI_BASE_URL") or "https://api.moonshot.ai/v1",
                 api_key=SecretStr(os.getenv("KIMI_API_KEY") or ""),
             ),
             LLMModel(
-                provider="kimi",
-                model="kimi-k2-turbo-preview",
+                provider="codrus",
+                model="codrus-k2-turbo-preview",
                 max_context_size=250_000,
             ),
         ),

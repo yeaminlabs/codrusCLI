@@ -8,18 +8,18 @@ from kosong import StepResult
 from kosong.message import ContentPart, Message
 from kosong.tooling.empty import EmptyToolset
 
-import kimi_cli.soul.kimisoul as kimisoul_module
-from kimi_cli.llm import LLM, ModelCapability
-from kimi_cli.soul import LLMNotSupported, run_soul
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.approval import Approval
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.dynamic_injection import DynamicInjection
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.soul.message import is_system_reminder_message
-from kimi_cli.utils.aioqueue import QueueShutDown
-from kimi_cli.wire import Wire
-from kimi_cli.wire.types import ImageURLPart, SteerInput, StepBegin, TextPart, TurnBegin, TurnEnd
+import codrus_cli.soul.kimisoul as kimisoul_module
+from codrus_cli.llm import LLM, ModelCapability
+from codrus_cli.soul import LLMNotSupported, run_soul
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.approval import Approval
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.dynamic_injection import DynamicInjection
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.message import is_system_reminder_message
+from codrus_cli.utils.aioqueue import QueueShutDown
+from codrus_cli.wire import Wire
+from codrus_cli.wire.types import ImageURLPart, SteerInput, StepBegin, TextPart, TurnBegin, TurnEnd
 
 
 @pytest.fixture

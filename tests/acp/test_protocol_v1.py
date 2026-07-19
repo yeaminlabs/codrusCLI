@@ -7,7 +7,7 @@ import os
 import acp
 import pytest
 
-from kimi_cli.acp.version import CURRENT_VERSION
+from codrus_cli.acp.version import CURRENT_VERSION
 
 from .conftest import ACPTestClient, _kimi_bin, _repo_root
 
@@ -25,7 +25,7 @@ async def test_initialize_returns_negotiated_version(
     assert resp.agent_capabilities is not None
     assert resp.agent_capabilities.prompt_capabilities is not None
     assert resp.agent_info is not None
-    assert resp.agent_info.name == "Kimi Code CLI"
+    assert resp.agent_info.name == "CodrusCLI powered by Codrus models"
 
 
 async def test_initialize_with_higher_version(

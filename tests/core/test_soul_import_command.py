@@ -5,12 +5,12 @@ from unittest.mock import AsyncMock, Mock
 
 from kosong.message import Message
 
-from kimi_cli.soul import slash as soul_slash
-from kimi_cli.wire.types import TextPart
+from codrus_cli.soul import slash as soul_slash
+from codrus_cli.wire.types import TextPart
 
 
 def _make_soul(work_dir: Path) -> Mock:
-    from kimi_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.kimisoul import KimiSoul
 
     soul = Mock(spec=KimiSoul)
     soul.runtime.session.work_dir = work_dir
@@ -61,7 +61,7 @@ async def test_export_writes_file_and_sends_wire(tmp_path: Path, monkeypatch) ->
 
     assert output.exists()
     content = output.read_text(encoding="utf-8")
-    assert "# Kimi Session Export" in content
+    assert "# Codrus Session Export" in content
     assert "Hello" in content
 
     # Should send export path + sensitive info warning

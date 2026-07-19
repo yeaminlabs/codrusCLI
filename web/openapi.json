@@ -1,12 +1,12 @@
 {
   "openapi": "3.1.0",
-  "info": { "title": "Kimi Code CLI Web Interface", "version": "0.1.0" },
+  "info": { "title": "CodrusCLI powered by Codrus models Web Interface", "version": "0.1.0" },
   "paths": {
     "/api/config/": {
       "get": {
         "tags": ["config"],
-        "summary": "Get global (kimi-cli) config snapshot",
-        "description": "Get global (kimi-cli) config snapshot.",
+        "summary": "Get global (codrus-cli) config snapshot",
+        "description": "Get global (codrus-cli) config snapshot.",
         "operationId": "get_global_config_api_config__get",
         "responses": {
           "200": {
@@ -21,8 +21,8 @@
       },
       "patch": {
         "tags": ["config"],
-        "summary": "Update global (kimi-cli) default model/thinking",
-        "description": "Update global (kimi-cli) default model/thinking.",
+        "summary": "Update global (codrus-cli) default model/thinking",
+        "description": "Update global (codrus-cli) default model/thinking.",
         "operationId": "update_global_config_api_config__patch",
         "requestBody": {
           "content": {
@@ -59,8 +59,8 @@
     "/api/config/toml": {
       "get": {
         "tags": ["config"],
-        "summary": "Get kimi-cli config.toml",
-        "description": "Get kimi-cli config.toml.",
+        "summary": "Get codrus-cli config.toml",
+        "description": "Get codrus-cli config.toml.",
         "operationId": "get_config_toml_api_config_toml_get",
         "responses": {
           "200": {
@@ -75,8 +75,8 @@
       },
       "put": {
         "tags": ["config"],
-        "summary": "Update kimi-cli config.toml",
-        "description": "Update kimi-cli config.toml.",
+        "summary": "Update codrus-cli config.toml",
+        "description": "Update codrus-cli config.toml.",
         "operationId": "update_config_toml_api_config_toml_put",
         "requestBody": {
           "content": {
@@ -576,7 +576,7 @@
       "get": {
         "tags": ["work-dirs"],
         "summary": "Get the startup directory",
-        "description": "Get the directory where kimi web was started.",
+        "description": "Get the directory where codrus web was started.",
         "operationId": "get_startup_dir_api_work_dirs_startup_get",
         "responses": {
           "200": {
@@ -680,7 +680,7 @@
           "name": {
             "type": "string",
             "title": "Name",
-            "description": "Model key in kimi-cli config (Config.models)"
+            "description": "Model key in codrus-cli config (Config.models)"
           },
           "provider_type": {
             "$ref": "#/components/schemas/ProviderType",
@@ -902,7 +902,7 @@
       "ProviderType": {
         "type": "string",
         "enum": [
-          "kimi",
+          "codrus",
           "openai_legacy",
           "openai_responses",
           "anthropic",
@@ -925,7 +925,7 @@
           "title": {
             "type": "string",
             "title": "Title",
-            "description": "Session title derived from kimi-cli history"
+            "description": "Session title derived from codrus-cli history"
           },
           "last_updated": {
             "type": "string",

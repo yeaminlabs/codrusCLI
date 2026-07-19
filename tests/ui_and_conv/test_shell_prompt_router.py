@@ -7,10 +7,10 @@ from typing import Any, cast
 
 import pytest
 
-import kimi_cli.ui.shell as shell_module
-from kimi_cli.soul import Soul
-from kimi_cli.ui.shell.prompt import CwdLostError, PromptMode, UserInput
-from kimi_cli.wire.types import TextPart
+import codrus_cli.ui.shell as shell_module
+from codrus_cli.soul import Soul
+from codrus_cli.ui.shell.prompt import CwdLostError, PromptMode, UserInput
+from codrus_cli.wire.types import TextPart
 
 
 def _make_user_input(command: str, *, mode: PromptMode = PromptMode.AGENT) -> UserInput:

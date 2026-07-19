@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from kimi_cli.utils.windows_paths import posix_path_to_windows
+from codrus_cli.utils.windows_paths import posix_path_to_windows
 
 
 @pytest.mark.parametrize(
@@ -12,7 +12,7 @@ from kimi_cli.utils.windows_paths import posix_path_to_windows
     [
         # MSYS/git-bash drive
         ("/c/Users/foo", r"C:\Users\foo"),
-        ("/d/Projects/kimi", r"D:\Projects\kimi"),
+        ("/d/Projects/codrus", r"D:\Projects\codrus"),
         # Drive letter case is normalized to upper
         ("/C/Users/foo", r"C:\Users\foo"),
         # Drive root

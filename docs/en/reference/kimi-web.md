@@ -1,13 +1,13 @@
 # Web UI
 
-Web UI provides a browser-based interactive interface, allowing you to use all features of Kimi Code CLI in a web page. Compared to the terminal interface, Web UI offers a richer visual experience, more flexible session management, and more convenient file operations.
+Web UI provides a browser-based interactive interface, allowing you to use all features of CodrusCLI powered by Codrus models in a web page. Compared to the terminal interface, Web UI offers a richer visual experience, more flexible session management, and more convenient file operations.
 
 ## Starting Web UI
 
-Run the `kimi web` command in your terminal to start the Web UI server:
+Run the `codrus web` command in your terminal to start the Web UI server:
 
 ```sh
-kimi web
+codrus web
 ```
 
 After the server starts, it will automatically open your browser to access the Web UI. The default address is `http://127.0.0.1:5494`.
@@ -30,10 +30,10 @@ If you want to access Web UI from a local network or the public internet, you ca
 
 ```sh
 # Bind to all network interfaces, allowing LAN access
-kimi web --network
+codrus web --network
 
 # Bind to a specific IP address
-kimi web --host 192.168.1.100
+codrus web --host 192.168.1.100
 ```
 
 ::: warning Note
@@ -49,7 +49,7 @@ When enabling network access, be sure to configure access control options (such 
 Use `--no-open` to prevent automatically opening the browser:
 
 ```sh
-kimi web --no-open
+codrus web --no-open
 ```
 
 ### Development options
@@ -61,7 +61,7 @@ kimi web --no-open
 Use `--reload` to automatically restart the server after code changes:
 
 ```sh
-kimi web --reload
+codrus web --reload
 ```
 
 ::: info Note
@@ -89,7 +89,7 @@ Access control options added in version 1.6.
 Use `--auth-token` to set an access token. Clients need to include `Authorization: Bearer <token>` in the HTTP request header to access the API:
 
 ```sh
-kimi web --network --auth-token my-secret-token
+codrus web --network --auth-token my-secret-token
 ```
 
 ::: tip
@@ -101,7 +101,7 @@ The access token should be a randomly generated string with at least 32 characte
 Use `--allowed-origins` to restrict the origin domains that can access Web UI:
 
 ```sh
-kimi web --network --allowed-origins "https://example.com,https://app.example.com"
+codrus web --network --allowed-origins "https://example.com,https://app.example.com"
 ```
 
 ::: tip
@@ -113,7 +113,7 @@ When using `--network` or `--host` to enable network access, it is recommended t
 By default, Web UI uses `--lan-only` mode, only allowing access from the local network (private IP address ranges). If you need to allow public access, use the `--public` option:
 
 ```sh
-kimi web --network --public --auth-token my-secret-token
+codrus web --network --public --auth-token my-secret-token
 ```
 
 ::: danger Warning
@@ -129,7 +129,7 @@ Use `--restrict-sensitive-apis` to disable some sensitive API features:
 - File access restrictions
 
 ```sh
-kimi web --network --restrict-sensitive-apis
+codrus web --network --restrict-sensitive-apis
 ```
 
 In `--public` mode, `--restrict-sensitive-apis` is enabled by default; in `--lan-only` mode (default), it is not enabled.
@@ -143,7 +143,7 @@ When you need to expose Web UI to untrusted network environments, it is recommen
 In trusted private network environments, you can use `--dangerously-omit-auth` to skip all authentication checks:
 
 ```sh
-kimi web --dangerously-omit-auth
+codrus web --dangerously-omit-auth
 ```
 
 ::: danger Warning
@@ -152,13 +152,13 @@ The `--dangerously-omit-auth` option completely disables authentication and acce
 
 ## Switching from terminal to Web UI
 
-If you are using Kimi Code CLI in shell mode in the terminal, you can enter the `/web` command to quickly switch to Web UI:
+If you are using CodrusCLI powered by Codrus models in shell mode in the terminal, you can enter the `/web` command to quickly switch to Web UI:
 
 ```
 /web
 ```
 
-After execution, Kimi Code CLI will automatically start the Web UI server and open the current session in the browser. You can continue the conversation in Web UI, and the session history will remain synchronized.
+After execution, CodrusCLI powered by Codrus models will automatically start the Web UI server and open the current session in the browser. You can continue the conversation in Web UI, and the session history will remain synchronized.
 
 ## Web UI features
 
@@ -324,7 +324,7 @@ http://127.0.0.1:5494?action=create-in-dir&workDir=/path/to/project
 The simplest usage, accessible only from the local machine:
 
 ```sh
-kimi web
+codrus web
 ```
 
 ### LAN sharing
@@ -332,7 +332,7 @@ kimi web
 Share Web UI on the local network with access token protection:
 
 ```sh
-kimi web --network --auth-token $(openssl rand -hex 32)
+codrus web --network --auth-token $(openssl rand -hex 32)
 ```
 
 After execution, the terminal will display the access address and token. Other devices can access through that address and enter the token in the browser for authentication.
@@ -342,7 +342,7 @@ After execution, the terminal will display the access address and token. Other d
 Deploy Web UI in a public internet environment (requires careful security configuration):
 
 ```sh
-kimi web \
+codrus web \
   --host 0.0.0.0 \
   --public \
   --auth-token $(openssl rand -hex 32) \
@@ -355,7 +355,7 @@ kimi web \
 Enable auto-reload for development purposes:
 
 ```sh
-kimi web --reload --no-open
+codrus web --reload --no-open
 ```
 
 ## Technical details
@@ -366,4 +366,4 @@ Web UI is built on the following technologies:
 - **Frontend**: React + TypeScript + Vite
 - **API protocol**: Complies with OpenAPI specification, see `web/openapi.json`
 
-Web UI communicates with Kimi Code CLI's Wire mode via WebSocket, enabling real-time bidirectional data transmission.
+Web UI communicates with CodrusCLI powered by Codrus models's Wire mode via WebSocket, enabling real-time bidirectional data transmission.

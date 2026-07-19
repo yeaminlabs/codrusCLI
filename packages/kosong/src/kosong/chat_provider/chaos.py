@@ -148,7 +148,7 @@ class ChaosChatProvider:
         Inject chaos transport into providers backed by httpx AsyncBaseTransport.
 
         Supported today (explicit list):
-        - Kimi
+        - Codrus
         - OpenAILegacy
         - Anthropic
 
@@ -220,10 +220,10 @@ class ChaosChatProvider:
     def for_kimi(
         cls, chaos_config: ChaosConfig | None = None, **kwargs: Any
     ) -> "ChaosChatProvider":
-        """Helper to wrap a Kimi provider without changing caller sites."""
-        from kosong.chat_provider.kimi import Kimi
+        """Helper to wrap a Codrus provider without changing caller sites."""
+        from kosong.chat_provider.codrus import Codrus
 
-        return cls(Kimi(**kwargs), chaos_config=chaos_config)
+        return cls(Codrus(**kwargs), chaos_config=chaos_config)
 
 
 class ChaosStreamedMessage:

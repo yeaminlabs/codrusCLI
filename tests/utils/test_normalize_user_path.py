@@ -6,7 +6,7 @@ import platform
 
 import pytest
 
-from kimi_cli.utils.path import normalize_user_path
+from codrus_cli.utils.path import normalize_user_path
 
 
 @pytest.fixture

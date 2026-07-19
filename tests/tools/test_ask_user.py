@@ -7,11 +7,11 @@ import json
 
 import pytest
 
-from kimi_cli.soul import _current_wire
-from kimi_cli.soul.toolset import current_tool_call
-from kimi_cli.tools.ask_user import AskUserQuestion, Params, QuestionOptionParam, QuestionParam
-from kimi_cli.wire import Wire
-from kimi_cli.wire.types import QuestionNotSupported, QuestionRequest, ToolCall
+from codrus_cli.soul import _current_wire
+from codrus_cli.soul.toolset import current_tool_call
+from codrus_cli.tools.ask_user import AskUserQuestion, Params, QuestionOptionParam, QuestionParam
+from codrus_cli.wire import Wire
+from codrus_cli.wire.types import QuestionNotSupported, QuestionRequest, ToolCall
 
 
 @pytest.fixture

@@ -1,10 +1,10 @@
-"""E2E regression test for Kimi-compatible endpoints that reject empty assistant text.
+"""E2E regression test for Codrus-compatible endpoints that reject empty assistant text.
 
 This reproduces the real compatibility issue against a local mock server:
 
 1. First response returns an assistant tool call with no visible text.
 2. The CLI executes the tool and sends the next request with conversation history.
-3. Some Kimi-compatible gateways reject the second request if the prior assistant
+3. Some Codrus-compatible gateways reject the second request if the prior assistant
    tool-call message contains `content: []` / `content: ""`, returning
    `400 {"error": {"message": "text content is empty"}}`.
 
@@ -55,7 +55,7 @@ def _tool_call_stream_chunk() -> dict[str, Any]:
         "id": "chatcmpl-tool-call",
         "object": "chat.completion.chunk",
         "created": 1,
-        "model": "kimi-for-coding",
+        "model": "codrus-for-coding",
         "choices": [
             {
                 "index": 0,
@@ -84,7 +84,7 @@ def _final_stream_chunk() -> dict[str, Any]:
         "id": "chatcmpl-final",
         "object": "chat.completion.chunk",
         "created": 2,
-        "model": "kimi-for-coding",
+        "model": "codrus-for-coding",
         "choices": [
             {
                 "index": 0,
@@ -196,17 +196,17 @@ def _write_kimi_config(config_path: Path, *, base_url: str) -> None:
     config_path.write_text(
         json.dumps(
             {
-                "default_model": "mock-kimi",
+                "default_model": "mock-codrus",
                 "models": {
-                    "mock-kimi": {
-                        "provider": "mock-kimi-provider",
-                        "model": "kimi-for-coding",
+                    "mock-codrus": {
+                        "provider": "mock-codrus-provider",
+                        "model": "codrus-for-coding",
                         "max_context_size": 100000,
                     }
                 },
                 "providers": {
-                    "mock-kimi-provider": {
-                        "type": "kimi",
+                    "mock-codrus-provider": {
+                        "type": "codrus",
                         "base_url": base_url,
                         "api_key": "test-api-key",
                     }
@@ -234,7 +234,7 @@ async def _run_kimi_print_json(
     args = [
         sys.executable,
         "-m",
-        "kimi_cli.cli",
+        "codrus_cli.cli",
         "--print",
         "--output-format",
         "stream-json",

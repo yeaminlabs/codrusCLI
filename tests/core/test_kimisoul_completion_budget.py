@@ -6,29 +6,29 @@ from typing import Any
 import pytest
 from kosong.chat_provider import APIConnectionError, ChatProvider
 from kosong.chat_provider.chaos import ChaosChatProvider, ChaosConfig
-from kosong.chat_provider.kimi import Kimi
+from kosong.chat_provider.codrus import Codrus
 from kosong.chat_provider.mock import MockChatProvider, MockStreamedMessage
 from kosong.message import Message
 from kosong.tooling import Tool
 from kosong.tooling.empty import EmptyToolset
 from pydantic import SecretStr
 
-from kimi_cli.config import LLMModel, LLMProvider
-from kimi_cli.llm import (
+from codrus_cli.config import LLMModel, LLMProvider
+from codrus_cli.llm import (
     DEFAULT_COMPLETION_TOKEN_SAFETY_MARGIN,
     LLM,
     estimate_request_tokens,
     with_kimi_generation_overrides,
 )
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.compaction import (
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.compaction import (
     COMPACTION_OUTPUT_PREFIX,
     COMPACTION_SYSTEM_PROMPT,
     CompactionResult,
 )
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.soul.message import system
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.message import system
 
 
 def _make_soul(
@@ -49,12 +49,12 @@ def _make_kimi_llm(chat_provider: ChatProvider, *, max_context_size: int = 100_0
         max_context_size=max_context_size,
         capabilities=set(),
         model_config=LLMModel(
-            provider="kimi",
-            model="kimi-k2",
+            provider="codrus",
+            model="codrus-k2",
             max_context_size=max_context_size,
         ),
         provider_config=LLMProvider(
-            type="kimi",
+            type="codrus",
             base_url="https://api.test/v1",
             api_key=SecretStr("test-key"),
         ),
@@ -82,8 +82,8 @@ def _compute_overrides(
 async def test_dynamic_completion_budget_clamps_kimi_request(
     runtime: Runtime, tmp_path: Path
 ) -> None:
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -100,8 +100,8 @@ async def test_dynamic_completion_budget_clamps_kimi_request(
 def test_dynamic_completion_budget_preserves_explicit_kimi_cap(
     runtime: Runtime, tmp_path: Path
 ) -> None:
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -118,8 +118,8 @@ def test_dynamic_completion_budget_preserves_explicit_kimi_cap(
 async def test_dynamic_completion_budget_clamps_explicit_kimi_cap(
     runtime: Runtime, tmp_path: Path
 ) -> None:
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -136,8 +136,8 @@ async def test_dynamic_completion_budget_clamps_explicit_kimi_cap(
 def test_dynamic_completion_budget_uses_full_context_without_explicit_cap(
     runtime: Runtime, tmp_path: Path
 ) -> None:
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -154,8 +154,8 @@ def test_dynamic_completion_budget_uses_full_context_without_explicit_cap(
 def test_dynamic_completion_budget_counts_full_first_request(
     runtime: Runtime, tmp_path: Path
 ) -> None:
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -194,8 +194,8 @@ def test_dynamic_completion_budget_counts_full_first_request(
 
 
 def test_dynamic_completion_budget_can_be_disabled(runtime: Runtime, tmp_path: Path) -> None:
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -209,10 +209,10 @@ def test_dynamic_completion_budget_can_be_disabled(runtime: Runtime, tmp_path: P
 def test_compute_completion_overrides_returns_none_for_non_kimi_provider(
     runtime: Runtime, tmp_path: Path
 ) -> None:
-    """Non-Kimi providers receive no overrides and run with their built-in defaults."""
+    """Non-Codrus providers receive no overrides and run with their built-in defaults."""
 
     class _NotKimi:
-        name = "not-kimi"
+        name = "not-codrus"
 
         @property
         def model_name(self) -> str:
@@ -251,8 +251,8 @@ def test_request_overrides_leave_non_kimi_provider_untouched() -> None:
 async def test_request_overrides_reach_kimi_and_chaos_kimi(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    kimi_provider = Kimi(
-        model="kimi-k2",
+    kimi_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -267,7 +267,7 @@ async def test_request_overrides_reach_kimi_and_chaos_kimi(
     captured_overrides: list[Any] = []
 
     async def fake_generate(
-        self: Kimi,
+        self: Codrus,
         system_prompt: str,
         tools: Any,
         history: Any,
@@ -278,7 +278,7 @@ async def test_request_overrides_reach_kimi_and_chaos_kimi(
         captured_overrides.append(generation_overrides)
         return MockStreamedMessage([])
 
-    monkeypatch.setattr(Kimi, "generate", fake_generate)
+    monkeypatch.setattr(Codrus, "generate", fake_generate)
 
     for provider in (kimi_provider, chaos_provider):
         request_provider = with_kimi_generation_overrides(
@@ -296,8 +296,8 @@ async def test_request_overrides_reach_kimi_and_chaos_kimi(
 def test_dynamic_completion_budget_unwraps_chaos_kimi_provider(
     runtime: Runtime, tmp_path: Path
 ) -> None:
-    kimi_provider = Kimi(
-        model="kimi-k2",
+    kimi_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -323,8 +323,8 @@ def test_dynamic_completion_budget_unwraps_chaos_kimi_provider(
 async def test_compaction_budget_reserves_next_main_request_overhead(
     runtime: Runtime, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -359,10 +359,10 @@ async def test_compaction_budget_reserves_next_main_request_overhead(
 
     monkeypatch.setattr(soul._compaction, "compact", fake_compact)
     monkeypatch.setattr(
-        "kimi_cli.soul.kimisoul.with_kimi_generation_overrides",
+        "codrus_cli.soul.kimisoul.with_kimi_generation_overrides",
         fake_with_overrides,
     )
-    monkeypatch.setattr("kimi_cli.soul.kimisoul.wire_send", lambda _message: None)
+    monkeypatch.setattr("codrus_cli.soul.kimisoul.wire_send", lambda _message: None)
 
     await soul.compact_context(manual=True)
 
@@ -398,7 +398,7 @@ async def test_compute_overrides_does_not_copy_chat_provider(
     """Regression for F3: the dynamic budget must not produce a shallow copy of the
     chat provider that shadows ``runtime.llm.chat_provider``.
 
-    Before the fix, ``_with_dynamic_completion_budget`` returned a fresh ``Kimi`` instance
+    Before the fix, ``_with_dynamic_completion_budget`` returned a fresh ``Codrus`` instance
     via ``with_generation_kwargs``. That copy shared ``client``/``_api_key`` with the
     original, but ``on_retryable_error`` rebound ``self.client`` only on the copy — so the
     runtime's ``chat_provider`` was left pointing at the (now-closed) old client and every
@@ -408,8 +408,8 @@ async def test_compute_overrides_does_not_copy_chat_provider(
     runtime keeps owning the single live provider instance, so recovery on it is the
     visible state for the next step.
     """
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -432,7 +432,7 @@ async def test_compute_overrides_does_not_copy_chat_provider(
     chat_provider.on_retryable_error(APIConnectionError("simulated"))
     assert chat_provider.client is not original_client
     runtime_provider = runtime.llm.chat_provider
-    assert isinstance(runtime_provider, Kimi)
+    assert isinstance(runtime_provider, Codrus)
     assert runtime_provider.client is chat_provider.client
 
     overrides_after_recovery = _compute_overrides(soul, runtime_provider)

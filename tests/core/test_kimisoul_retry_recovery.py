@@ -19,15 +19,15 @@ from kosong.tooling import Tool
 from kosong.tooling.simple import SimpleToolset
 from pydantic import SecretStr
 
-from kimi_cli.config import LLMModel, LLMProvider, OAuthRef
-from kimi_cli.llm import LLM
-from kimi_cli.soul import run_soul
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.utils.aioqueue import QueueShutDown
-from kimi_cli.wire import Wire
-from kimi_cli.wire.types import StepBegin, StepRetry
+from codrus_cli.config import LLMModel, LLMProvider, OAuthRef
+from codrus_cli.llm import LLM
+from codrus_cli.soul import run_soul
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.utils.aioqueue import QueueShutDown
+from codrus_cli.wire import Wire
+from codrus_cli.wire.types import StepBegin, StepRetry
 
 
 class StaticStreamedMessage:
@@ -458,18 +458,18 @@ async def test_step_connection_recovery_then_401_triggers_oauth_refresh(
     runtime: Runtime, tmp_path: Path
 ) -> None:
     oauth_provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://api.test/v1",
         api_key=SecretStr(""),
-        oauth=OAuthRef(storage="file", key="oauth/kimi-code"),
+        oauth=OAuthRef(storage="file", key="oauth/codrus-code"),
     )
     oauth_model = LLMModel(
-        provider="managed:kimi-code",
-        model="kimi-for-coding",
+        provider="managed:codrus-code",
+        model="codrus-for-coding",
         max_context_size=100_000,
     )
     runtime.config.providers[oauth_model.provider] = oauth_provider
-    runtime.config.models["kimi-code/kimi-for-coding"] = oauth_model
+    runtime.config.models["codrus-code/codrus-for-coding"] = oauth_model
 
     provider = ConnectionThen401ThenSuccessProvider()
     llm = LLM(

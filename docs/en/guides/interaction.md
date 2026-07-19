@@ -1,13 +1,13 @@
 # Interaction and Input
 
-Kimi Code CLI provides rich interaction features to help you collaborate efficiently with AI.
+CodrusCLI powered by Codrus models provides rich interaction features to help you collaborate efficiently with AI.
 
 ## Agent and shell mode
 
-Kimi Code CLI has two input modes:
+CodrusCLI powered by Codrus models has two input modes:
 
 - **Agent mode**: The default mode, where input is sent to the AI for processing
-- **Shell mode**: Execute shell commands directly without leaving Kimi Code CLI
+- **Shell mode**: Execute shell commands directly without leaving CodrusCLI powered by Codrus models
 
 Press `Ctrl-X` to switch between the two modes. The current mode is displayed in the bottom status bar.
 
@@ -35,7 +35,7 @@ In plan mode, the AI can only use read-only tools (`Glob`, `Grep`, `ReadFile`) t
 
 There are four ways to enter plan mode:
 
-- **CLI flag**: Use `kimi --plan` to start a new session directly in plan mode
+- **CLI flag**: Use `codrus --plan` to start a new session directly in plan mode
 - **Keyboard shortcut**: Press `Shift-Tab` to toggle plan mode
 - **Slash command**: Enter `/plan` or `/plan on`
 - **AI-initiated**: When facing complex tasks, the AI may request to enter plan mode via the `EnterPlanMode` tool — you can accept or decline
@@ -74,11 +74,11 @@ Thinking mode allows the AI to think more deeply before responding, suitable for
 You can use the `/model` command to switch models and thinking mode. After selecting a model, if the model supports thinking mode, the system will ask whether to enable it. You can also enable it at startup with the `--thinking` flag:
 
 ```sh
-kimi --thinking
+codrus --thinking
 ```
 
 ::: tip
-Thinking mode requires support from the current model. Some models (like `kimi-k2-thinking-turbo`) always use thinking mode and cannot be disabled.
+Thinking mode requires support from the current model. Some models (like `codrus-k2-thinking-turbo`) always use thinking mode and cannot be disabled.
 :::
 
 ## Sending messages while running
@@ -134,7 +134,7 @@ Press `Ctrl-V` to paste text, images, or video files from the clipboard.
 
 In agent mode, longer pasted text (over 1000 characters or 15 lines) is automatically collapsed into a `[Pasted text #n]` placeholder in the input box to keep the interface clean. The full content is still expanded and sent to the model when submitting. When using an external editor (`Ctrl-O`), placeholders are automatically expanded to the original text; unmodified portions are re-collapsed after saving.
 
-If the clipboard contains an image, Kimi Code CLI caches the image to disk and displays it as an `[image:…]` placeholder in the input box. After sending the message, the AI can see and analyze the image. If the clipboard contains a video file, its file path is inserted as text into the input box.
+If the clipboard contains an image, CodrusCLI powered by Codrus models caches the image to disk and displays it as an `[image:…]` placeholder in the input box. After sending the message, the AI can see and analyze the image. If the clipboard contains a video file, its file path is inserted as text into the input box.
 
 ::: tip
 Image input requires the model to support the `image_in` capability. Video input requires the `video_in` capability.
@@ -142,11 +142,11 @@ Image input requires the model to support the `image_in` capability. Video input
 
 ## Slash commands
 
-Slash commands are special instructions starting with `/`, used to execute Kimi Code CLI's built-in features, such as `/help`, `/login`, `/sessions`, etc. After typing `/`, a list of available commands will automatically appear. For the complete list of slash commands, see the [slash commands reference](../reference/slash-commands.md).
+Slash commands are special instructions starting with `/`, used to execute CodrusCLI powered by Codrus models's built-in features, such as `/help`, `/login`, `/sessions`, etc. After typing `/`, a list of available commands will automatically appear. For the complete list of slash commands, see the [slash commands reference](../reference/slash-commands.md).
 
 ## @ path completion
 
-When you type `@` in a message, Kimi Code CLI will auto-complete file and directory paths in the working directory. This allows you to conveniently reference files in your project:
+When you type `@` in a message, CodrusCLI powered by Codrus models will auto-complete file and directory paths in the working directory. This allows you to conveniently reference files in your project:
 
 ```
 Check if there are any issues with @src/components/Button.tsx
@@ -174,7 +174,7 @@ The AI only uses this tool when your choice genuinely affects subsequent actions
 
 ## Approvals and confirmations
 
-When the AI needs to perform operations that may have an impact (such as modifying files or running commands), Kimi Code CLI will request your confirmation.
+When the AI needs to perform operations that may have an impact (such as modifying files or running commands), CodrusCLI powered by Codrus models will request your confirmation.
 
 The confirmation prompt will show operation details, including shell command and file diff previews. If the content is long and truncated, you can press `Ctrl-E` to expand and view the full content. You can choose:
 
@@ -183,11 +183,11 @@ The confirmation prompt will show operation details, including shell command and
 - **Reject**: Do not execute this operation
 - **Reject with feedback**: Decline the operation and provide written feedback telling the agent how to adjust
 
-If you trust the AI's operations, or you're running Kimi Code CLI in a safe isolated environment, you can enable "YOLO mode" to automatically approve all tool calls:
+If you trust the AI's operations, or you're running CodrusCLI powered by Codrus models in a safe isolated environment, you can enable "YOLO mode" to automatically approve all tool calls:
 
 ```sh
 # Enable at startup
-kimi --yolo
+codrus --yolo
 
 # Or toggle during runtime
 /yolo
@@ -209,7 +209,7 @@ When you're stepping away from the terminal and want the agent to keep running u
 
 ```sh
 # Enable at startup
-kimi --afk
+codrus --afk
 
 # Or toggle during runtime
 /afk

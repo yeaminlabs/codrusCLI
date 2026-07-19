@@ -1,23 +1,23 @@
 # Wire 模式
 
-Wire 模式是 Kimi Code CLI 的底层通信协议，用于与外部程序进行结构化的双向通信。
+Wire 模式是 CodrusCLI powered by Codrus models 的底层通信协议，用于与外部程序进行结构化的双向通信。
 
 ## Wire 是什么
 
-Wire 是 Kimi Code CLI 内部使用的消息传递层。当你使用终端交互时，Shell UI 通过 Wire 接收 AI 的输出并显示；当你使用 ACP 集成到 IDE 时，ACP 服务器也通过 Wire 与 Agent 核心通信。
+Wire 是 CodrusCLI powered by Codrus models 内部使用的消息传递层。当你使用终端交互时，Shell UI 通过 Wire 接收 AI 的输出并显示；当你使用 ACP 集成到 IDE 时，ACP 服务器也通过 Wire 与 Agent 核心通信。
 
-Wire 模式（`--wire`）将这个通信协议暴露出来，允许外部程序直接与 Kimi Code CLI 交互。这适用于构建自定义 UI 或将 Kimi Code CLI 嵌入到其他应用中。
+Wire 模式（`--wire`）将这个通信协议暴露出来，允许外部程序直接与 CodrusCLI powered by Codrus models 交互。这适用于构建自定义 UI 或将 CodrusCLI powered by Codrus models 嵌入到其他应用中。
 
 ```sh
-kimi --wire
+codrus --wire
 ```
 
 ## 使用场景
 
 Wire 模式主要用于：
 
-- **自定义 UI**：构建 Web、桌面或移动端的 Kimi Code CLI 前端
-- **应用集成**：将 Kimi Code CLI 嵌入到其他应用程序中
+- **自定义 UI**：构建 Web、桌面或移动端的 CodrusCLI powered by Codrus models 前端
+- **应用集成**：将 CodrusCLI powered by Codrus models 嵌入到其他应用程序中
 - **自动化测试**：对 Agent 行为进行程序化测试
 
 ::: tip 提示
@@ -181,7 +181,7 @@ interface ExternalToolsResult {
 **成功响应示例**
 
 ```json
-{"jsonrpc": "2.0", "id": "550e8400-e29b-41d4-a716-446655440000", "result": {"protocol_version": "1.7", "server": {"name": "Kimi Code CLI", "version": "1.14.0"}, "slash_commands": [{"name": "init", "description": "Analyze the codebase ...", "aliases": []}], "capabilities": {"supports_question": true}, "external_tools": {"accepted": ["open_in_ide"], "rejected": []}}}
+{"jsonrpc": "2.0", "id": "550e8400-e29b-41d4-a716-446655440000", "result": {"protocol_version": "1.7", "server": {"name": "CodrusCLI powered by Codrus models", "version": "1.14.0"}, "slash_commands": [{"name": "init", "description": "Analyze the codebase ...", "aliases": []}], "capabilities": {"supports_question": true}, "external_tools": {"accepted": ["open_in_ide"], "rejected": []}}}
 ```
 
 若 Server 不支持 `initialize` 方法，Client 会收到 `-32601 method not found` 错误，应自动降级到无握手模式。
@@ -1133,83 +1133,83 @@ interface ShellDisplayBlock {
 }
 ```
 
-## Kimi Agent（Rust）Wire Server
+## Codrus Agent（Rust）Wire Server
 
 ::: warning 注意
-Kimi Agent 目前为实验性功能，API 和行为可能在后续版本中发生变化。
+Codrus Agent 目前为实验性功能，API 和行为可能在后续版本中发生变化。
 :::
 
-Kimi Agent (Rust) 是 Kimi Code CLI 内核的 Rust 实现，专为 Wire 模式设计。如果你只需要 Wire 协议服务，Kimi Agent (Rust) 提供了一个更轻量的选择。Rust 实现位于 [`MoonshotAI/kimi-agent-rs`](https://github.com/MoonshotAI/kimi-agent-rs)。
+Codrus Agent (Rust) 是 CodrusCLI powered by Codrus models 内核的 Rust 实现，专为 Wire 模式设计。如果你只需要 Wire 协议服务，Codrus Agent (Rust) 提供了一个更轻量的选择。Rust 实现位于 [`MoonshotAI/codrus-agent-rs`](https://github.com/MoonshotAI/codrus-agent-rs)。
 
 ### 特点
 
-- **Wire 协议完全兼容**：与 Python 版 `kimi --wire` 使用相同的 Wire 协议，现有客户端无需修改
+- **Wire 协议完全兼容**：与 Python 版 `codrus --wire` 使用相同的 Wire 协议，现有客户端无需修改
 - **更小的体积**：单一静态链接二进制，无需 Python 运行时
 - **更快的启动**：原生编译，启动速度更快
-- **相同的配置**：使用相同的配置文件（`~/.kimi/config.toml`）和会话目录
+- **相同的配置**：使用相同的配置文件（`~/.codrus/config.toml`）和会话目录
 
 ### 限制
 
 - **仅支持 Wire 模式**：没有 Shell/Print/ACP UI
-- **仅支持 Kimi 供应商**：不支持 OpenAI、Anthropic 等其他供应商
-- **无 Kimi 账号登录功能**：没有 `login`/`logout` 子命令和 `/login`、`/logout` 斜杠命令，需要手动配置 API 密钥
+- **仅支持 Codrus 供应商**：不支持 OpenAI、Anthropic 等其他供应商
+- **无 Codrus 账号登录功能**：没有 `login`/`logout` 子命令和 `/login`、`/logout` 斜杠命令，需要手动配置 API 密钥
 - **不支持 `--prompt`/`--command`**：Wire 服务器不接受初始提示词
 - **仅支持本地执行**：没有 SSH Kaos 支持
-- **MCP OAuth 存储位置不同**：Kimi Agent 存储在 `~/.kimi/credentials/mcp_auth.json`，Python 版存储在 `~/.kimi/mcp-oauth/`，两者不兼容
+- **MCP OAuth 存储位置不同**：Codrus Agent 存储在 `~/.codrus/credentials/mcp_auth.json`，Python 版存储在 `~/.codrus/mcp-oauth/`，两者不兼容
 
 ### 安装
 
-从 [GitHub Releases](https://github.com/MoonshotAI/kimi-agent-rs/releases) 下载预编译的二进制文件：
+从 [GitHub Releases](https://github.com/MoonshotAI/codrus-agent-rs/releases) 下载预编译的二进制文件：
 
 ```sh
 # macOS (Apple Silicon)
-curl -L https://github.com/MoonshotAI/kimi-agent-rs/releases/latest/download/kimi-agent-aarch64-apple-darwin.tar.gz | tar xz
-sudo mv kimi-agent /usr/local/bin/
+curl -L https://github.com/MoonshotAI/codrus-agent-rs/releases/latest/download/codrus-agent-aarch64-apple-darwin.tar.gz | tar xz
+sudo mv codrus-agent /usr/local/bin/
 
 # Linux (x86_64)
-curl -L https://github.com/MoonshotAI/kimi-agent-rs/releases/latest/download/kimi-agent-x86_64-unknown-linux-gnu.tar.gz | tar xz
-sudo mv kimi-agent /usr/local/bin/
+curl -L https://github.com/MoonshotAI/codrus-agent-rs/releases/latest/download/codrus-agent-x86_64-unknown-linux-gnu.tar.gz | tar xz
+sudo mv codrus-agent /usr/local/bin/
 ```
 
 ### 使用
 
-Kimi Agent 默认运行 Wire 模式：
+Codrus Agent 默认运行 Wire 模式：
 
 ```sh
-kimi-agent
+codrus-agent
 ```
 
-常用选项与 `kimi` 命令相同：
+常用选项与 `codrus` 命令相同：
 
 ```sh
 # 指定工作目录
-kimi-agent --work-dir /path/to/project
+codrus-agent --work-dir /path/to/project
 
 # 继续上一个会话
-kimi-agent --continue
+codrus-agent --continue
 
 # 使用指定会话
-kimi-agent --session <session-id>
+codrus-agent --session <session-id>
 
 # 使用指定模型
-kimi-agent --model k2
+codrus-agent --model k2
 
 # YOLO 模式（跳过审批）
-kimi-agent --yolo
+codrus-agent --yolo
 ```
 
 子命令：
 
 ```sh
 # 显示版本和环境信息
-kimi-agent info
+codrus-agent info
 
 # 管理 MCP 服务器
-kimi-agent mcp list
-kimi-agent mcp add <name> <command> [args...]
-kimi-agent mcp remove <name>
+codrus-agent mcp list
+codrus-agent mcp add <name> <command> [args...]
+codrus-agent mcp remove <name>
 ```
 
 ### 版本同步
 
-Kimi Agent 与 Kimi Code CLI 独立发版。兼容性与同步状态以 `MoonshotAI/kimi-agent-rs` 的发布说明为准。
+Codrus Agent 与 CodrusCLI powered by Codrus models 独立发版。兼容性与同步状态以 `MoonshotAI/codrus-agent-rs` 的发布说明为准。

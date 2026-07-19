@@ -2,8 +2,8 @@
 import { useData } from 'vitepress'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
-const STORAGE_KEY = 'kimi-cli-evolution-banner-dismissed'
-const TARGET_URL = 'https://github.com/MoonshotAI/kimi-code'
+const STORAGE_KEY = 'codrus-cli-evolution-banner-dismissed'
+const TARGET_URL = 'https://github.com/MoonshotAI/codrus-code'
 const HTML_CLASS = 'has-evolution-banner'
 
 const { lang } = useData()
@@ -41,8 +41,8 @@ function dismiss() {
 const isZh = computed(() => lang.value.startsWith('zh'))
 const message = computed(() =>
   isZh.value
-    ? 'Kimi Code CLI 重构升级版已发布，迭代更快   了解更多➡️'
-    : 'Kimi Code CLI rebuilt & upgraded version released — faster iterations. Learn more ➡️',
+    ? 'CodrusCLI powered by Codrus models 重构升级版已发布，迭代更快   了解更多➡️'
+    : 'CodrusCLI powered by Codrus models rebuilt & upgraded version released — faster iterations. Learn more ➡️',
 )
 const closeLabel = computed(() => (isZh.value ? '关闭' : 'Dismiss'))
 </script>

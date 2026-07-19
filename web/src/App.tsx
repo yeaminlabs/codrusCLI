@@ -278,7 +278,7 @@ function App() {
 
       if (reason === "config_update") {
         console.log("[App] Config update detected, refreshing global config");
-        window.dispatchEvent(new Event("kimi:config-update"));
+        window.dispatchEvent(new Event("codrus:config-update"));
       }
 
       if (!reason.startsWith("prompt_")) {
@@ -417,14 +417,14 @@ function App() {
                   )}
                 >
                   <a
-                    href="https://www.kimi.com/code"
+                    href="https://www.codrus.com/code"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:opacity-80 transition-opacity"
                   >
                     <img
                       src="/logo.png"
-                      alt="Kimi"
+                      alt="Codrus"
                       width={24}
                       height={24}
                       className="size-6"

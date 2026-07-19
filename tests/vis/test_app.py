@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi.testclient import TestClient
-
 from kimi_cli.metadata import Metadata, WorkDirMeta, save_metadata
 from kimi_cli.vis.api import system as vis_system_api
 from kimi_cli.vis.app import create_app

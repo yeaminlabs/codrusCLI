@@ -4,7 +4,7 @@
 The plugin system is currently in Beta. The implementation details and configuration definitions may change in future releases. Please use with caution in production environments and stay tuned for updates.
 :::
 
-The plugin system allows you to add custom tools to Kimi Code CLI, extending the AI's capabilities. Unlike MCP servers, plugins are lightweight local toolkits ideal for packaging project-specific scripts and utilities.
+The plugin system allows you to add custom tools to CodrusCLI powered by Codrus models, extending the AI's capabilities. Unlike MCP servers, plugins are lightweight local toolkits ideal for packaging project-specific scripts and utilities.
 
 ## What are plugins
 
@@ -23,56 +23,56 @@ Difference between plugins and Agent Skills:
 
 ## Installing plugins
 
-Use the `kimi plugin` command to manage plugins.
+Use the `codrus plugin` command to manage plugins.
 
 **Install from a local directory**
 
 ```sh
-kimi plugin install /path/to/my-plugin
+codrus plugin install /path/to/my-plugin
 ```
 
 **Install from a ZIP file**
 
 ```sh
 # Local ZIP file
-kimi plugin install my-plugin.zip
+codrus plugin install my-plugin.zip
 
 # Remote ZIP URL (including GitHub/GitLab archive download links)
-kimi plugin install https://example.com/my-plugin.zip
-kimi plugin install https://github.com/user/repo/archive/refs/heads/main.zip
+codrus plugin install https://example.com/my-plugin.zip
+codrus plugin install https://github.com/user/repo/archive/refs/heads/main.zip
 ```
 
 **Install from a Git repository**
 
 ```sh
 # Install the root plugin
-kimi plugin install https://github.com/user/repo.git
+codrus plugin install https://github.com/user/repo.git
 
 # Install a plugin from a subdirectory (multi-plugin repo)
-kimi plugin install https://github.com/user/repo.git/plugins/my-plugin
+codrus plugin install https://github.com/user/repo.git/plugins/my-plugin
 
 # Specify a branch (use browser-style GitHub URL without .git)
-kimi plugin install https://github.com/user/repo/tree/develop/plugins/my-plugin
+codrus plugin install https://github.com/user/repo/tree/develop/plugins/my-plugin
 ```
 
-When a Git repository has no `plugin.json` at the root, Kimi Code CLI checks the root and its immediate subdirectories, then lists available plugins for you to choose from.
+When a Git repository has no `plugin.json` at the root, CodrusCLI powered by Codrus models checks the root and its immediate subdirectories, then lists available plugins for you to choose from.
 
 **List installed plugins**
 
 ```sh
-kimi plugin list
+codrus plugin list
 ```
 
 **View plugin details**
 
 ```sh
-kimi plugin info my-plugin
+codrus plugin info my-plugin
 ```
 
 **Remove a plugin**
 
 ```sh
-kimi plugin remove my-plugin
+codrus plugin remove my-plugin
 ```
 
 ## Creating a plugin
@@ -148,7 +148,7 @@ my-plugin/
 
 ## Credential injection
 
-If your plugin needs to call LLM APIs, you can use the `inject` configuration to automatically receive Kimi Code CLI's credentials.
+If your plugin needs to call LLM APIs, you can use the `inject` configuration to automatically receive CodrusCLI powered by Codrus models's credentials.
 
 **`inject` configuration example**
 
@@ -180,10 +180,10 @@ If your plugin needs to call LLM APIs, you can use the `inject` configuration to
 }
 ```
 
-During installation, Kimi Code CLI injects the currently configured API key and base URL into the specified config file. If OAuth is configured, a valid token is automatically obtained and injected. Later, when the application starts, Kimi Code CLI will also try to write the latest credentials (such as the refreshed OAuth token) into the configuration file of the installed plugin.
+During installation, CodrusCLI powered by Codrus models injects the currently configured API key and base URL into the specified config file. If OAuth is configured, a valid token is automatically obtained and injected. Later, when the application starts, CodrusCLI powered by Codrus models will also try to write the latest credentials (such as the refreshed OAuth token) into the configuration file of the installed plugin.
 
 ::: tip
-Generally, there is no need to reinstall the plugin in order to update credentials: after switching the LLM provider or re-authorizing, restarting Kimi Code CLI will automatically refresh the credentials in the configuration file. The plugin tool will also obtain the currently valid credentials through environment variables when it is actually run. The plugin needs to be reinstalled only when the configuration structure of the plugin itself (such as `config_file` or `inject` mapping) is modified.
+Generally, there is no need to reinstall the plugin in order to update credentials: after switching the LLM provider or re-authorizing, restarting CodrusCLI powered by Codrus models will automatically refresh the credentials in the configuration file. The plugin tool will also obtain the currently valid credentials through environment variables when it is actually run. The plugin needs to be reinstalled only when the configuration structure of the plugin itself (such as `config_file` or `inject` mapping) is modified.
 :::
 
 ::: info About inject keys
@@ -306,7 +306,7 @@ rl.on("close", () => {
 
 ## Plugin installation location
 
-Plugins are installed in the `~/.kimi/plugins/` directory. Each plugin is an independent subdirectory containing the complete `plugin.json` and script files.
+Plugins are installed in the `~/.codrus/plugins/` directory. Each plugin is an independent subdirectory containing the complete `plugin.json` and script files.
 
 ::: info Note
 Plugins and MCP servers are complementary extension mechanisms:

@@ -1,9 +1,9 @@
-# `kimi info` Subcommand
+# `codrus info` Subcommand
 
-`kimi info` displays version and protocol information for Kimi Code CLI.
+`codrus info` displays version and protocol information for CodrusCLI powered by Codrus models.
 
 ```sh
-kimi info [--json]
+codrus info [--json]
 ```
 
 ## Options
@@ -16,7 +16,7 @@ kimi info [--json]
 
 | Field | Description |
 |-------|-------------|
-| `kimi_cli_version` | Kimi Code CLI version number |
+| `codrus_cli_version` | CodrusCLI powered by Codrus models version number |
 | `agent_spec_versions` | List of supported agent spec versions |
 | `wire_protocol_version` | Wire protocol version |
 | `python_version` | Python runtime version |
@@ -26,8 +26,8 @@ kimi info [--json]
 **Text output**
 
 ```sh
-$ kimi info
-kimi-cli version: 1.20.0
+$ codrus info
+codrus-cli version: 1.20.0
 agent spec versions: 1
 wire protocol: 1.10
 python version: 3.13.1
@@ -36,6 +36,6 @@ python version: 3.13.1
 **JSON output**
 
 ```sh
-$ kimi info --json
-{"kimi_cli_version": "1.20.0", "agent_spec_versions": ["1"], "wire_protocol_version": "1.10", "python_version": "3.13.1"}
+$ codrus info --json
+{"codrus_cli_version": "1.20.0", "agent_spec_versions": ["1"], "wire_protocol_version": "1.10", "python_version": "3.13.1"}
 ```

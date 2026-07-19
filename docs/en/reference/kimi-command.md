@@ -1,9 +1,9 @@
-# `kimi` Command
+# `codrus` Command
 
-`kimi` is the main command for Kimi Code CLI, used to start interactive sessions or execute single queries.
+`codrus` is the main command for CodrusCLI powered by Codrus models, used to start interactive sessions or execute single queries.
 
 ```sh
-kimi [OPTIONS] COMMAND [ARGS]
+codrus [OPTIONS] COMMAND [ARGS]
 ```
 
 ## Basic information
@@ -13,7 +13,7 @@ kimi [OPTIONS] COMMAND [ARGS]
 | `--version` | `-V` | Show version number and exit |
 | `--help` | `-h` | Show help message and exit |
 | `--verbose` | | Output detailed runtime information |
-| `--debug` | | Log debug information (output to `~/.kimi/logs/kimi.log`) |
+| `--debug` | | Log debug information (output to `~/.codrus/logs/codrus.log`) |
 
 ## Agent configuration
 
@@ -29,7 +29,7 @@ kimi [OPTIONS] COMMAND [ARGS]
 | Option | Description |
 |--------|-------------|
 | `--config STRING` | Load TOML/JSON configuration string |
-| `--config-file PATH` | Load configuration file (default `~/.kimi/config.toml`) |
+| `--config-file PATH` | Load configuration file (default `~/.codrus/config.toml`) |
 
 `--config` and `--config-file` are mutually exclusive. Both configuration strings and files support TOML and JSON formats. See [Config Files](../configuration/config-files.md) for details.
 
@@ -66,7 +66,7 @@ The working directory determines the root directory for file operations. Relativ
 | `--prompt TEXT` | `-p` | Pass user prompt, doesn't enter interactive mode |
 | `--command TEXT` | `-c` | Alias for `--prompt` |
 
-When using `--prompt` (or `--command`), Kimi Code CLI exits after processing the query (unless `--print` is specified, results are still displayed in interactive mode).
+When using `--prompt` (or `--command`), CodrusCLI powered by Codrus models exits after processing the query (unless `--print` is specified, results are still displayed in interactive mode).
 
 ## Loop control
 
@@ -80,7 +80,7 @@ When using `--prompt` (or `--command`), Kimi Code CLI exits after processing the
 
 [Ralph](https://ghuntley.com/ralph/) is a technique that puts an agent in a loop: the same prompt is fed again and again so the agent can keep iterating one big task.
 
-When `--max-ralph-iterations` is not `0`, Kimi Code CLI enters Ralph Loop mode and automatically loops through task execution until the agent outputs `<choice>STOP</choice>` or the iteration limit is reached.
+When `--max-ralph-iterations` is not `0`, CodrusCLI powered by Codrus models enters Ralph Loop mode and automatically loops through task execution until the agent outputs `<choice>STOP</choice>` or the iteration limit is reached.
 
 ## UI modes
 
@@ -88,7 +88,7 @@ When `--max-ralph-iterations` is not `0`, Kimi Code CLI enters Ralph Loop mode a
 |--------|-------------|
 | `--print` | Run in print mode (non-interactive), implicitly enables `--afk` |
 | `--quiet` | Shortcut for `--print --output-format text --final-message-only` |
-| `--acp` | Run in ACP server mode (deprecated, use `kimi acp` instead) |
+| `--acp` | Run in ACP server mode (deprecated, use `codrus acp` instead) |
 | `--wire` | Run in Wire server mode (experimental) |
 
 The four options are mutually exclusive, only one can be selected. Default is shell mode. See [Print Mode](../customization/print-mode.md) and [Wire Mode](../customization/wire-mode.md) for details.
@@ -112,7 +112,7 @@ The following options are only effective in `--print` mode:
 | `--mcp-config-file PATH` | Load MCP config file, can be specified multiple times |
 | `--mcp-config JSON` | Load MCP config JSON string, can be specified multiple times |
 
-Default loads `~/.kimi/mcp.json` (if exists). See [Model Context Protocol](../customization/mcp.md) for details.
+Default loads `~/.codrus/mcp.json` (if exists). See [Model Context Protocol](../customization/mcp.md) for details.
 
 ## Approval control
 
@@ -152,45 +152,45 @@ Thinking mode requires model support. If not specified, uses the last session's 
 |--------|-------------|
 | `--skills-dir PATH` | Append additional skills directories (repeatable) |
 
-When not specified, Kimi Code CLI automatically discovers user-level and project-level skills directories in priority order. See [Agent Skills](../customization/skills.md) for details.
+When not specified, CodrusCLI powered by Codrus models automatically discovers user-level and project-level skills directories in priority order. See [Agent Skills](../customization/skills.md) for details.
 
 ## Subcommands
 
 | Subcommand | Description |
 |------------|-------------|
-| [`kimi login`](#kimi-login) | Log in to your Kimi account |
-| [`kimi logout`](#kimi-logout) | Log out from your Kimi account |
-| [`kimi info`](./kimi-info.md) | Display version and protocol information |
-| [`kimi acp`](./kimi-acp.md) | Start multi-session ACP server |
-| [`kimi mcp`](./kimi-mcp.md) | Manage MCP server configuration |
-| [`kimi plugin`](../customization/plugins.md) | Manage plugins (Beta) |
-| [`kimi term`](./kimi-term.md) | Launch the Toad terminal UI |
-| [`kimi export`](#kimi-export) | Export a session as a ZIP file |
-| [`kimi vis`](./kimi-vis.md) | Launch the Agent Tracing Visualizer (Technical Preview) |
-| [`kimi web`](./kimi-web.md) | Start the Web UI server |
+| [`codrus login`](#codrus-login) | Log in to your Codrus account |
+| [`codrus logout`](#codrus-logout) | Log out from your Codrus account |
+| [`codrus info`](./codrus-info.md) | Display version and protocol information |
+| [`codrus acp`](./codrus-acp.md) | Start multi-session ACP server |
+| [`codrus mcp`](./codrus-mcp.md) | Manage MCP server configuration |
+| [`codrus plugin`](../customization/plugins.md) | Manage plugins (Beta) |
+| [`codrus term`](./codrus-term.md) | Launch the Toad terminal UI |
+| [`codrus export`](#codrus-export) | Export a session as a ZIP file |
+| [`codrus vis`](./codrus-vis.md) | Launch the Agent Tracing Visualizer (Technical Preview) |
+| [`codrus web`](./codrus-web.md) | Start the Web UI server |
 
-### `kimi login`
+### `codrus login`
 
-Log in to your Kimi account. This automatically opens a browser; complete account authorization and available models will be automatically configured.
-
-```sh
-kimi login
-```
-
-### `kimi logout`
-
-Log out from your Kimi account. This clears stored OAuth credentials and removes related configuration from the config file.
+Log in to your Codrus account. This automatically opens a browser; complete account authorization and available models will be automatically configured.
 
 ```sh
-kimi logout
+codrus login
 ```
 
-### `kimi export`
+### `codrus logout`
+
+Log out from your Codrus account. This clears stored OAuth credentials and removes related configuration from the config file.
+
+```sh
+codrus logout
+```
+
+### `codrus export`
 
 Export session data as a ZIP file. The ZIP contains all files in the session directory (`context.jsonl`, `wire.jsonl`, `state.json`, etc.) and related diagnostic logs.
 
 ```sh
-kimi export [<session_id>] [-o <output_path>] [--yes]
+codrus export [<session_id>] [-o <output_path>] [--yes]
 ```
 
 | Argument / Option | Description |
@@ -203,7 +203,7 @@ kimi export [<session_id>] [-o <output_path>] [--yes]
 Added in version 1.20.
 :::
 
-### `kimi vis`
+### `codrus vis`
 
 ::: warning Note
 Technical Preview feature, may be unstable.
@@ -212,7 +212,7 @@ Technical Preview feature, may be unstable.
 Launch the Agent Tracing Visualizer to view and analyze session traces in a browser.
 
 ```sh
-kimi vis [OPTIONS]
+codrus vis [OPTIONS]
 ```
 
 | Option | Short | Description |
@@ -223,14 +223,14 @@ kimi vis [OPTIONS]
 | `--open / --no-open` | | Automatically open browser (default: enabled) |
 | `--reload` | | Enable auto-reload (development mode) |
 
-See [Agent Tracing Visualizer](./kimi-vis.md) for details.
+See [Agent Tracing Visualizer](./codrus-vis.md) for details.
 
-### `kimi web`
+### `codrus web`
 
-Start the Web UI server to access Kimi Code CLI through a browser.
+Start the Web UI server to access CodrusCLI powered by Codrus models through a browser.
 
 ```sh
-kimi web [OPTIONS]
+codrus web [OPTIONS]
 ```
 
 If the default port is in use, the server will pick the next available port (by default `5494`–`5503`) and print a notice in the terminal.
@@ -247,16 +247,16 @@ Examples:
 
 ```sh
 # Default startup, automatically opens browser
-kimi web
+codrus web
 
 # Specify port
-kimi web --port 8080
+codrus web --port 8080
 
 # Don't automatically open browser
-kimi web --no-open
+codrus web --no-open
 
 # Bind to all network interfaces (allow LAN access)
-kimi web --host 0.0.0.0
+codrus web --host 0.0.0.0
 ```
 
-See [Web UI](./kimi-web.md) for details.
+See [Web UI](./codrus-web.md) for details.

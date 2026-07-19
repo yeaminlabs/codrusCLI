@@ -3,13 +3,13 @@ from typing import cast
 
 from kosong.message import Message
 
-import kimi_cli.ui.shell as shell_module
-from kimi_cli.soul import Soul
-from kimi_cli.ui.shell import Shell
-from kimi_cli.ui.shell.echo import render_user_echo
-from kimi_cli.ui.shell.prompt import PromptMode, UserInput
-from kimi_cli.utils.slashcmd import SlashCommand, SlashCommandCall
-from kimi_cli.wire.types import AudioURLPart, ImageURLPart, TextPart, VideoURLPart
+import codrus_cli.ui.shell as shell_module
+from codrus_cli.soul import Soul
+from codrus_cli.ui.shell import Shell
+from codrus_cli.ui.shell.echo import render_user_echo
+from codrus_cli.ui.shell.prompt import PromptMode, UserInput
+from codrus_cli.utils.slashcmd import SlashCommand, SlashCommandCall
+from codrus_cli.wire.types import AudioURLPart, ImageURLPart, TextPart, VideoURLPart
 
 
 def _make_user_input(command: str, *, mode: PromptMode = PromptMode.AGENT) -> UserInput:

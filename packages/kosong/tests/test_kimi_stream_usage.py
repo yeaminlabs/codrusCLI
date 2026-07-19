@@ -1,6 +1,5 @@
+from kosong.chat_provider.codrus import extract_usage_from_chunk
 from openai.types.chat import ChatCompletionChunk
-
-from kosong.chat_provider.kimi import extract_usage_from_chunk
 
 
 def test_kimi_extracts_choice_usage_in_stream_chunk() -> None:
@@ -9,7 +8,7 @@ def test_kimi_extracts_choice_usage_in_stream_chunk() -> None:
             "id": "chatcmpl-6970b5d02fa474c1767e8767",
             "object": "chat.completion.chunk",
             "created": 1768994256,
-            "model": "kimi-k2-turbo-preview",
+            "model": "codrus-k2-turbo-preview",
             "choices": [
                 {
                     "index": 0,

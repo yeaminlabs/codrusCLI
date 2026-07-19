@@ -1,26 +1,26 @@
 # Breaking changes and migration
 
-This page documents breaking changes in Kimi Code CLI releases and provides migration guidance.
+This page documents breaking changes in CodrusCLI powered by Codrus models releases and provides migration guidance.
 
 ## Unreleased
 
 ## 1.49.0
 
-### Kimi no longer sends legacy `reasoning_effort` automatically
+### Codrus no longer sends legacy `reasoning_effort` automatically
 
-Kimi thinking configuration now uses `thinking.type` exclusively. `Kimi.with_thinking(...)` no longer adds the legacy `reasoning_effort` parameter to requests.
+Codrus thinking configuration now uses `thinking.type` exclusively. `Codrus.with_thinking(...)` no longer adds the legacy `reasoning_effort` parameter to requests.
 
-- **Affected**: Applications using Kosong's Kimi provider with older Kimi-compatible endpoints that require `reasoning_effort`
+- **Affected**: Applications using Kosong's Codrus provider with older Codrus-compatible endpoints that require `reasoning_effort`
 - **Migration**: Update the endpoint to support `thinking.type`. If an older endpoint still requires the legacy parameter, pass it explicitly with `with_generation_kwargs(reasoning_effort="...")`
 
 ## 1.43.0
 
-### MCP OAuth token cache moved to `~/.kimi/mcp-oauth/`
+### MCP OAuth token cache moved to `~/.codrus/mcp-oauth/`
 
-Kimi Code CLI now uses FastMCP 3's persistent OAuth storage API for MCP servers and stores MCP OAuth tokens under `~/.kimi/mcp-oauth/`. Tokens from the old FastMCP 2.x cache location are not migrated automatically.
+CodrusCLI powered by Codrus models now uses FastMCP 3's persistent OAuth storage API for MCP servers and stores MCP OAuth tokens under `~/.codrus/mcp-oauth/`. Tokens from the old FastMCP 2.x cache location are not migrated automatically.
 
 - **Affected**: Users who authorized OAuth MCP servers before upgrading
-- **Migration**: If `kimi mcp list` shows an OAuth server as requiring authorization, run `kimi mcp auth <name>` once to create a new token in `~/.kimi/mcp-oauth/`. Use `kimi mcp reset-auth <name>` before re-authorizing if the stored token becomes invalid or corrupted
+- **Migration**: If `codrus mcp list` shows an OAuth server as requiring authorization, run `codrus mcp auth <name>` once to create a new token in `~/.codrus/mcp-oauth/`. Use `codrus mcp reset-auth <name>` before re-authorizing if the stored token becomes invalid or corrupted
 
 ## 1.42.0
 
@@ -31,10 +31,10 @@ The Shell tool on Windows now runs commands through `bash.exe` (POSIX semantics)
 - **Affected**: All Windows users; integrations, agent specs, or saved snippets that rely on PowerShell-specific syntax (`Get-ChildItem`, `Where-Object`, `cmdlet -Foo Bar` argument style, `;`-only command chaining, `NUL` redirects, etc.) reaching the Shell tool
 - **Migration**:
   1. Install [Git for Windows](https://git-scm.com/downloads/win) if not already installed; the bundled `bash.exe` (typically `C:\Program Files\Git\bin\bash.exe`) is auto-discovered via `where.exe git` or the standard install location
-  2. If `bash.exe` lives in a non-standard location, set the `KIMI_CLI_GIT_BASH_PATH` environment variable to its absolute path before launching kimi-cli
+  2. If `bash.exe` lives in a non-standard location, set the `KIMI_CLI_GIT_BASH_PATH` environment variable to its absolute path before launching codrus-cli
   3. Update any custom prompts, agent specs, or snippets that hard-code PowerShell syntax to use Unix shell syntax instead (forward slashes inside Shell commands, `/dev/null` instead of `NUL`, `&&` and `||` for control flow, `grep`/`sed`/`awk` instead of PowerShell cmdlets)
   4. Note that `python.exe`, `node.exe`, and other native Windows binaries called from inside bash still need native Windows paths (e.g. `python C:\path\to\script.py`); only POSIX-aware tools (cat, ls, grep, etc.) understand the `/c/path/...` form
-  5. If kimi-cli cannot find `bash.exe`, it now exits with an install hint at startup instead of falling back to PowerShell
+  5. If codrus-cli cannot find `bash.exe`, it now exits with an install hint at startup instead of falling back to PowerShell
 
 ## 1.40.0
 
@@ -56,7 +56,7 @@ YOLO no longer injects model guidance, so the old `skip_yolo_prompt_injection` c
 
 ### `merge_all_available_skills` default flipped to `true`
 
-The `merge_all_available_skills` config option default has changed from `false` to `true`. kimi-cli now merges all existing user- and project-level brand skill directories (`.kimi/skills`, `.claude/skills`, `.codex/skills`) by default instead of only using the first one found. Users who keep skills in multiple brand directories — for example both `~/.kimi/skills` and `~/.claude/skills` — will see every skill out of the box after upgrading.
+The `merge_all_available_skills` config option default has changed from `false` to `true`. codrus-cli now merges all existing user- and project-level brand skill directories (`.codrus/skills`, `.claude/skills`, `.codex/skills`) by default instead of only using the first one found. Users who keep skills in multiple brand directories — for example both `~/.codrus/skills` and `~/.claude/skills` — will see every skill out of the box after upgrading.
 
 - **Affected**: Users who maintain multiple brand skill directories and relied on the first-match behavior to hide duplicates
 - **Migration**: Set `merge_all_available_skills = false` in your config to restore the previous first-match behavior
@@ -72,10 +72,10 @@ The `SubagentEvent` field `task_tool_call_id` has been renamed to `parent_tool_c
 
 ### `CreateSubagent` and `Task` (multiagent) tools removed
 
-The `CreateSubagent` and `Task` tools under `kimi_cli.tools.multiagent` have been removed. Use the new `Agent` tool instead.
+The `CreateSubagent` and `Task` tools under `codrus_cli.tools.multiagent` have been removed. Use the new `Agent` tool instead.
 
-- **Affected**: Custom agent configurations referencing `kimi_cli.tools.multiagent:Task` or `kimi_cli.tools.multiagent:CreateSubagent`
-- **Migration**: Replace with `kimi_cli.tools.agent:Agent` in your agent YAML `allowed_tools`
+- **Affected**: Custom agent configurations referencing `codrus_cli.tools.multiagent:Task` or `codrus_cli.tools.multiagent:CreateSubagent`
+- **Migration**: Replace with `codrus_cli.tools.agent:Agent` in your agent YAML `allowed_tools`
 
 ### `TaskOutput` `block` parameter default changed
 
@@ -104,12 +104,12 @@ The `/begin` slash command has been replaced with `/flow:<skill-name>` commands.
 
 ### Thinking mode setting migration change
 
-After upgrading from `0.76`, the thinking mode setting is no longer automatically preserved. The previous `thinking` state stored in `~/.kimi/kimi.json` is no longer used; instead, thinking mode is now managed via the `default_thinking` configuration option in `~/.kimi/config.toml`, but values are not automatically migrated from legacy `metadata`.
+After upgrading from `0.76`, the thinking mode setting is no longer automatically preserved. The previous `thinking` state stored in `~/.codrus/codrus.json` is no longer used; instead, thinking mode is now managed via the `default_thinking` configuration option in `~/.codrus/config.toml`, but values are not automatically migrated from legacy `metadata`.
 
 - **Affected**: Users who previously had thinking mode enabled
 - **Migration**: Reconfigure thinking mode after upgrading:
   - Use the `/model` command to select model and set thinking mode (interactive)
-  - Or manually add to `~/.kimi/config.toml`:
+  - Or manually add to `~/.codrus/config.toml`:
 
     ```toml
     default_thinking = true  # Set to true if you want thinking mode enabled by default
@@ -128,10 +128,10 @@ The `--query` (`-q`) option has been removed. Use `--prompt` as the primary opti
 
 ### `--acp` option deprecated
 
-The `--acp` option has been deprecated. Use the `kimi acp` subcommand instead.
+The `--acp` option has been deprecated. Use the `codrus acp` subcommand instead.
 
-- **Affected**: Scripts and IDE configurations using `kimi --acp`
-- **Migration**: `kimi --acp` → `kimi acp`
+- **Affected**: Scripts and IDE configurations using `codrus --acp`
+- **Migration**: `codrus --acp` → `codrus acp`
 
 ## 0.66 - Config file and provider type
 
@@ -139,19 +139,19 @@ The `--acp` option has been deprecated. Use the `kimi acp` subcommand instead.
 
 The config file format has been migrated from JSON to TOML.
 
-- **Affected**: Users with `~/.kimi/config.json`
-- **Migration**: Kimi Code CLI will automatically read the old JSON config, but manual migration to TOML is recommended
-- **New location**: `~/.kimi/config.toml`
+- **Affected**: Users with `~/.codrus/config.json`
+- **Migration**: CodrusCLI powered by Codrus models will automatically read the old JSON config, but manual migration to TOML is recommended
+- **New location**: `~/.codrus/config.toml`
 
 JSON config example:
 
 ```json
 {
-  "default_model": "kimi-k2-0711",
+  "default_model": "codrus-k2-0711",
   "providers": {
-    "kimi": {
-      "type": "kimi",
-      "base_url": "https://api.kimi.com/coding/v1",
+    "codrus": {
+      "type": "codrus",
+      "base_url": "https://api.codrus.com/coding/v1",
       "api_key": "your-key"
     }
   }
@@ -161,11 +161,11 @@ JSON config example:
 Equivalent TOML config:
 
 ```toml
-default_model = "kimi-k2-0711"
+default_model = "codrus-k2-0711"
 
-[providers.kimi]
-type = "kimi"
-base_url = "https://api.kimi.com/coding/v1"
+[providers.codrus]
+type = "codrus"
+base_url = "https://api.codrus.com/coding/v1"
 api_key = "your-key"
 ```
 
@@ -188,10 +188,10 @@ The `Bash` tool (or `CMD` on Windows) has been unified and renamed to `Shell`.
 
 ### `Task` tool moved to `multiagent` module
 
-The `Task` tool has been moved from `kimi_cli.tools.task` to `kimi_cli.tools.multiagent`.
+The `Task` tool has been moved from `codrus_cli.tools.task` to `codrus_cli.tools.multiagent`.
 
 - **Affected**: Custom tools importing the `Task` tool
-- **Migration**: Change import path to `from kimi_cli.tools.multiagent import Task`
+- **Migration**: Change import path to `from codrus_cli.tools.multiagent import Task`
 
 ### `PatchFile` tool removed
 
@@ -209,7 +209,7 @@ The `--ui` option has been removed in favor of separate flags.
 - **Affected**: Scripts using `--ui print`, `--ui acp`, or `--ui wire`
 - **Migration**:
   - `--ui print` → `--print`
-  - `--ui acp` → `kimi acp`
+  - `--ui acp` → `codrus acp`
   - `--ui wire` → `--wire`
 
 ## 0.42 - Keyboard shortcut changes
@@ -233,12 +233,12 @@ The `--agent` option has been renamed to `--agent-file`.
 
 ## 0.25 - Package name change
 
-### Package renamed from `ensoul` to `kimi-cli`
+### Package renamed from `ensoul` to `codrus-cli`
 
 - **Affected**: Code or scripts using the `ensoul` package name
 - **Migration**:
-  - Installation: `pip install ensoul` → `pip install kimi-cli` or `uv tool install kimi-cli`
-  - Command: `ensoul` → `kimi`
+  - Installation: `pip install ensoul` → `pip install codrus-cli` or `uv tool install codrus-cli`
+  - Command: `ensoul` → `codrus`
 
 ### `ENSOUL_*` parameter prefix changed
 

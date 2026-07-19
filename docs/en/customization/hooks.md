@@ -20,7 +20,7 @@ Example use cases:
 
 ## Supported Hook Events
 
-Kimi Code CLI supports 13 lifecycle events:
+CodrusCLI powered by Codrus models supports 13 lifecycle events:
 
 | Event | Trigger | Matcher Filter | Available Context |
 |-------|---------|----------------|-------------------|
@@ -40,7 +40,7 @@ Kimi Code CLI supports 13 lifecycle events:
 
 ## Configuring Hooks
 
-Define hooks in `~/.kimi/config.toml` using the `[[hooks]]` array syntax:
+Define hooks in `~/.codrus/config.toml` using the `[[hooks]]` array syntax:
 
 ```toml
 # Auto-format after file edits
@@ -53,19 +53,19 @@ command = "jq -r '.tool_input.file_path' | xargs prettier --write"
 [[hooks]]
 event = "PreToolUse"
 matcher = "WriteFile|StrReplaceFile"
-command = ".kimi/hooks/protect-env.sh"
+command = ".codrus/hooks/protect-env.sh"
 timeout = 10
 
 # Desktop notification when approval needed
 [[hooks]]
 event = "Notification"
 matcher = "permission_prompt"
-command = "osascript -e 'display notification \"Kimi needs attention\" with title \"Kimi CLI\"'"
+command = "osascript -e 'display notification \"Codrus needs attention\" with title \"CodrusCLI powered by Codrus models\"'"
 
 # Verify tasks complete before stopping
 [[hooks]]
 event = "Stop"
-command = ".kimi/hooks/check-complete.sh"
+command = ".codrus/hooks/check-complete.sh"
 ```
 
 ### Configuration Fields
@@ -123,7 +123,7 @@ When `permissionDecision` is `deny`, the operation is blocked and `permissionDec
 
 ```bash
 #!/bin/bash
-# .kimi/hooks/protect-env.sh
+# .codrus/hooks/protect-env.sh
 
 read JSON
 echo "$JSON" | jq -r '.tool_input.file_path' | grep -qE '\.env$|\.env\.local$'
@@ -140,7 +140,7 @@ exit 0
 
 ```bash
 #!/bin/bash
-# .kimi/hooks/auto-format.sh
+# .codrus/hooks/auto-format.sh
 
 FILE=$(python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_input',{}).get('file_path',''))")
 
@@ -157,10 +157,10 @@ exit 0
 
 ```bash
 #!/bin/bash
-# .kimi/hooks/check-complete.sh
+# .codrus/hooks/check-complete.sh
 
 # Check for running background tasks
-if kimi task list --active 2>/dev/null | grep -q "running"; then
+if codrus task list --active 2>/dev/null | grep -q "running"; then
     echo '{"hookSpecificOutput":{"permissionDecision":"deny","permissionDecisionReason":"Background tasks are still running. Please check /task first."}}'
     exit 0
 fi

@@ -1,21 +1,21 @@
 # Config Files
 
-Kimi Code CLI uses configuration files to manage API providers, models, services, and runtime parameters, supporting both TOML and JSON formats.
+CodrusCLI powered by Codrus models uses configuration files to manage API providers, models, services, and runtime parameters, supporting both TOML and JSON formats.
 
 ## Config file location
 
-The default configuration file is located at `~/.kimi/config.toml`. On first run, if the configuration file doesn't exist, Kimi Code CLI will automatically create a default configuration file.
+The default configuration file is located at `~/.codrus/config.toml`. On first run, if the configuration file doesn't exist, CodrusCLI powered by Codrus models will automatically create a default configuration file.
 
 You can specify a different configuration file (TOML or JSON format) with the `--config-file` flag:
 
 ```sh
-kimi --config-file /path/to/config.toml
+codrus --config-file /path/to/config.toml
 ```
 
-When calling Kimi Code CLI programmatically, you can also pass the complete configuration content directly via the `--config` flag:
+When calling CodrusCLI powered by Codrus models programmatically, you can also pass the complete configuration content directly via the `--config` flag:
 
 ```sh
-kimi --config '{"default_model": "kimi-for-coding", "providers": {...}, "models": {...}}'
+codrus --config '{"default_model": "codrus-for-coding", "providers": {...}, "models": {...}}'
 ```
 
 ## Config items
@@ -33,7 +33,7 @@ The configuration file contains the following top-level configuration items:
 | `theme` | `string` | Terminal color theme, either `"dark"` or `"light"` (defaults to `"dark"`) |
 | `show_thinking_stream` | `boolean` | Whether to stream the raw reasoning text in the live area as a 6-line scrolling preview and commit the full reasoning markdown to history when the block ends (defaults to `true`; set to `false` to show only the compact `Thinking ...` indicator and a one-line trace summary) |
 | `merge_all_available_skills` | `boolean` | Whether to merge skills from all brand directories (defaults to `true`); see [Skills configuration](../customization/skills.md) |
-| `telemetry` | `boolean` | Whether to enable anonymous telemetry to help improve kimi-cli (defaults to `true`; set to `false` to disable) |
+| `telemetry` | `boolean` | Whether to enable anonymous telemetry to help improve codrus-cli (defaults to `true`; set to `false` to disable) |
 | `providers` | `table` | API provider configuration |
 | `models` | `table` | Model configuration |
 | `loop_control` | `table` | Agent loop control parameters |
@@ -44,7 +44,7 @@ The configuration file contains the following top-level configuration items:
 ### Complete configuration example
 
 ```toml
-default_model = "kimi-for-coding"
+default_model = "codrus-for-coding"
 default_thinking = false
 default_yolo = false
 skip_afk_prompt_injection = false
@@ -55,14 +55,14 @@ show_thinking_stream = true
 merge_all_available_skills = true
 telemetry = true
 
-[providers.kimi-for-coding]
-type = "kimi"
-base_url = "https://api.kimi.com/coding/v1"
+[providers.codrus-for-coding]
+type = "codrus"
+base_url = "https://api.codrus.com/coding/v1"
 api_key = "sk-xxx"
 
-[models.kimi-for-coding]
-provider = "kimi-for-coding"
-model = "kimi-for-coding"
+[models.codrus-for-coding]
+provider = "codrus-for-coding"
+model = "codrus-for-coding"
 max_context_size = 262144
 
 [loop_control]
@@ -78,11 +78,11 @@ keep_alive_on_exit = false
 agent_task_timeout_s = 900
 
 [services.moonshot_search]
-base_url = "https://api.kimi.com/coding/v1/search"
+base_url = "https://api.codrus.com/coding/v1/search"
 api_key = "sk-xxx"
 
 [services.moonshot_fetch]
-base_url = "https://api.kimi.com/coding/v1/fetch"
+base_url = "https://api.codrus.com/coding/v1/fetch"
 api_key = "sk-xxx"
 
 [mcp.client]
@@ -105,7 +105,7 @@ Example:
 
 ```toml
 [providers.moonshot-cn]
-type = "kimi"
+type = "codrus"
 base_url = "https://api.moonshot.cn/v1"
 api_key = "sk-xxx"
 custom_headers = { "X-Custom-Header" = "value" }
@@ -130,9 +130,9 @@ If a `providers` or `models` key contains `.`, you must use a quoted TOML key. O
 Example:
 
 ```toml
-[models.kimi-k2-thinking-turbo]
+[models.codrus-k2-thinking-turbo]
 provider = "moonshot-cn"
-model = "kimi-k2-thinking-turbo"
+model = "codrus-k2-thinking-turbo"
 max_context_size = 262144
 capabilities = ["thinking", "image_in"]
 ```
@@ -173,7 +173,7 @@ capabilities = ["thinking"]
 
 ### `services`
 
-`services` configures external services used by Kimi Code CLI.
+`services` configures external services used by CodrusCLI powered by Codrus models.
 
 #### `moonshot_search`
 
@@ -196,7 +196,7 @@ Configures web fetch service. When enabled, the `FetchURL` tool prioritizes usin
 | `custom_headers` | `table` | No | Custom HTTP headers to attach to requests |
 
 ::: tip
-When configuring the Kimi Code platform using the `/login` command, search and fetch services are automatically configured.
+When configuring the Codrus Code platform using the `/login` command, search and fetch services are automatically configured.
 :::
 
 ### `mcp`
@@ -217,7 +217,7 @@ Use the `[[hooks]]` array syntax to define multiple hooks:
 [[hooks]]
 event = "PreToolUse"
 matcher = "Shell"
-command = ".kimi/hooks/safety-check.sh"
+command = ".codrus/hooks/safety-check.sh"
 timeout = 10
 
 [[hooks]]
@@ -235,6 +235,6 @@ command = "prettier --write"
 
 ## JSON configuration migration
 
-If `~/.kimi/config.toml` doesn't exist but `~/.kimi/config.json` exists, Kimi Code CLI will automatically migrate the JSON configuration to TOML format and backup the original file as `config.json.bak`.
+If `~/.codrus/config.toml` doesn't exist but `~/.codrus/config.json` exists, CodrusCLI powered by Codrus models will automatically migrate the JSON configuration to TOML format and backup the original file as `config.json.bak`.
 
 `--config-file` specified configuration files are parsed based on file extension. `--config` passed configuration content is first attempted as JSON, then falls back to TOML if that fails.

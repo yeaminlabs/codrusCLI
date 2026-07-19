@@ -8,7 +8,7 @@ import aiohttp
 import pytest
 from pydantic import SecretStr
 
-from kimi_cli.auth.oauth import (
+from codrus_cli.auth.oauth import (
     _REJECTED_REFRESH_TOKENS,
     OAuthError,
     OAuthManager,
@@ -18,7 +18,7 @@ from kimi_cli.auth.oauth import (
     _save_to_file,
     refresh_token,
 )
-from kimi_cli.config import Config, LLMModel, LLMProvider, OAuthRef, Services
+from codrus_cli.config import Config, LLMModel, LLMProvider, OAuthRef, Services
 
 # ── helpers ──────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ def _make_token(
         access_token=access,
         refresh_token=refresh,
         expires_at=time.time() + expires_in,
-        scope="kimi-code",
+        scope="codrus-code",
         token_type="Bearer",
         expires_in=expires_in,
     )
@@ -48,22 +48,22 @@ def _make_token(
 
 def _make_config() -> Config:
     provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://api.test/v1",
         api_key=SecretStr(""),
-        oauth=OAuthRef(storage="file", key="oauth/kimi-code"),
+        oauth=OAuthRef(storage="file", key="oauth/codrus-code"),
     )
-    model = LLMModel(provider="managed:kimi-code", model="test-model", max_context_size=100_000)
+    model = LLMModel(provider="managed:codrus-code", model="test-model", max_context_size=100_000)
     return Config(
-        default_model="managed:kimi-code/test-model",
-        providers={"managed:kimi-code": provider},
-        models={"managed:kimi-code/test-model": model},
+        default_model="managed:codrus-code/test-model",
+        providers={"managed:codrus-code": provider},
+        models={"managed:codrus-code/test-model": model},
         services=Services(),
     )
 
 
 def _make_manager(token: OAuthToken | None = None) -> OAuthManager:
-    with patch("kimi_cli.auth.oauth.load_tokens", return_value=token):
+    with patch("codrus_cli.auth.oauth.load_tokens", return_value=token):
         return OAuthManager(_make_config())
 
 
@@ -80,7 +80,7 @@ async def test_refresh_token_retries_on_network_error():
             "access_token": "new-access",
             "refresh_token": "new-refresh",
             "expires_in": 900,
-            "scope": "kimi-code",
+            "scope": "codrus-code",
             "token_type": "Bearer",
         }
     )
@@ -108,7 +108,7 @@ async def test_refresh_token_retries_on_network_error():
         async def __aexit__(self, *args):
             pass
 
-    with patch("kimi_cli.auth.oauth.new_client_session", return_value=FakeSession()):
+    with patch("codrus_cli.auth.oauth.new_client_session", return_value=FakeSession()):
         result = await refresh_token("old-refresh", max_retries=3)
 
     assert result.access_token == "new-access"
@@ -140,7 +140,7 @@ async def test_refresh_token_does_not_retry_on_unauthorized():
             pass
 
     with (
-        patch("kimi_cli.auth.oauth.new_client_session", return_value=FakeSession()),
+        patch("codrus_cli.auth.oauth.new_client_session", return_value=FakeSession()),
         pytest.raises(OAuthUnauthorized, match="Token revoked"),
     ):
         await refresh_token("bad-refresh", max_retries=3)
@@ -168,7 +168,7 @@ async def test_refresh_token_raises_after_all_retries_exhausted():
             pass
 
     with (
-        patch("kimi_cli.auth.oauth.new_client_session", return_value=FakeSession()),
+        patch("codrus_cli.auth.oauth.new_client_session", return_value=FakeSession()),
         pytest.raises(OAuthError, match="after retries"),
     ):
         await refresh_token("some-refresh", max_retries=2)
@@ -184,7 +184,7 @@ async def test_refresh_token_retries_on_5xx():
             "access_token": "recovered",
             "refresh_token": "new-refresh",
             "expires_in": 900,
-            "scope": "kimi-code",
+            "scope": "codrus-code",
             "token_type": "Bearer",
         }
     )
@@ -215,7 +215,7 @@ async def test_refresh_token_retries_on_5xx():
         async def __aexit__(self, *args):
             pass
 
-    with patch("kimi_cli.auth.oauth.new_client_session", return_value=FakeSession()):
+    with patch("codrus_cli.auth.oauth.new_client_session", return_value=FakeSession()):
         result = await refresh_token("old-refresh", max_retries=3)
 
     assert result.access_token == "recovered"
@@ -247,7 +247,7 @@ async def test_refresh_token_does_not_retry_on_400():
             pass
 
     with (
-        patch("kimi_cli.auth.oauth.new_client_session", return_value=FakeSession()),
+        patch("codrus_cli.auth.oauth.new_client_session", return_value=FakeSession()),
         pytest.raises(OAuthError, match="invalid_grant"),
     ):
         await refresh_token("bad-refresh", max_retries=3)
@@ -265,9 +265,9 @@ async def test_ensure_fresh_force_bypasses_threshold():
     mock_refresh = AsyncMock(return_value=_make_token())
 
     with (
-        patch("kimi_cli.auth.oauth.load_tokens", return_value=token),
-        patch("kimi_cli.auth.oauth.refresh_token", mock_refresh),
-        patch("kimi_cli.auth.oauth.save_tokens"),
+        patch("codrus_cli.auth.oauth.load_tokens", return_value=token),
+        patch("codrus_cli.auth.oauth.refresh_token", mock_refresh),
+        patch("codrus_cli.auth.oauth.save_tokens"),
     ):
         await manager.ensure_fresh(force=True)
 
@@ -289,9 +289,9 @@ async def test_ensure_fresh_uses_dynamic_threshold():
     mock_refresh = AsyncMock(return_value=_make_token())
 
     with (
-        patch("kimi_cli.auth.oauth.load_tokens", return_value=token),
-        patch("kimi_cli.auth.oauth.refresh_token", mock_refresh),
-        patch("kimi_cli.auth.oauth.save_tokens"),
+        patch("codrus_cli.auth.oauth.load_tokens", return_value=token),
+        patch("codrus_cli.auth.oauth.refresh_token", mock_refresh),
+        patch("codrus_cli.auth.oauth.save_tokens"),
     ):
         await manager.ensure_fresh()
 
@@ -310,9 +310,9 @@ async def test_ensure_fresh_skips_when_plenty_of_time():
     mock_refresh = AsyncMock(return_value=_make_token())
 
     with (
-        patch("kimi_cli.auth.oauth.load_tokens", return_value=token),
-        patch("kimi_cli.auth.oauth.refresh_token", mock_refresh),
-        patch("kimi_cli.auth.oauth.save_tokens"),
+        patch("codrus_cli.auth.oauth.load_tokens", return_value=token),
+        patch("codrus_cli.auth.oauth.refresh_token", mock_refresh),
+        patch("codrus_cli.auth.oauth.save_tokens"),
     ):
         await manager.ensure_fresh()
 
@@ -325,7 +325,7 @@ async def test_ensure_fresh_skips_when_plenty_of_time():
 def test_save_to_file_is_atomic(tmp_path):
     """_save_to_file should write atomically via rename, not in-place."""
     key = "test-atomic"
-    with patch("kimi_cli.auth.oauth._credentials_dir", return_value=tmp_path):
+    with patch("codrus_cli.auth.oauth._credentials_dir", return_value=tmp_path):
         token = _make_token()
         _save_to_file(key, token)
         path = tmp_path / f"{key}.json"
@@ -340,7 +340,7 @@ def test_save_to_file_is_atomic(tmp_path):
 def test_save_to_file_expires_in_roundtrip(tmp_path):
     """expires_in should survive a save/load roundtrip."""
     key = "test-roundtrip"
-    with patch("kimi_cli.auth.oauth._credentials_dir", return_value=tmp_path):
+    with patch("codrus_cli.auth.oauth._credentials_dir", return_value=tmp_path):
         token = _make_token(expires_in=7200)
         _save_to_file(key, token)
         path = tmp_path / f"{key}.json"
@@ -375,11 +375,11 @@ async def test_ensure_fresh_force_raises_on_unauthorized():
     manager = _make_manager(token)
 
     with (
-        patch("kimi_cli.auth.oauth.load_tokens", return_value=token),
+        patch("codrus_cli.auth.oauth.load_tokens", return_value=token),
         patch(
-            "kimi_cli.auth.oauth.refresh_token", AsyncMock(side_effect=OAuthUnauthorized("revoked"))
+            "codrus_cli.auth.oauth.refresh_token", AsyncMock(side_effect=OAuthUnauthorized("revoked"))
         ),
-        patch("kimi_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
+        patch("codrus_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
         pytest.raises(OAuthUnauthorized, match="revoked"),
     ):
         await manager.ensure_fresh(force=True)
@@ -394,18 +394,18 @@ async def test_unauthorized_must_not_delete_credentials_file(tmp_path, monkeypat
     permanent auth loss even though a valid token is sitting on disk.
     """
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
-    _save_to_file("oauth/kimi-code", _make_token(refresh="R1", expires_in=100))
-    cred = tmp_path / "credentials" / "kimi-code.json"
+    _save_to_file("oauth/codrus-code", _make_token(refresh="R1", expires_in=100))
+    cred = tmp_path / "credentials" / "codrus-code.json"
     assert cred.exists()
 
     manager = OAuthManager(_make_config())
 
     with (
         patch(
-            "kimi_cli.auth.oauth.refresh_token",
+            "codrus_cli.auth.oauth.refresh_token",
             AsyncMock(side_effect=OAuthUnauthorized("invalid_grant")),
         ),
-        patch("kimi_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
+        patch("codrus_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
         pytest.raises(OAuthUnauthorized),
     ):
         await manager.ensure_fresh(force=True)
@@ -414,7 +414,7 @@ async def test_unauthorized_must_not_delete_credentials_file(tmp_path, monkeypat
         "credentials file was deleted on a single 401 — a concurrent "
         "manager may have just rotated the token in the TOCTOU window"
     )
-    assert manager._access_tokens.get("oauth/kimi-code") is None, (
+    assert manager._access_tokens.get("oauth/codrus-code") is None, (
         "in-memory access token cache must still be cleared after 401"
     )
 
@@ -427,18 +427,18 @@ async def test_unauthorized_non_force_must_not_delete_credentials_file(tmp_path,
     manager may have just rotated the token.
     """
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
-    _save_to_file("oauth/kimi-code", _make_token(refresh="R1", expires_in=100))
-    cred = tmp_path / "credentials" / "kimi-code.json"
+    _save_to_file("oauth/codrus-code", _make_token(refresh="R1", expires_in=100))
+    cred = tmp_path / "credentials" / "codrus-code.json"
     assert cred.exists()
 
     manager = OAuthManager(_make_config())
 
     with (
         patch(
-            "kimi_cli.auth.oauth.refresh_token",
+            "codrus_cli.auth.oauth.refresh_token",
             AsyncMock(side_effect=OAuthUnauthorized("invalid_grant")),
         ),
-        patch("kimi_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
+        patch("codrus_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
     ):
         # force=False: should NOT raise, just log warning and return
         await manager.ensure_fresh(force=False)
@@ -447,7 +447,7 @@ async def test_unauthorized_non_force_must_not_delete_credentials_file(tmp_path,
         "credentials file was deleted on a background-refresh 401 — "
         "same TOCTOU risk as the force=True case"
     )
-    assert manager._access_tokens.get("oauth/kimi-code") is None, (
+    assert manager._access_tokens.get("oauth/codrus-code") is None, (
         "in-memory access token cache must still be cleared after 401"
     )
 
@@ -458,14 +458,14 @@ async def test_rejected_refresh_token_cooldown_skips_background_retry(tmp_path, 
     not be retried again immediately by the background-refresh path.
     """
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
-    _save_to_file("oauth/kimi-code", _make_token(refresh="R1", expires_in=100))
+    _save_to_file("oauth/codrus-code", _make_token(refresh="R1", expires_in=100))
 
     manager = OAuthManager(_make_config())
     refresh = AsyncMock(side_effect=OAuthUnauthorized("invalid_grant"))
 
     with (
-        patch("kimi_cli.auth.oauth.refresh_token", refresh),
-        patch("kimi_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
+        patch("codrus_cli.auth.oauth.refresh_token", refresh),
+        patch("codrus_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
     ):
         with pytest.raises(OAuthUnauthorized):
             await manager.ensure_fresh(force=True)
@@ -480,45 +480,45 @@ async def test_rejected_refresh_token_cooldown_skips_background_retry(tmp_path, 
 
 @pytest.mark.asyncio
 async def test_rejected_tombstone_cleared_when_concurrent_instance_rotated(tmp_path, monkeypatch):
-    """If another kimi-cli instance legitimately rotates the refresh token
+    """If another codrus-cli instance legitimately rotates the refresh token
     after we marked the old one rejected, the tombstone must clear and the
     new token must be picked up without going to the network.
     """
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
-    _save_to_file("oauth/kimi-code", _make_token(refresh="R1", expires_in=100))
+    _save_to_file("oauth/codrus-code", _make_token(refresh="R1", expires_in=100))
 
     manager = OAuthManager(_make_config())
     refresh = AsyncMock(side_effect=OAuthUnauthorized("invalid_grant"))
 
     # Step 1: hit a 401 with R1 → marks R1 rejected
     with (
-        patch("kimi_cli.auth.oauth.refresh_token", refresh),
-        patch("kimi_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
+        patch("codrus_cli.auth.oauth.refresh_token", refresh),
+        patch("codrus_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
         pytest.raises(OAuthUnauthorized),
     ):
         await manager.ensure_fresh(force=True)
 
-    assert _REJECTED_REFRESH_TOKENS.get("oauth/kimi-code") is not None
+    assert _REJECTED_REFRESH_TOKENS.get("oauth/codrus-code") is not None
 
     # Step 2: simulate a concurrent instance writing a fresh token (R2) to disk
     _save_to_file(
-        "oauth/kimi-code",
+        "oauth/codrus-code",
         _make_token(access="new-access", refresh="R2", expires_in=900),
     )
 
     # Step 3: next ensure_fresh should detect the rotation, clear the
     # tombstone, and NOT call refresh_token again
     with (
-        patch("kimi_cli.auth.oauth.refresh_token", refresh),
-        patch("kimi_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
+        patch("codrus_cli.auth.oauth.refresh_token", refresh),
+        patch("codrus_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
     ):
         await manager.ensure_fresh(force=False)
 
     assert refresh.await_count == 1, "should not retry refresh after rotation recovered"
-    assert _REJECTED_REFRESH_TOKENS.get("oauth/kimi-code") is None, (
+    assert _REJECTED_REFRESH_TOKENS.get("oauth/codrus-code") is None, (
         "tombstone must be cleared once the on-disk refresh_token no longer matches"
     )
-    assert manager._access_tokens.get("oauth/kimi-code") == "new-access", (
+    assert manager._access_tokens.get("oauth/codrus-code") == "new-access", (
         "the new access token from R2 should be cached"
     )
 
@@ -530,9 +530,9 @@ async def test_ensure_fresh_force_raises_on_network_error():
     manager = _make_manager(token)
 
     with (
-        patch("kimi_cli.auth.oauth.load_tokens", return_value=token),
+        patch("codrus_cli.auth.oauth.load_tokens", return_value=token),
         patch(
-            "kimi_cli.auth.oauth.refresh_token", AsyncMock(side_effect=OAuthError("after retries"))
+            "codrus_cli.auth.oauth.refresh_token", AsyncMock(side_effect=OAuthError("after retries"))
         ),
         pytest.raises(OAuthError, match="after retries"),
     ):
@@ -547,8 +547,8 @@ async def test_ensure_fresh_non_force_swallows_errors():
     manager = _make_manager(token)
 
     with (
-        patch("kimi_cli.auth.oauth.load_tokens", return_value=token),
-        patch("kimi_cli.auth.oauth.refresh_token", AsyncMock(side_effect=OAuthError("fail"))),
+        patch("codrus_cli.auth.oauth.load_tokens", return_value=token),
+        patch("codrus_cli.auth.oauth.refresh_token", AsyncMock(side_effect=OAuthError("fail"))),
     ):
         # Should NOT raise — errors are swallowed in background mode
         await manager.ensure_fresh()

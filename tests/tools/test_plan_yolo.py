@@ -6,11 +6,11 @@ from pathlib import Path
 
 import pytest
 
-from kimi_cli.soul import _current_wire
-from kimi_cli.tools.plan import ExitPlanMode, PlanOption
-from kimi_cli.tools.plan import Params as ExitParams
-from kimi_cli.tools.plan.enter import EnterPlanMode
-from kimi_cli.tools.plan.enter import Params as EnterParams
+from codrus_cli.soul import _current_wire
+from codrus_cli.tools.plan import ExitPlanMode, PlanOption
+from codrus_cli.tools.plan import Params as ExitParams
+from codrus_cli.tools.plan.enter import EnterPlanMode
+from codrus_cli.tools.plan.enter import Params as EnterParams
 
 # ---------------------------------------------------------------------------
 # helpers

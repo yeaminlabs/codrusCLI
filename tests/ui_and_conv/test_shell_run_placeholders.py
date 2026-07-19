@@ -7,11 +7,11 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-import kimi_cli.ui.shell as shell_module
-from kimi_cli.soul import Soul
-from kimi_cli.ui.shell.prompt import PromptMode, UserInput
-from kimi_cli.utils.slashcmd import SlashCommand, SlashCommandCall
-from kimi_cli.wire.types import TextPart
+import codrus_cli.ui.shell as shell_module
+from codrus_cli.soul import Soul
+from codrus_cli.ui.shell.prompt import PromptMode, UserInput
+from codrus_cli.utils.slashcmd import SlashCommand, SlashCommandCall
+from codrus_cli.wire.types import TextPart
 
 
 class _FakePromptSession:
@@ -83,7 +83,7 @@ async def test_shell_slash_alias_tracks_canonical_command(monkeypatch) -> None:
     )
 
     monkeypatch.setattr(
-        "kimi_cli.telemetry.track",
+        "codrus_cli.telemetry.track",
         lambda event, **properties: tracked.append((event, properties)),
     )
     monkeypatch.setattr(

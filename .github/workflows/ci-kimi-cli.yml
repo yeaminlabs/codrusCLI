@@ -1,4 +1,4 @@
-name: CI (kimi-cli)
+name: CI (codrus-cli)
 
 on:
   pull_request:
@@ -59,7 +59,7 @@ jobs:
       - name: Run checks
         env:
           UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
-        run: make check-kimi-cli
+        run: make check-codrus-cli
 
   test:
     strategy:
@@ -94,7 +94,7 @@ jobs:
         env:
           UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
           PYTHONUTF8: "1"
-        run: make test-kimi-cli
+        run: make test-codrus-cli
 
   build:
     strategy:
@@ -103,16 +103,16 @@ jobs:
         include:
           - runner: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
-            binary_path: dist/onefile/kimi
+            binary_path: dist/onefile/codrus
           - runner: ubuntu-22.04-arm
             target: aarch64-unknown-linux-gnu
-            binary_path: dist/onefile/kimi
+            binary_path: dist/onefile/codrus
           - runner: macos-14
             target: aarch64-apple-darwin
-            binary_path: dist/onefile/kimi
+            binary_path: dist/onefile/codrus
           - runner: windows-2022
             target: x86_64-pc-windows-msvc
-            binary_path: dist/onefile/kimi.exe
+            binary_path: dist/onefile/codrus.exe
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
@@ -160,8 +160,8 @@ jobs:
 
           binary = os.path.abspath(os.environ["BINARY_PATH"])
           result = subprocess.run([binary, "--help"], capture_output=True, text=True, check=True)
-          if "Kimi" not in result.stdout:
-              raise SystemExit("'Kimi' not found in --help output")
+          if "Codrus" not in result.stdout:
+              raise SystemExit("'Codrus' not found in --help output")
         env:
           BINARY_PATH: ${{ matrix.binary_path }}
 
@@ -169,7 +169,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: kimi-${{ matrix.target }}
+          name: codrus-${{ matrix.target }}
           path: ${{ matrix.binary_path }}
           if-no-files-found: error
           retention-days: 7
@@ -232,14 +232,14 @@ jobs:
             --kosong-pyproject packages/kosong/pyproject.toml \
             --pykaos-pyproject packages/kaos/pyproject.toml
 
-      - name: Check kimi-code version alignment
+      - name: Check codrus-code version alignment
         if: steps.version.outputs.bump == 'true'
         run: |
           python scripts/check_version_tag.py \
-            --pyproject packages/kimi-code/pyproject.toml \
+            --pyproject packages/codrus-code/pyproject.toml \
             --expected-version "${{ steps.version.outputs.head_version }}"
 
-      - name: Check kimi-code dependency pin
+      - name: Check codrus-code dependency pin
         if: steps.version.outputs.bump == 'true'
         shell: python
         run: |
@@ -247,12 +247,12 @@ jobs:
           from pathlib import Path
 
           expected_version = "${{ steps.version.outputs.head_version }}"
-          data = tomllib.loads(Path("packages/kimi-code/pyproject.toml").read_text())
+          data = tomllib.loads(Path("packages/codrus-code/pyproject.toml").read_text())
           deps = data["project"]["dependencies"]
-          expected = f"kimi-cli=={expected_version}"
+          expected = f"codrus-cli=={expected_version}"
           if expected not in deps:
               raise SystemExit(
-                  "kimi-code must depend on "
+                  "codrus-code must depend on "
                   f"{expected}, got: {deps}"
               )
 
@@ -263,13 +263,13 @@ jobs:
         include:
           - runner: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
-            binary_path: dist/kimi
+            binary_path: dist/codrus
           - runner: ubuntu-22.04-arm
             target: aarch64-unknown-linux-gnu
-            binary_path: dist/kimi
+            binary_path: dist/codrus
           - runner: macos-14
             target: aarch64-apple-darwin
-            binary_path: dist/kimi
+            binary_path: dist/codrus
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
@@ -279,4 +279,4 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@main
 
       - name: Run nix package
-        run: nix run .#kimi-cli -- --version && nix run . -- --help
+        run: nix run .#codrus-cli -- --version && nix run . -- --help

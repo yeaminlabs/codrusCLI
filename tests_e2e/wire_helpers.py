@@ -53,7 +53,7 @@ def make_env(home_dir: Path) -> dict[str, str]:
 
 
 def share_dir(home_dir: Path) -> Path:
-    return home_dir / ".kimi"
+    return home_dir / ".codrus"
 
 
 def register_path_replacements(
@@ -485,7 +485,7 @@ def _normalize_server_version(value: Any) -> Any:
     """Normalize the server version in initialize response to '<VERSION>'."""
     if isinstance(value, dict):
         value = {k: _normalize_server_version(v) for k, v in value.items()}
-        if value.get("name") == "Kimi Code CLI" and "version" in value:
+        if value.get("name") == "CodrusCLI powered by Codrus models" and "version" in value:
             value = {**value, "version": "<VERSION>"}
     elif isinstance(value, list):
         value = [_normalize_server_version(v) for v in value]
@@ -509,7 +509,7 @@ def base_command() -> list[str]:
     override = os.getenv(WIRE_COMMAND_ENV)
     if override is not None:
         override = override.strip()
-    parts = shlex.split(override, posix=os.name != "nt") if override else ["uv", "run", "kimi"]
+    parts = shlex.split(override, posix=os.name != "nt") if override else ["uv", "run", "codrus"]
     return [part for part in parts if part != "--wire"]
 
 

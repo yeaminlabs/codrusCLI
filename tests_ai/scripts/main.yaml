@@ -34,14 +34,14 @@ agent:
       Beside the `report.json`, you must also compile a concise human-readable summary in the final response, containing the passed and failed test cases, and suggestions on how to fix the failed ones.
       </role>
   tools:
-    - "kimi_cli.tools.multiagent:Task"
-    - "kimi_cli.tools.think:Think"
-    - "kimi_cli.tools.todo:SetTodoList"
-    - "kimi_cli.tools.shell:Shell"
-    - "kimi_cli.tools.file:Glob"
-    - "kimi_cli.tools.file:WriteFile" # for the final report file
-    # - "kimi_cli.tools.web:SearchWeb"
-    # - "kimi_cli.tools.web:FetchURL"
+    - "codrus_cli.tools.multiagent:Task"
+    - "codrus_cli.tools.think:Think"
+    - "codrus_cli.tools.todo:SetTodoList"
+    - "codrus_cli.tools.shell:Shell"
+    - "codrus_cli.tools.file:Glob"
+    - "codrus_cli.tools.file:WriteFile" # for the final report file
+    # - "codrus_cli.tools.web:SearchWeb"
+    # - "codrus_cli.tools.web:FetchURL"
   subagents:
     worker:
       path: ./worker.yaml

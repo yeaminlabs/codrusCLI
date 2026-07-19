@@ -11,18 +11,18 @@ from kosong.chat_provider import StreamedMessagePart, ThinkingEffort, TokenUsage
 from kosong.message import Message, TextPart
 from kosong.tooling.empty import EmptyToolset
 
-from kimi_cli.app import KimiCLI
-from kimi_cli.approval_runtime import ApprovalSource, get_current_approval_source_or_none
-from kimi_cli.background import TaskRuntime, TaskSpec
-from kimi_cli.llm import LLM
-from kimi_cli.notifications import NotificationEvent
-from kimi_cli.soul import RunCancelled, StatusSnapshot, _current_wire, run_soul
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.utils.aioqueue import QueueShutDown
-from kimi_cli.wire import Wire
-from kimi_cli.wire.types import ApprovalRequest, ApprovalResponse, Notification
+from codrus_cli.app import KimiCLI
+from codrus_cli.approval_runtime import ApprovalSource, get_current_approval_source_or_none
+from codrus_cli.background import TaskRuntime, TaskSpec
+from codrus_cli.llm import LLM
+from codrus_cli.notifications import NotificationEvent
+from codrus_cli.soul import RunCancelled, StatusSnapshot, _current_wire, run_soul
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.utils.aioqueue import QueueShutDown
+from codrus_cli.wire import Wire
+from codrus_cli.wire.types import ApprovalRequest, ApprovalResponse, Notification
 
 
 class _SequenceStream:
@@ -202,7 +202,7 @@ async def test_run_soul_emits_wire_notifications(runtime: Runtime, tmp_path: Pat
 
 
 @pytest.mark.asyncio
-async def test_kimi_cli_run_yields_root_hub_approvals(runtime: Runtime) -> None:
+async def test_codrus_cli_run_yields_root_hub_approvals(runtime: Runtime) -> None:
     class _ApprovalOnlySoul:
         def __init__(self, runtime: Runtime) -> None:
             self.runtime = runtime
@@ -257,7 +257,7 @@ async def test_kimi_cli_run_yields_root_hub_approvals(runtime: Runtime) -> None:
 
 
 @pytest.mark.asyncio
-async def test_kimi_cli_run_bridges_approval_resolution_back_to_runtime(runtime: Runtime) -> None:
+async def test_codrus_cli_run_bridges_approval_resolution_back_to_runtime(runtime: Runtime) -> None:
     class _ApprovalRoundTripSoul:
         def __init__(self, runtime: Runtime) -> None:
             self.runtime = runtime
@@ -328,7 +328,7 @@ async def test_kimi_cli_run_bridges_approval_resolution_back_to_runtime(runtime:
 
 
 @pytest.mark.asyncio
-async def test_kimi_cli_run_cancels_abandoned_approval_stream(
+async def test_codrus_cli_run_cancels_abandoned_approval_stream(
     runtime: Runtime,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -388,7 +388,7 @@ async def test_kimi_cli_run_cancels_abandoned_approval_stream(
 
 
 @pytest.mark.asyncio
-async def test_kimi_cli_run_propagates_external_cancel_event(
+async def test_codrus_cli_run_propagates_external_cancel_event(
     runtime: Runtime,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -448,7 +448,7 @@ async def test_kimi_cli_run_propagates_external_cancel_event(
 
 
 @pytest.mark.asyncio
-async def test_kimi_cli_run_replays_pending_approvals_from_previous_turn(runtime: Runtime) -> None:
+async def test_codrus_cli_run_replays_pending_approvals_from_previous_turn(runtime: Runtime) -> None:
     assert runtime.approval_runtime is not None
     runtime.approval_runtime.create_request(
         request_id="req-run-replay-1",

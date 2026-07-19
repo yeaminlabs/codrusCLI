@@ -1,12 +1,12 @@
 # Model Context Protocol
 
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) is an open protocol that allows AI models to safely interact with external tools and data sources. Kimi Code CLI supports connecting to MCP servers to extend AI capabilities.
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) is an open protocol that allows AI models to safely interact with external tools and data sources. CodrusCLI powered by Codrus models supports connecting to MCP servers to extend AI capabilities.
 
 ## What is MCP
 
 MCP servers provide "tools" for AI to use. For example, a database MCP server can provide query tools that allow AI to execute SQL queries; a browser MCP server can let AI control browsers for automation tasks.
 
-Kimi Code CLI has built-in tools (file read/write, shell commands, web fetching, etc.). Through MCP, you can add more tools, such as:
+CodrusCLI powered by Codrus models has built-in tools (file read/write, shell commands, web fetching, etc.). Through MCP, you can add more tools, such as:
 
 - Accessing specific APIs or databases
 - Controlling browsers or other applications
@@ -14,7 +14,7 @@ Kimi Code CLI has built-in tools (file read/write, shell commands, web fetching,
 
 ## MCP server management
 
-Use the [`kimi mcp`](../reference/kimi-mcp.md) command to manage MCP servers.
+Use the [`codrus mcp`](../reference/codrus-mcp.md) command to manage MCP servers.
 
 **Add a server**
 
@@ -22,34 +22,34 @@ Add an HTTP server:
 
 ```sh
 # Basic usage
-kimi mcp add --transport http context7 https://mcp.context7.com/mcp
+codrus mcp add --transport http context7 https://mcp.context7.com/mcp
 
 # With headers
-kimi mcp add --transport http context7 https://mcp.context7.com/mcp \
+codrus mcp add --transport http context7 https://mcp.context7.com/mcp \
   --header "CONTEXT7_API_KEY: your-key"
 
 # Using OAuth authentication
-kimi mcp add --transport http --auth oauth linear https://mcp.linear.app/mcp
+codrus mcp add --transport http --auth oauth linear https://mcp.linear.app/mcp
 ```
 
 Add a stdio server (local process):
 
 ```sh
-kimi mcp add --transport stdio chrome-devtools -- npx chrome-devtools-mcp@latest
+codrus mcp add --transport stdio chrome-devtools -- npx chrome-devtools-mcp@latest
 ```
 
 **List servers**
 
 ```sh
-kimi mcp list
+codrus mcp list
 ```
 
-While Kimi Code CLI is running, you can also enter `/mcp` to view connected servers and loaded tools.
+While CodrusCLI powered by Codrus models is running, you can also enter `/mcp` to view connected servers and loaded tools.
 
 **Remove a server**
 
 ```sh
-kimi mcp remove context7
+codrus mcp remove context7
 ```
 
 **OAuth authorization**
@@ -57,22 +57,22 @@ kimi mcp remove context7
 For servers using OAuth, you need to complete authorization first:
 
 ```sh
-kimi mcp auth linear
+codrus mcp auth linear
 ```
 
-This will open a browser to complete the OAuth flow. After successful authorization, Kimi Code CLI will save the token for future use.
+This will open a browser to complete the OAuth flow. After successful authorization, CodrusCLI powered by Codrus models will save the token for future use.
 
-MCP OAuth tokens are stored in `~/.kimi/mcp-oauth/`. After upgrading from older versions that used FastMCP 2.x, the old token cache is not migrated automatically; if `kimi mcp list` shows that an OAuth server needs authorization, run `kimi mcp auth <name>` again.
+MCP OAuth tokens are stored in `~/.codrus/mcp-oauth/`. After upgrading from older versions that used FastMCP 2.x, the old token cache is not migrated automatically; if `codrus mcp list` shows that an OAuth server needs authorization, run `codrus mcp auth <name>` again.
 
 **Test a server**
 
 ```sh
-kimi mcp test context7
+codrus mcp test context7
 ```
 
 ## MCP configuration file
 
-MCP server configuration is stored in `~/.kimi/mcp.json`, in a format compatible with other MCP clients:
+MCP server configuration is stored in `~/.codrus/mcp.json`, in a format compatible with other MCP clients:
 
 ```json
 {
@@ -99,13 +99,13 @@ MCP server configuration is stored in `~/.kimi/mcp.json`, in a format compatible
 Use the `--mcp-config-file` flag to load a configuration file from another location:
 
 ```sh
-kimi --mcp-config-file /path/to/mcp.json
+codrus --mcp-config-file /path/to/mcp.json
 ```
 
 Use the `--mcp-config` flag to pass JSON configuration directly:
 
 ```sh
-kimi --mcp-config '{"mcpServers": {"test": {"url": "https://..."}}}'
+codrus --mcp-config '{"mcpServers": {"test": {"url": "https://..."}}}'
 ```
 
 ## Loading status
@@ -120,11 +120,11 @@ MCP tools may access and operate external systems. Be aware of security risks.
 
 **Approval mechanism**
 
-Kimi Code CLI requests user confirmation for sensitive operations (such as file modifications and command execution). MCP tools follow the same approval mechanism, with all MCP tool calls prompting for confirmation.
+CodrusCLI powered by Codrus models requests user confirmation for sensitive operations (such as file modifications and command execution). MCP tools follow the same approval mechanism, with all MCP tool calls prompting for confirmation.
 
 **Prompt injection risks**
 
-Content returned by MCP tools may contain malicious instructions attempting to trick the AI into performing dangerous operations. Kimi Code CLI marks tool return content to help the AI distinguish between tool output and user instructions, but you should still:
+Content returned by MCP tools may contain malicious instructions attempting to trick the AI into performing dangerous operations. CodrusCLI powered by Codrus models marks tool return content to help the AI distinguish between tool output and user instructions, but you should still:
 
 - Only use MCP servers from trusted sources
 - Check whether AI-proposed operations are reasonable

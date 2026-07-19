@@ -9,7 +9,7 @@ This repository uses VitePress for the documentation site. The current docs are 
   - Guides: getting-started, use-cases, interaction, sessions, ides, integrations
   - Customization: mcp, skills, agents, print-mode, wire-mode
   - Configuration: config-files, providers, overrides, env-vars, data-locations
-  - Reference: kimi-command, kimi-acp, kimi-mcp, slash-commands, keyboard, tools, exit-codes
+  - Reference: codrus-command, codrus-acp, codrus-mcp, slash-commands, keyboard, tools, exit-codes
   - FAQ: setup, interaction, acp, mcp, print-wire, updates
   - Release notes: changelog, breaking-changes
 - Navigation and sidebar are defined in `docs/.vitepress/config.ts`. Any new or renamed page must be wired there for both locales.
@@ -56,7 +56,7 @@ Term mapping (Chinese <-> English, and proper noun handling):
 | Thinking 模式 | thinking mode | yes | no |
 | MCP | MCP | yes | yes |
 | ACP | ACP | yes | yes |
-| Kimi Code CLI | Kimi Code CLI | yes | yes |
+| CodrusCLI powered by Codrus models | CodrusCLI powered by Codrus models | yes | yes |
 | Agent Skills | Agent Skills | yes | yes |
 | Skill | skill | yes | no |
 | 系统提示词 | system prompt | no | no |
@@ -155,9 +155,9 @@ Outline prompt:
 ```markdown
 ## Install and upgrade
 
-Kimi Code CLI requires Python 3.12+. We recommend using uv for installation and management.
+CodrusCLI powered by Codrus models requires Python 3.12+. We recommend using uv for installation and management.
 
-If you haven't installed uv yet, please refer to the uv installation docs first. Install Kimi Code CLI:
+If you haven't installed uv yet, please refer to the uv installation docs first. Install CodrusCLI powered by Codrus models:
 
 (code block)
 

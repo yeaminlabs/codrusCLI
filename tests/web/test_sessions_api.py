@@ -8,14 +8,14 @@ from uuid import UUID
 import pytest
 from kaos.path import KaosPath
 
-from kimi_cli.session import Session
-from kimi_cli.session_state import load_session_state, save_session_state
-from kimi_cli.web.api import sessions as sessions_api
-from kimi_cli.web.api.sessions import SESSION_TITLE_MAX_COMPLETION_TOKENS
-from kimi_cli.web.models import GenerateTitleRequest
+from codrus_cli.session import Session
+from codrus_cli.session_state import load_session_state, save_session_state
+from codrus_cli.web.api import sessions as sessions_api
+from codrus_cli.web.api.sessions import SESSION_TITLE_MAX_COMPLETION_TOKENS
+from codrus_cli.web.models import GenerateTitleRequest
 
 if TYPE_CHECKING:
-    from kimi_cli.web.runner.process import KimiCLIRunner
+    from codrus_cli.web.runner.process import KimiCLIRunner
 
 
 @pytest.fixture
@@ -27,8 +27,8 @@ def isolated_share_dir(monkeypatch, tmp_path: Path) -> Path:
         share_dir.mkdir(parents=True, exist_ok=True)
         return share_dir
 
-    monkeypatch.setattr("kimi_cli.share.get_share_dir", _get_share_dir)
-    monkeypatch.setattr("kimi_cli.metadata.get_share_dir", _get_share_dir)
+    monkeypatch.setattr("codrus_cli.share.get_share_dir", _get_share_dir)
+    monkeypatch.setattr("codrus_cli.metadata.get_share_dir", _get_share_dir)
     return share_dir
 
 
@@ -85,12 +85,12 @@ async def test_generate_title_preserves_concurrent_manual_title(
         providers={"test-provider": object()},
     )
 
-    monkeypatch.setattr("kimi_cli.config.load_config", lambda: config)
+    monkeypatch.setattr("codrus_cli.config.load_config", lambda: config)
     monkeypatch.setattr(
-        "kimi_cli.llm.create_llm",
+        "codrus_cli.llm.create_llm",
         lambda provider_config, model_config, oauth=None: _FakeLLM(),
     )
-    monkeypatch.setattr("kimi_cli.auth.oauth.OAuthManager", _FakeOAuthManager)
+    monkeypatch.setattr("codrus_cli.auth.oauth.OAuthManager", _FakeOAuthManager)
 
     async def fake_generate(*, chat_provider, system_prompt, tools, history):
         state = load_session_state(session.dir)
@@ -123,11 +123,11 @@ async def test_generate_title_caps_kimi_completion(
     work_dir: KaosPath,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from kosong.chat_provider.kimi import Kimi
+    from kosong.chat_provider.codrus import Codrus
 
     session = await Session.create(work_dir)
-    chat_provider = Kimi(
-        model="kimi-k2",
+    chat_provider = Codrus(
+        model="codrus-k2",
         base_url="https://api.test/v1",
         api_key="test-key",
         stream=False,
@@ -137,14 +137,14 @@ async def test_generate_title_caps_kimi_completion(
         models={"test-model": SimpleNamespace(provider="test-provider")},
         providers={"test-provider": object()},
     )
-    monkeypatch.setattr("kimi_cli.config.load_config", lambda: config)
+    monkeypatch.setattr("codrus_cli.config.load_config", lambda: config)
     monkeypatch.setattr(
-        "kimi_cli.llm.create_llm",
+        "codrus_cli.llm.create_llm",
         lambda provider_config, model_config, oauth=None: SimpleNamespace(
             chat_provider=chat_provider
         ),
     )
-    monkeypatch.setattr("kimi_cli.auth.oauth.OAuthManager", _FakeOAuthManager)
+    monkeypatch.setattr("codrus_cli.auth.oauth.OAuthManager", _FakeOAuthManager)
     request_provider = object()
     captured_provider = None
     captured_overrides = None
@@ -161,7 +161,7 @@ async def test_generate_title_caps_kimi_completion(
         captured_provider = chat_provider
         return _FakeResult("Bounded Title")
 
-    monkeypatch.setattr("kimi_cli.llm.with_kimi_generation_overrides", fake_with_overrides)
+    monkeypatch.setattr("codrus_cli.llm.with_kimi_generation_overrides", fake_with_overrides)
     monkeypatch.setattr("kosong.generate", fake_generate)
 
     response = await sessions_api.generate_session_title(

@@ -16,39 +16,39 @@ from kaos.path import KaosPath
 from kosong.chat_provider.mock import MockChatProvider
 from pydantic import SecretStr
 
-from kimi_cli.auth.oauth import OAuthManager
-from kimi_cli.background import BackgroundTaskManager
-from kimi_cli.config import Config, MoonshotSearchConfig, get_default_config
-from kimi_cli.llm import ALL_MODEL_CAPABILITIES, LLM
-from kimi_cli.metadata import WorkDirMeta
-from kimi_cli.notifications import NotificationManager
-from kimi_cli.session import Session
-from kimi_cli.session_state import SessionState
-from kimi_cli.soul.agent import BuiltinSystemPromptArgs, LaborMarket, Runtime
-from kimi_cli.soul.approval import Approval
-from kimi_cli.soul.denwarenji import DenwaRenji
-from kimi_cli.soul.toolset import KimiToolset
-from kimi_cli.subagents import AgentTypeDefinition, ToolPolicy
-from kimi_cli.tools.agent import Agent as AgentTool
-from kimi_cli.tools.background import (
+from codrus_cli.auth.oauth import OAuthManager
+from codrus_cli.background import BackgroundTaskManager
+from codrus_cli.config import Config, MoonshotSearchConfig, get_default_config
+from codrus_cli.llm import ALL_MODEL_CAPABILITIES, LLM
+from codrus_cli.metadata import WorkDirMeta
+from codrus_cli.notifications import NotificationManager
+from codrus_cli.session import Session
+from codrus_cli.session_state import SessionState
+from codrus_cli.soul.agent import BuiltinSystemPromptArgs, LaborMarket, Runtime
+from codrus_cli.soul.approval import Approval
+from codrus_cli.soul.denwarenji import DenwaRenji
+from codrus_cli.soul.toolset import KimiToolset
+from codrus_cli.subagents import AgentTypeDefinition, ToolPolicy
+from codrus_cli.tools.agent import Agent as AgentTool
+from codrus_cli.tools.background import (
     TaskList,
     TaskOutput,
     TaskStop,
 )
-from kimi_cli.tools.dmail import SendDMail
-from kimi_cli.tools.file.glob import Glob
-from kimi_cli.tools.file.grep_local import Grep
-from kimi_cli.tools.file.read import ReadFile
-from kimi_cli.tools.file.read_media import ReadMediaFile
-from kimi_cli.tools.file.replace import StrReplaceFile
-from kimi_cli.tools.file.write import WriteFile
-from kimi_cli.tools.shell import Shell
-from kimi_cli.tools.think import Think
-from kimi_cli.tools.todo import SetTodoList
-from kimi_cli.tools.web.fetch import FetchURL
-from kimi_cli.tools.web.search import SearchWeb
-from kimi_cli.utils.environment import Environment
-from kimi_cli.wire.file import WireFile
+from codrus_cli.tools.dmail import SendDMail
+from codrus_cli.tools.file.glob import Glob
+from codrus_cli.tools.file.grep_local import Grep
+from codrus_cli.tools.file.read import ReadFile
+from codrus_cli.tools.file.read_media import ReadMediaFile
+from codrus_cli.tools.file.replace import StrReplaceFile
+from codrus_cli.tools.file.write import WriteFile
+from codrus_cli.tools.shell import Shell
+from codrus_cli.tools.think import Think
+from codrus_cli.tools.todo import SetTodoList
+from codrus_cli.tools.web.fetch import FetchURL
+from codrus_cli.tools.web.search import SearchWeb
+from codrus_cli.utils.environment import Environment
+from codrus_cli.wire.file import WireFile
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ def config() -> Config:
     """Create a Config instance."""
     conf = get_default_config()
     conf.services.moonshot_search = MoonshotSearchConfig(
-        base_url="https://api.kimi.com/coding/v1/search",
+        base_url="https://api.codrus.com/coding/v1/search",
         api_key=SecretStr("test-api-key"),
     )
     return conf
@@ -218,8 +218,8 @@ def toolset() -> KimiToolset:
 @contextmanager
 def tool_call_context(tool_name: str) -> Generator[None]:
     """Create a tool call context."""
-    from kimi_cli.soul.toolset import current_tool_call
-    from kimi_cli.wire.types import ToolCall
+    from codrus_cli.soul.toolset import current_tool_call
+    from codrus_cli.wire.types import ToolCall
 
     token = current_tool_call.set(
         ToolCall(id="test", function=ToolCall.FunctionBody(name=tool_name, arguments=None))

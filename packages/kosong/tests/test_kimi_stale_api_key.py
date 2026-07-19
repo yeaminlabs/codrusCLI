@@ -1,7 +1,7 @@
 """Verify that on_retryable_error preserves the latest api_key after token refresh.
 
 Bug scenario (now fixed):
-1. Kimi() constructed with api_key="token-A" → self._api_key = "token-A"
+1. Codrus() constructed with api_key="token-A" → self._api_key = "token-A"
 2. OAuth refresh updates client.api_key = "token-B" (via _apply_access_token)
 3. Network error triggers on_retryable_error() → rebuilds client
 4. BEFORE FIX: new client used stale "token-A" → 401
@@ -11,13 +11,12 @@ Bug scenario (now fixed):
 import httpx
 import pytest
 import respx
-
-from kosong.chat_provider.kimi import Kimi
+from kosong.chat_provider.codrus import Codrus
 
 
 def test_on_retryable_error_preserves_refreshed_api_key():
     """on_retryable_error must use the current client.api_key, not stale _api_key."""
-    provider = Kimi(model="test-model", api_key="token-A")
+    provider = Codrus(model="test-model", api_key="token-A")
 
     # Simulate OAuth token refresh: _apply_access_token updates client.api_key
     provider.client.api_key = "token-B"
@@ -38,13 +37,13 @@ def test_on_retryable_error_preserves_refreshed_api_key():
 
 def test_api_key_correct_after_construction():
     """Sanity check: client.api_key matches the value passed at construction."""
-    provider = Kimi(model="test-model", api_key="initial-token")
+    provider = Codrus(model="test-model", api_key="initial-token")
     assert provider.client.api_key == "initial-token"
 
 
 def test_on_retryable_error_idempotent():
     """Multiple on_retryable_error calls should all preserve the current key."""
-    provider = Kimi(model="test-model", api_key="token-A")
+    provider = Codrus(model="test-model", api_key="token-A")
 
     provider.client.api_key = "token-B"
     provider.on_retryable_error(Exception("error 1"))
@@ -90,7 +89,7 @@ async def test_rebuilt_client_sends_correct_authorization_header():
     with respx.mock:
         respx.post("https://api.moonshot.ai/v1/chat/completions").mock(side_effect=capture_headers)
 
-        provider = Kimi(model="test-model", api_key="token-A", stream=False)
+        provider = Codrus(model="test-model", api_key="token-A", stream=False)
 
         # Step 1: initial request uses token-A
         result = await provider.generate("", [], [])

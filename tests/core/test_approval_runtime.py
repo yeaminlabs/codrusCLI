@@ -6,7 +6,7 @@ import contextlib
 import pytest
 from kosong.tooling.empty import EmptyToolset
 
-from kimi_cli.approval_runtime import (
+from codrus_cli.approval_runtime import (
     ApprovalCancelledError,
     ApprovalRuntime,
     ApprovalSource,
@@ -14,14 +14,14 @@ from kimi_cli.approval_runtime import (
     reset_current_approval_source,
     set_current_approval_source,
 )
-from kimi_cli.soul import RunCancelled, run_soul
-from kimi_cli.soul.agent import Agent as SoulAgent
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.utils.aioqueue import QueueShutDown
-from kimi_cli.wire import Wire
-from kimi_cli.wire.root_hub import RootWireHub
-from kimi_cli.wire.types import ApprovalRequest, ApprovalResponse
+from codrus_cli.soul import RunCancelled, run_soul
+from codrus_cli.soul.agent import Agent as SoulAgent
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.utils.aioqueue import QueueShutDown
+from codrus_cli.wire import Wire
+from codrus_cli.wire.root_hub import RootWireHub
+from codrus_cli.wire.types import ApprovalRequest, ApprovalResponse
 
 
 @pytest.mark.asyncio

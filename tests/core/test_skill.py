@@ -7,7 +7,7 @@ import pytest
 from inline_snapshot import snapshot
 from kaos.path import KaosPath
 
-from kimi_cli.skill import (
+from codrus_cli.skill import (
     ScopedSkillsRoot,
     Skill,
     discover_skills,
@@ -339,12 +339,12 @@ async def test_discover_skills_from_roots_first_wins(tmp_path):
 
 @pytest.mark.asyncio
 async def test_find_user_skills_dirs_empty_generic_does_not_shadow_brand(monkeypatch, tmp_path):
-    """Core bug: empty ~/.config/agents/skills should NOT hide ~/.kimi/skills."""
+    """Core bug: empty ~/.config/agents/skills should NOT hide ~/.codrus/skills."""
     home_dir = tmp_path / "home"
     generic_dir = home_dir / ".config" / "agents" / "skills"
     generic_dir.mkdir(parents=True)  # exists but empty
 
-    brand_dir = home_dir / ".kimi" / "skills"
+    brand_dir = home_dir / ".codrus" / "skills"
     brand_dir.mkdir(parents=True)
     _write_skill(brand_dir / "my-skill", "---\nname: my-skill\ndescription: works\n---\n")
 
@@ -370,7 +370,7 @@ async def test_find_user_skills_dirs_none_exist(monkeypatch, tmp_path):
 async def test_find_user_skills_dirs_only_brand(monkeypatch, tmp_path):
     """Only brand dir exists → returned alone."""
     home_dir = tmp_path / "home"
-    brand_dir = home_dir / ".kimi" / "skills"
+    brand_dir = home_dir / ".codrus" / "skills"
     brand_dir.mkdir(parents=True)
     monkeypatch.setattr(Path, "home", lambda: home_dir)
 
@@ -398,7 +398,7 @@ async def test_find_user_skills_dirs_brand_wins_over_generic_same_skill(monkeypa
     generic_dir.mkdir(parents=True)
     _write_skill(generic_dir / "greet", "---\nname: greet\ndescription: generic version\n---\n")
 
-    brand_dir = home_dir / ".kimi" / "skills"
+    brand_dir = home_dir / ".codrus" / "skills"
     brand_dir.mkdir(parents=True)
     _write_skill(brand_dir / "greet", "---\nname: greet\ndescription: brand version\n---\n")
 
@@ -416,16 +416,16 @@ async def test_find_user_skills_dirs_brand_wins_over_generic_same_skill(monkeypa
 
 @pytest.mark.asyncio
 async def test_find_user_skills_dirs_brand_group_prefers_kimi_over_claude(monkeypatch, tmp_path):
-    """Brand group: ~/.kimi/skills takes priority over ~/.claude/skills."""
+    """Brand group: ~/.codrus/skills takes priority over ~/.claude/skills."""
     home_dir = tmp_path / "home"
-    kimi_dir = home_dir / ".kimi" / "skills"
+    kimi_dir = home_dir / ".codrus" / "skills"
     kimi_dir.mkdir(parents=True)
     claude_dir = home_dir / ".claude" / "skills"
     claude_dir.mkdir(parents=True)
     monkeypatch.setattr(Path, "home", lambda: home_dir)
 
     dirs = await find_user_skills_dirs()
-    # Only kimi should be selected (first existing in brand group)
+    # Only codrus should be selected (first existing in brand group)
     assert KaosPath.unsafe_from_local_path(kimi_dir) in dirs
     assert KaosPath.unsafe_from_local_path(claude_dir) not in dirs
 
@@ -436,7 +436,7 @@ async def test_find_project_skills_dirs_merge(tmp_path):
     work_dir = tmp_path / "project"
     generic_dir = work_dir / ".agents" / "skills"
     generic_dir.mkdir(parents=True)
-    brand_dir = work_dir / ".kimi" / "skills"
+    brand_dir = work_dir / ".codrus" / "skills"
     brand_dir.mkdir(parents=True)
 
     dirs = await find_project_skills_dirs(KaosPath.unsafe_from_local_path(work_dir))
@@ -447,9 +447,9 @@ async def test_find_project_skills_dirs_merge(tmp_path):
 
 @pytest.mark.asyncio
 async def test_find_project_skills_dirs_brand_prefers_kimi(tmp_path):
-    """Project layer brand group: .kimi/skills wins over .claude/skills."""
+    """Project layer brand group: .codrus/skills wins over .claude/skills."""
     work_dir = tmp_path / "project"
-    kimi_dir = work_dir / ".kimi" / "skills"
+    kimi_dir = work_dir / ".codrus" / "skills"
     kimi_dir.mkdir(parents=True)
     claude_dir = work_dir / ".claude" / "skills"
     claude_dir.mkdir(parents=True)
@@ -469,7 +469,7 @@ async def test_resolve_skills_roots_merges_user_and_project(monkeypatch, tmp_pat
     home_dir = tmp_path / "home"
     user_generic = home_dir / ".config" / "agents" / "skills"
     user_generic.mkdir(parents=True)
-    user_brand = home_dir / ".kimi" / "skills"
+    user_brand = home_dir / ".codrus" / "skills"
     user_brand.mkdir(parents=True)
     monkeypatch.setattr(Path, "home", lambda: home_dir)
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path / "share"))
@@ -477,7 +477,7 @@ async def test_resolve_skills_roots_merges_user_and_project(monkeypatch, tmp_pat
     work_dir = tmp_path / "project"
     proj_generic = work_dir / ".agents" / "skills"
     proj_generic.mkdir(parents=True)
-    proj_brand = work_dir / ".kimi" / "skills"
+    proj_brand = work_dir / ".codrus" / "skills"
     proj_brand.mkdir(parents=True)
 
     roots = _roots_of(await resolve_skills_roots(KaosPath.unsafe_from_local_path(work_dir)))
@@ -497,7 +497,7 @@ async def test_empty_generic_brand_skills_visible_end_to_end(monkeypatch, tmp_pa
     generic_dir = home_dir / ".config" / "agents" / "skills"
     generic_dir.mkdir(parents=True)  # exists but empty
 
-    brand_dir = home_dir / ".kimi" / "skills"
+    brand_dir = home_dir / ".codrus" / "skills"
     brand_dir.mkdir(parents=True)
     _write_skill(
         brand_dir / "deploy",
@@ -540,9 +540,9 @@ async def test_find_user_skills_dirs_generic_group_prefers_config_over_agents(
 
 @pytest.mark.asyncio
 async def test_find_user_skills_dirs_merge_brands_kimi_and_claude(monkeypatch, tmp_path):
-    """merge_brands=True: kimi + claude both exist → both returned, kimi first."""
+    """merge_brands=True: codrus + claude both exist → both returned, codrus first."""
     home_dir = tmp_path / "home"
-    kimi_dir = home_dir / ".kimi" / "skills"
+    kimi_dir = home_dir / ".codrus" / "skills"
     kimi_dir.mkdir(parents=True)
     claude_dir = home_dir / ".claude" / "skills"
     claude_dir.mkdir(parents=True)
@@ -551,7 +551,7 @@ async def test_find_user_skills_dirs_merge_brands_kimi_and_claude(monkeypatch, t
     dirs = await find_user_skills_dirs(merge_brands=True)
     assert KaosPath.unsafe_from_local_path(kimi_dir) in dirs
     assert KaosPath.unsafe_from_local_path(claude_dir) in dirs
-    # kimi before claude
+    # codrus before claude
     kimi_idx = dirs.index(KaosPath.unsafe_from_local_path(kimi_dir))
     claude_idx = dirs.index(KaosPath.unsafe_from_local_path(claude_dir))
     assert kimi_idx < claude_idx
@@ -559,9 +559,9 @@ async def test_find_user_skills_dirs_merge_brands_kimi_and_claude(monkeypatch, t
 
 @pytest.mark.asyncio
 async def test_find_user_skills_dirs_merge_brands_all_three(monkeypatch, tmp_path):
-    """merge_brands=True: all three brand dirs → [kimi, claude, codex]."""
+    """merge_brands=True: all three brand dirs → [codrus, claude, codex]."""
     home_dir = tmp_path / "home"
-    kimi_dir = home_dir / ".kimi" / "skills"
+    kimi_dir = home_dir / ".codrus" / "skills"
     kimi_dir.mkdir(parents=True)
     claude_dir = home_dir / ".claude" / "skills"
     claude_dir.mkdir(parents=True)
@@ -591,13 +591,13 @@ async def test_find_user_skills_dirs_merge_brands_only_claude(monkeypatch, tmp_p
 
 @pytest.mark.asyncio
 async def test_find_user_skills_dirs_merge_brands_same_skill_kimi_wins(monkeypatch, tmp_path):
-    """merge_brands=True + same skill name → kimi version wins via discover."""
+    """merge_brands=True + same skill name → codrus version wins via discover."""
     home_dir = tmp_path / "home"
-    kimi_dir = home_dir / ".kimi" / "skills"
+    kimi_dir = home_dir / ".codrus" / "skills"
     kimi_dir.mkdir(parents=True)
     _write_skill(
         kimi_dir / "deploy",
-        "---\nname: deploy\ndescription: kimi deploy\n---\n",
+        "---\nname: deploy\ndescription: codrus deploy\n---\n",
     )
     claude_dir = home_dir / ".claude" / "skills"
     claude_dir.mkdir(parents=True)
@@ -610,14 +610,14 @@ async def test_find_user_skills_dirs_merge_brands_same_skill_kimi_wins(monkeypat
     dirs = await find_user_skills_dirs(merge_brands=True)
     skills = await discover_skills_from_roots(_as_user(dirs))
     assert len(skills) == 1
-    assert skills[0].description == "kimi deploy"
+    assert skills[0].description == "codrus deploy"
 
 
 @pytest.mark.asyncio
 async def test_find_project_skills_dirs_merge_brands(tmp_path):
     """Project layer merge_brands=True: all brand dirs returned."""
     work_dir = tmp_path / "project"
-    kimi_dir = work_dir / ".kimi" / "skills"
+    kimi_dir = work_dir / ".codrus" / "skills"
     kimi_dir.mkdir(parents=True)
     claude_dir = work_dir / ".claude" / "skills"
     claude_dir.mkdir(parents=True)
@@ -638,7 +638,7 @@ def test_get_builtin_skills_dir_frozen_env(monkeypatch, tmp_path):
     monkeypatch.setattr(sys, "_MEIPASS", str(fake_meipass), raising=False)
 
     result = get_builtin_skills_dir()
-    assert result == fake_meipass / "kimi_cli" / "skills"
+    assert result == fake_meipass / "codrus_cli" / "skills"
 
 
 def test_get_builtin_skills_dir_normal_env():
@@ -646,14 +646,14 @@ def test_get_builtin_skills_dir_normal_env():
     result = get_builtin_skills_dir()
     # Should resolve relative to the skill package
     assert result.name == "skills"
-    assert result.parent.name == "kimi_cli"
+    assert result.parent.name == "codrus_cli"
 
 
 @pytest.mark.asyncio
 async def test_resolve_skills_roots_passes_merge_brands(monkeypatch, tmp_path):
     """resolve_skills_roots forwards merge_brands to finders."""
     home_dir = tmp_path / "home"
-    kimi_dir = home_dir / ".kimi" / "skills"
+    kimi_dir = home_dir / ".codrus" / "skills"
     kimi_dir.mkdir(parents=True)
     claude_dir = home_dir / ".claude" / "skills"
     claude_dir.mkdir(parents=True)
@@ -662,7 +662,7 @@ async def test_resolve_skills_roots_passes_merge_brands(monkeypatch, tmp_path):
 
     work_dir = tmp_path / "project"
 
-    # Without merge_brands: only kimi
+    # Without merge_brands: only codrus
     roots_default = _roots_of(await resolve_skills_roots(KaosPath.unsafe_from_local_path(work_dir)))
     assert KaosPath.unsafe_from_local_path(kimi_dir) in roots_default
     assert KaosPath.unsafe_from_local_path(claude_dir) not in roots_default
@@ -1029,7 +1029,7 @@ async def test_resolve_skills_roots_extra_skill_dirs_cli_override_still_wins(mon
 async def test_project_scope_skill_overrides_builtin_with_same_name(monkeypatch, tmp_path):
     """Project > Built-in: a project-local skill wins over a same-named builtin."""
     # Fake the bundled builtin skills dir via the module-level getter
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     builtin_dir = tmp_path / "fake_builtin"
     builtin_dir.mkdir()
@@ -1044,7 +1044,7 @@ async def test_project_scope_skill_overrides_builtin_with_same_name(monkeypatch,
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path / "share"))
 
     work_dir = tmp_path / "project"
-    proj_dir = work_dir / ".kimi" / "skills"
+    proj_dir = work_dir / ".codrus" / "skills"
     proj_dir.mkdir(parents=True)
     (proj_dir / "foo").mkdir()
     (proj_dir / "foo" / "SKILL.md").write_text(
@@ -1063,7 +1063,7 @@ async def test_project_scope_skill_overrides_builtin_with_same_name(monkeypatch,
 @pytest.mark.asyncio
 async def test_user_scope_skill_overrides_builtin_with_same_name(monkeypatch, tmp_path):
     """User > Built-in: a user-scope skill wins over a same-named builtin."""
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     builtin_dir = tmp_path / "fake_builtin"
     builtin_dir.mkdir()
@@ -1075,7 +1075,7 @@ async def test_user_scope_skill_overrides_builtin_with_same_name(monkeypatch, tm
     monkeypatch.setattr(skill_mod, "get_builtin_skills_dir", lambda: builtin_dir)
 
     home_dir = tmp_path / "home"
-    user_dir = home_dir / ".kimi" / "skills"
+    user_dir = home_dir / ".codrus" / "skills"
     user_dir.mkdir(parents=True)
     (user_dir / "foo").mkdir()
     (user_dir / "foo" / "SKILL.md").write_text(
@@ -1098,7 +1098,7 @@ async def test_user_scope_skill_overrides_builtin_with_same_name(monkeypatch, tm
 async def test_project_scope_skill_overrides_user_with_same_name(monkeypatch, tmp_path):
     """Project > User: when both define 'foo', the project version wins."""
     home_dir = tmp_path / "home"
-    user_dir = home_dir / ".kimi" / "skills"
+    user_dir = home_dir / ".codrus" / "skills"
     user_dir.mkdir(parents=True)
     (user_dir / "foo").mkdir()
     (user_dir / "foo" / "SKILL.md").write_text(
@@ -1109,7 +1109,7 @@ async def test_project_scope_skill_overrides_user_with_same_name(monkeypatch, tm
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path / "share"))
 
     work_dir = tmp_path / "project"
-    proj_dir = work_dir / ".kimi" / "skills"
+    proj_dir = work_dir / ".codrus" / "skills"
     proj_dir.mkdir(parents=True)
     (proj_dir / "foo").mkdir()
     (proj_dir / "foo" / "SKILL.md").write_text(
@@ -1128,7 +1128,7 @@ async def test_project_scope_skill_overrides_user_with_same_name(monkeypatch, tm
 @pytest.mark.asyncio
 async def test_extra_scope_skill_overrides_builtin_with_same_name(monkeypatch, tmp_path):
     """Extra > Built-in: an extra_skill_dirs skill wins over a same-named builtin."""
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     builtin_dir = tmp_path / "fake_builtin"
     builtin_dir.mkdir()
@@ -1165,7 +1165,7 @@ async def test_extra_scope_skill_overrides_builtin_with_same_name(monkeypatch, t
 async def test_user_scope_skill_overrides_extra_with_same_name(monkeypatch, tmp_path):
     """User > Extra: a user-scope skill wins over an extra_skill_dirs skill with the same name."""
     home_dir = tmp_path / "home"
-    user_dir = home_dir / ".kimi" / "skills"
+    user_dir = home_dir / ".codrus" / "skills"
     user_dir.mkdir(parents=True)
     (user_dir / "foo").mkdir()
     (user_dir / "foo" / "SKILL.md").write_text(
@@ -1274,7 +1274,7 @@ async def test_resolve_skills_roots_extra_skill_dirs_symlink_dedup(monkeypatch, 
     ``KaosPath.canonical()`` does not walk symlinks, so this relies on
     ``_append`` running a ``Path.resolve()`` pass on local backends.
     """
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     # Suppress built-in skills so we can make a tight ``len(roots) == 1``
     # assertion — the point of this test is exactly that the real dir and the
@@ -1308,7 +1308,7 @@ async def test_resolve_skills_roots_extra_skill_dirs_symlink_dedup(monkeypatch, 
 @pytest.mark.asyncio
 async def test_resolve_skills_roots_extra_skill_dirs_trailing_slash_dedup(monkeypatch, tmp_path):
     """Entries that differ only by a trailing slash collapse to one root."""
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     # Suppress built-in skills so we can make a tight ``len(roots) == 1``
     # assertion — otherwise the built-in roots would also land in ``roots``
@@ -1340,7 +1340,7 @@ async def test_resolve_skills_roots_extra_skill_dirs_trailing_slash_dedup(monkey
 @pytest.mark.asyncio
 async def test_resolve_skills_roots_extra_skill_dirs_symlink_scope_is_extra(monkeypatch, tmp_path):
     """After symlink dedup the surviving root still carries ``scope='extra'``."""
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     monkeypatch.setattr(skill_mod, "_supports_builtin_skills", lambda: False)
     monkeypatch.setattr(Path, "home", lambda: tmp_path / "empty_home")
@@ -1373,7 +1373,7 @@ async def test_resolve_skills_roots_extra_skill_dirs_symlink_stored_root_is_real
     keeps ``Path:`` lines stable across users who happen to add different
     symlinks to the same underlying directory.
     """
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     monkeypatch.setattr(skill_mod, "_supports_builtin_skills", lambda: False)
     monkeypatch.setattr(Path, "home", lambda: tmp_path / "empty_home")
@@ -1410,7 +1410,7 @@ async def test_discover_skills_permission_denied_returns_empty(monkeypatch, tmp_
     """If ``iterdir`` raises PermissionError, discovery logs and returns [] —
     it does not bubble the exception up and crash the whole session.
     """
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     # Build a real dir so the initial is_dir() check succeeds.
     root = tmp_path / "locked"
@@ -1448,7 +1448,7 @@ async def test_skills_dirs_override_excludes_user_and_project_scopes(monkeypatch
     end-to-end that the *discovered skills* don't contain the shadowed ones.
     """
     home_dir = tmp_path / "home"
-    user_brand = home_dir / ".kimi" / "skills"
+    user_brand = home_dir / ".codrus" / "skills"
     user_brand.mkdir(parents=True)
     _write_skill(
         user_brand / "foo",
@@ -1458,7 +1458,7 @@ async def test_skills_dirs_override_excludes_user_and_project_scopes(monkeypatch
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path / "share"))
 
     work_dir = tmp_path / "project"
-    proj_brand = work_dir / ".kimi" / "skills"
+    proj_brand = work_dir / ".codrus" / "skills"
     proj_brand.mkdir(parents=True)
     _write_skill(
         proj_brand / "foo",
@@ -1492,7 +1492,7 @@ async def test_three_scope_conflict_project_wins_over_user_and_builtin(monkeypat
     pairwise smoking-gun tests each cover 2 scopes at a time). Locks in that
     the full pipeline collapses to a single foo tagged ``project``.
     """
-    import kimi_cli.skill as skill_mod
+    import codrus_cli.skill as skill_mod
 
     builtin_dir = tmp_path / "fake_builtin"
     builtin_dir.mkdir()
@@ -1503,7 +1503,7 @@ async def test_three_scope_conflict_project_wins_over_user_and_builtin(monkeypat
     monkeypatch.setattr(skill_mod, "get_builtin_skills_dir", lambda: builtin_dir)
 
     home_dir = tmp_path / "home"
-    user_brand = home_dir / ".kimi" / "skills"
+    user_brand = home_dir / ".codrus" / "skills"
     user_brand.mkdir(parents=True)
     _write_skill(
         user_brand / "foo",
@@ -1513,7 +1513,7 @@ async def test_three_scope_conflict_project_wins_over_user_and_builtin(monkeypat
     monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path / "share"))
 
     work_dir = tmp_path / "project"
-    proj_brand = work_dir / ".kimi" / "skills"
+    proj_brand = work_dir / ".codrus" / "skills"
     proj_brand.mkdir(parents=True)
     _write_skill(
         proj_brand / "foo",
@@ -1576,13 +1576,13 @@ async def test_extra_skill_dirs_dedup_with_auto_discovery_overlap(monkeypatch, t
     """An ``extra_skill_dirs`` entry that points at an auto-discovered user
     dir does not create a duplicate root.
 
-    Scenario: user puts ``~/.kimi/skills`` (already auto-discovered as the
+    Scenario: user puts ``~/.codrus/skills`` (already auto-discovered as the
     user-scope brand root) into ``extra_skill_dirs`` as well. The canonicalize
     dedup must collapse this to a single root, preserving the original
     (user-scope) label rather than duplicating under ``extra``.
     """
     home_dir = tmp_path / "home"
-    user_brand = home_dir / ".kimi" / "skills"
+    user_brand = home_dir / ".codrus" / "skills"
     user_brand.mkdir(parents=True)
     _write_skill(
         user_brand / "foo",
@@ -1655,7 +1655,7 @@ async def test_cli_skills_dir_wins_over_extra_skill_dirs_same_name(monkeypatch, 
 # ---------------------------------------------------------------------------
 #
 # Before this change, ``find_project_skills_dirs`` only looked directly under
-# the work directory. Launching kimi-cli from a subdirectory of a monorepo
+# the work directory. Launching codrus-cli from a subdirectory of a monorepo
 # therefore missed skills defined at the repository root. These tests lock in
 # the new behaviour: walk up to the nearest ``.git`` ancestor (fallback to the
 # work directory when no marker is found).
@@ -1666,7 +1666,7 @@ async def test_find_project_skills_dirs_walks_up_to_git_root(tmp_path):
     """Project-scope discovery starts at the nearest ``.git`` ancestor.
 
     Launching from a nested subdirectory of a repo must still surface skills
-    defined at the repo root — otherwise running kimi-cli inside a monorepo
+    defined at the repo root — otherwise running codrus-cli inside a monorepo
     package silently loses all project-level skills.
     """
     repo = tmp_path / "repo"
@@ -1734,9 +1734,9 @@ async def test_find_project_skills_dirs_cwd_is_project_root_still_works(tmp_path
 # ---------------------------------------------------------------------------
 #
 # Users with skills in more than one brand directory (for example both
-# ~/.kimi/skills and ~/.claude/skills after migrating from Claude Code)
+# ~/.codrus/skills and ~/.claude/skills after migrating from Claude Code)
 # previously lost visibility of everything in .claude/skills because the
-# default "first brand wins" behaviour would stop at .kimi/skills. Flipping
+# default "first brand wins" behaviour would stop at .codrus/skills. Flipping
 # the Config default to True merges all existing brand dirs out of the box.
 # The two tests below lock both ends of that contract:
 #   (A) the Config value itself is True by default;
@@ -1751,7 +1751,7 @@ def test_config_default_merges_all_brand_skills():
     silently flips the default back to False shows up as an obvious red
     test, independent of the wiring inside Runtime.create.
     """
-    from kimi_cli.config import Config
+    from codrus_cli.config import Config
 
     assert Config().merge_all_available_skills is True
 
@@ -1763,14 +1763,14 @@ async def test_default_config_effectively_merges_user_brand_skill_dirs(monkeypat
     End-to-end companion to the Config-contract test above: threads the
     default Config value through the same bridge ``Runtime.create`` uses
     (``merge_brands=config.merge_all_available_skills``) and asserts that
-    both ``~/.kimi/skills`` and ``~/.claude/skills`` are surfaced. If the
+    both ``~/.codrus/skills`` and ``~/.claude/skills`` are surfaced. If the
     default is ever silently reverted, OR if the merge pipeline breaks for
     ``merge_brands=True``, this test catches it.
     """
-    from kimi_cli.config import Config
+    from codrus_cli.config import Config
 
     home_dir = tmp_path / "home"
-    kimi_dir = home_dir / ".kimi" / "skills"
+    kimi_dir = home_dir / ".codrus" / "skills"
     kimi_dir.mkdir(parents=True)
     claude_dir = home_dir / ".claude" / "skills"
     claude_dir.mkdir(parents=True)

@@ -4,11 +4,11 @@ Updated: 2026-01-26
 Status: Draft
 ---
 
-# KLIP-15: kagent Rust kernel 以 sidecar 方式接入 kimi-cli
+# KLIP-15: kagent Rust kernel 以 sidecar 方式接入 codrus-cli
 
 ## 背景与现状
 
-* Python 版 kimi-cli 的 Agent kernel 由 `KimiSoul` 驱动（`src/kimi_cli/soul/kimisoul.py`）。
+* Python 版 codrus-cli 的 Agent kernel 由 `KimiSoul` 驱动（`src/codrus_cli/soul/kimisoul.py`）。
 * UI（shell/print）与 ACP server 通过 Wire 事件与 kernel 交互。
 * Wire 协议已稳定，详见 `docs/zh/customization/wire-mode.md`（JSON-RPC 2.0 + stdio）。
 * Rust 版 kagent 已实现相同协议与核心逻辑，目标是替换 Python kernel，但**保留 Python UI/ACP**。

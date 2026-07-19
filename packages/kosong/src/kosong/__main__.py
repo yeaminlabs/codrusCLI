@@ -97,7 +97,7 @@ async def main():
     parser = ArgumentParser(description="A simple agent.")
     parser.add_argument(
         "provider",
-        choices=["kimi", "openai", "anthropic", "google"],
+        choices=["codrus", "openai", "anthropic", "google"],
         help="The chat provider to use.",
     )
     parser.add_argument(
@@ -107,7 +107,7 @@ async def main():
     )
     args = parser.parse_args()
 
-    provider: Literal["kimi", "openai", "anthropic", "google"] = args.provider
+    provider: Literal["codrus", "openai", "anthropic", "google"] = args.provider
     with_bash: bool = args.with_bash
 
     provider_upper = provider.upper()
@@ -116,17 +116,17 @@ async def main():
     model = os.getenv(f"{provider_upper}_MODEL_NAME")
 
     match provider:
-        case "kimi":
-            from kosong.chat_provider.kimi import Kimi
+        case "codrus":
+            from kosong.chat_provider.codrus import Codrus
 
             base_url = base_url or "https://api.moonshot.ai/v1"
             assert api_key is not None, "Expect KIMI_API_KEY environment variable"
-            model = model or "kimi-k2-turbo-preview"
+            model = model or "codrus-k2-turbo-preview"
 
-            # ``Kimi.generate`` no longer carries a built-in completion cap, so set a
+            # ``Codrus.generate`` no longer carries a built-in completion cap, so set a
             # conservative default here to keep this developer-facing demo from running
             # unbounded generations.
-            chat_provider = Kimi(
+            chat_provider = Codrus(
                 base_url=base_url, api_key=api_key, model=model
             ).with_generation_kwargs(max_completion_tokens=8192)
         case "openai":

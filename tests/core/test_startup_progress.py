@@ -7,10 +7,10 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-import kimi_cli.app as app_module
-import kimi_cli.ui.shell.startup as startup_module
-from kimi_cli.app import KimiCLI
-from kimi_cli.ui.shell.startup import ShellStartupProgress
+import codrus_cli.app as app_module
+import codrus_cli.ui.shell.startup as startup_module
+from codrus_cli.app import KimiCLI
+from codrus_cli.ui.shell.startup import ShellStartupProgress
 
 
 def test_shell_startup_progress_starts_once_and_updates_messages(monkeypatch) -> None:
@@ -64,7 +64,7 @@ def test_shell_startup_progress_is_noop_when_disabled(monkeypatch) -> None:
 
 
 @pytest.mark.asyncio
-async def test_kimi_cli_create_reports_startup_phases(session, config, monkeypatch) -> None:
+async def test_codrus_cli_create_reports_startup_phases(session, config, monkeypatch) -> None:
     phases: list[str] = []
     fake_runtime = SimpleNamespace(
         session=session,
@@ -120,11 +120,11 @@ async def test_kimi_cli_create_reports_startup_phases(session, config, monkeypat
 
 @pytest.mark.asyncio
 async def test_run_shell_adds_kimi_code_migration_card(runtime, monkeypatch) -> None:
-    from kimi_cli.ui.shell import WelcomeInfoItem
+    from codrus_cli.ui.shell import WelcomeInfoItem
 
     # Not installed -> the welcome screen shows the upgrade card (deterministic).
     monkeypatch.setattr(
-        "kimi_cli.ui.shell.migration_nudge.kimi_code_installed", lambda home=None: False
+        "codrus_cli.ui.shell.migration_nudge.kimi_code_installed", lambda home=None: False
     )
 
     captured: dict[str, object] = {}
@@ -143,9 +143,9 @@ async def test_run_shell_adds_kimi_code_migration_card(runtime, monkeypatch) -> 
     async def fake_env():
         yield
 
-    monkeypatch.setattr("kimi_cli.ui.shell.Shell", FakeShell)
+    monkeypatch.setattr("codrus_cli.ui.shell.Shell", FakeShell)
 
-    soul = SimpleNamespace(model_name="kimi-code", name="Kimi Code CLI")
+    soul = SimpleNamespace(model_name="codrus-code", name="CodrusCLI powered by Codrus models")
     cli = KimiCLI(soul, runtime, {})  # type: ignore[arg-type]
     monkeypatch.setattr(cli, "_env", fake_env)
 
@@ -159,7 +159,7 @@ async def test_run_shell_adds_kimi_code_migration_card(runtime, monkeypatch) -> 
 
 
 @pytest.mark.asyncio
-async def test_kimi_cli_create_cleans_stale_running_foreground_subagents(
+async def test_codrus_cli_create_cleans_stale_running_foreground_subagents(
     session, config, monkeypatch
 ) -> None:
     update_instance = Mock()

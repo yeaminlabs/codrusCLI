@@ -4,13 +4,13 @@ default_install_hook_types:
 repos:
   - repo: local
     hooks:
-      - id: make-format-kimi-cli
-        name: make format-kimi-cli
-        entry: make format-kimi-cli
+      - id: make-format-codrus-cli
+        name: make format-codrus-cli
+        entry: make format-codrus-cli
         language: system
         pass_filenames: false
-      - id: make-check-kimi-cli
-        name: make check-kimi-cli
-        entry: make check-kimi-cli
+      - id: make-check-codrus-cli
+        name: make check-codrus-cli
+        entry: make check-codrus-cli
         language: system
         pass_filenames: false

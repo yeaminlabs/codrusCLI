@@ -10,15 +10,15 @@ from unittest.mock import MagicMock
 import click
 import pytest
 
-import kimi_cli.telemetry as telemetry_mod
-import kimi_cli.telemetry.crash as crash_mod
-from kimi_cli.telemetry import attach_sink
-from kimi_cli.telemetry.crash import (
+import codrus_cli.telemetry as telemetry_mod
+import codrus_cli.telemetry.crash as crash_mod
+from codrus_cli.telemetry import attach_sink
+from codrus_cli.telemetry.crash import (
     install_asyncio_handler,
     install_crash_handlers,
     set_phase,
 )
-from kimi_cli.telemetry.sink import EventSink
+from codrus_cli.telemetry.sink import EventSink
 
 
 @pytest.fixture(autouse=True)

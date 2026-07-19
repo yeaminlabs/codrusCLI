@@ -21,7 +21,7 @@ from pydantic import BaseModel
 
 import kosong
 from kosong import StepResult
-from kosong.chat_provider.kimi import Kimi
+from kosong.chat_provider.codrus import Codrus
 from kosong.message import Message
 from kosong.tooling import CallableTool2, ToolOk, ToolReturnValue
 from kosong.tooling.simple import SimpleToolset
@@ -42,10 +42,10 @@ class AddTool(CallableTool2[AddToolParams]):
 
 
 async def main() -> None:
-    kimi = Kimi(
+    codrus = Codrus(
         base_url="https://api.moonshot.ai/v1",
         api_key="your_kimi_api_key_here",
-        model="kimi-k2-turbo-preview",
+        model="codrus-k2-turbo-preview",
     )
 
     toolset = SimpleToolset()
@@ -56,7 +56,7 @@ async def main() -> None:
     ]
 
     result: StepResult = await kosong.step(
-        chat_provider=kimi,
+        chat_provider=codrus,
         system_prompt="You are a precise math tutor.",
         toolset=toolset,
         history=history,

@@ -10,7 +10,7 @@ import asyncio
 
 import pytest
 
-from kimi_cli.utils.aioqueue import QueueShutDown
+from codrus_cli.utils.aioqueue import QueueShutDown
 
 
 @pytest.mark.asyncio
@@ -19,11 +19,11 @@ async def test_watcher_survives_handler_exception(runtime, tmp_path) -> None:
     and process subsequent messages instead of dying silently."""
     from kosong.tooling.empty import EmptyToolset
 
-    from kimi_cli.soul.agent import Agent
-    from kimi_cli.soul.context import Context
-    from kimi_cli.soul.kimisoul import KimiSoul
-    from kimi_cli.ui.shell import Shell
-    from kimi_cli.wire.types import ApprovalRequest
+    from codrus_cli.soul.agent import Agent
+    from codrus_cli.soul.context import Context
+    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.ui.shell import Shell
+    from codrus_cli.wire.types import ApprovalRequest
 
     agent = Agent(
         name="Test",
@@ -93,10 +93,10 @@ async def test_watcher_exits_gracefully_on_queue_shutdown(runtime, tmp_path) -> 
     not raise an unhandled QueueShutDown exception."""
     from kosong.tooling.empty import EmptyToolset
 
-    from kimi_cli.soul.agent import Agent
-    from kimi_cli.soul.context import Context
-    from kimi_cli.soul.kimisoul import KimiSoul
-    from kimi_cli.ui.shell import Shell
+    from codrus_cli.soul.agent import Agent
+    from codrus_cli.soul.context import Context
+    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.ui.shell import Shell
 
     agent = Agent(
         name="Test",

@@ -77,10 +77,10 @@ def test_cross_process_lock_mutual_exclusion(tmp_path: Path) -> None:
     script = textwrap.dedent(f"""\
         import asyncio, sys
         from pathlib import Path
-        from kimi_cli.auth.oauth import _CrossProcessLock
+        from codrus_cli.auth.oauth import _CrossProcessLock
 
         COUNTER = Path({str(counter)!r})
-        KEY = "oauth/kimi-code"
+        KEY = "oauth/codrus-code"
 
         async def main():
             for _ in range({N_INCREMENTS}):
@@ -108,7 +108,7 @@ def test_atomic_save_no_corruption(tmp_path: Path) -> None:
     script = textwrap.dedent(f"""\
         import sys, time, json
         from pathlib import Path
-        from kimi_cli.auth.oauth import OAuthToken, _save_to_file
+        from codrus_cli.auth.oauth import OAuthToken, _save_to_file
 
         worker_id = int(sys.argv[1])
 
@@ -117,14 +117,14 @@ def test_atomic_save_no_corruption(tmp_path: Path) -> None:
                 access_token=f"at-{{worker_id}}-{{i}}",
                 refresh_token=f"rt-{{worker_id}}-{{i}}",
                 expires_at=time.time() + 900,
-                scope="kimi-code",
+                scope="codrus-code",
                 token_type="Bearer",
                 expires_in=900.0,
             )
-            _save_to_file("kimi-code", token)
+            _save_to_file("codrus-code", token)
 
         # After all writes, the file must still be valid JSON.
-        path = Path({str(tmp_path / "share" / "credentials" / "kimi-code.json")!r})
+        path = Path({str(tmp_path / "share" / "credentials" / "codrus-code.json")!r})
         data = json.loads(path.read_text(encoding="utf-8"))
         assert "access_token" in data and "refresh_token" in data
     """)
@@ -133,7 +133,7 @@ def test_atomic_save_no_corruption(tmp_path: Path) -> None:
     for rc, _out, err in results:
         assert rc == 0, f"Worker failed:\n{err}"
 
-    cred = tmp_path / "share" / "credentials" / "kimi-code.json"
+    cred = tmp_path / "share" / "credentials" / "codrus-code.json"
     data = json.loads(cred.read_text(encoding="utf-8"))
     assert data["access_token"].startswith("at-")
     assert data["refresh_token"].startswith("rt-")
@@ -145,17 +145,17 @@ def test_atomic_save_no_corruption(tmp_path: Path) -> None:
 @pytest.mark.asyncio
 async def test_lock_file_created_with_safe_permissions(tmp_path: Path) -> None:
     """Lock file is created with 0o600 permissions (owner-only)."""
-    from kimi_cli.auth.oauth import _CrossProcessLock
+    from codrus_cli.auth.oauth import _CrossProcessLock
 
     share = tmp_path / "share"
     (share / "credentials").mkdir(parents=True, exist_ok=True)
     original = os.environ.get("KIMI_SHARE_DIR")
     os.environ["KIMI_SHARE_DIR"] = str(share)
     try:
-        lock = _CrossProcessLock("oauth/kimi-code")
+        lock = _CrossProcessLock("oauth/codrus-code")
         acquired = await lock.acquire_with_retry()
         assert acquired
-        lock_path = share / "credentials" / "kimi-code.lock"
+        lock_path = share / "credentials" / "codrus-code.lock"
         assert lock_path.exists()
         mode = lock_path.stat().st_mode & 0o777
         assert mode == 0o600, f"Expected 0o600, got {oct(mode)}"

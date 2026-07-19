@@ -11,22 +11,22 @@ const base = rawBase
 
 export default withMermaid(defineConfig({
   base,
-  title: 'Kimi Code CLI Docs',
-  description: 'Kimi Code CLI Documentation',
+  title: 'CodrusCLI powered by Codrus models Docs',
+  description: 'CodrusCLI powered by Codrus models Documentation',
 
   locales: {
     zh: {
       label: '简体中文',
       lang: 'zh-CN',
       link: '/zh/',
-      title: 'Kimi Code CLI 文档',
-      description: 'Kimi Code CLI 用户文档',
+      title: 'CodrusCLI powered by Codrus models 文档',
+      description: 'CodrusCLI powered by Codrus models 用户文档',
       themeConfig: {
         nav: [
           { text: '指南', link: '/zh/guides/getting-started', activeMatch: '/zh/guides/' },
           { text: '定制化', link: '/zh/customization/mcp', activeMatch: '/zh/customization/' },
           { text: '配置', link: '/zh/configuration/config-files', activeMatch: '/zh/configuration/' },
-          { text: '参考手册', link: '/zh/reference/kimi-command', activeMatch: '/zh/reference/' },
+          { text: '参考手册', link: '/zh/reference/codrus-command', activeMatch: '/zh/reference/' },
           { text: '常见问题', link: '/zh/faq' },
           { text: '发布说明', link: '/zh/release-notes/changelog', activeMatch: '/zh/release-notes/' },
         ],
@@ -74,13 +74,13 @@ export default withMermaid(defineConfig({
             {
               text: '参考手册',
               items: [
-                { text: 'kimi 命令', link: '/zh/reference/kimi-command' },
-                { text: 'kimi info 子命令', link: '/zh/reference/kimi-info' },
-                { text: 'kimi acp 子命令', link: '/zh/reference/kimi-acp' },
-                { text: 'kimi mcp 子命令', link: '/zh/reference/kimi-mcp' },
-                { text: 'kimi term 子命令', link: '/zh/reference/kimi-term' },
-                { text: 'kimi vis 子命令', link: '/zh/reference/kimi-vis' },
-                { text: 'kimi web 子命令', link: '/zh/reference/kimi-web' },
+                { text: 'codrus 命令', link: '/zh/reference/codrus-command' },
+                { text: 'codrus info 子命令', link: '/zh/reference/codrus-info' },
+                { text: 'codrus acp 子命令', link: '/zh/reference/codrus-acp' },
+                { text: 'codrus mcp 子命令', link: '/zh/reference/codrus-mcp' },
+                { text: 'codrus term 子命令', link: '/zh/reference/codrus-term' },
+                { text: 'codrus vis 子命令', link: '/zh/reference/codrus-vis' },
+                { text: 'codrus web 子命令', link: '/zh/reference/codrus-web' },
                 { text: '斜杠命令', link: '/zh/reference/slash-commands' },
                 { text: '键盘快捷键', link: '/zh/reference/keyboard' },
               ],
@@ -102,14 +102,14 @@ export default withMermaid(defineConfig({
       label: 'English',
       lang: 'en-US',
       link: '/en/',
-      title: 'Kimi Code CLI Docs',
-      description: 'Kimi Code CLI User Documentation',
+      title: 'CodrusCLI powered by Codrus models Docs',
+      description: 'CodrusCLI powered by Codrus models User Documentation',
       themeConfig: {
         nav: [
           { text: 'Guides', link: '/en/guides/getting-started', activeMatch: '/en/guides/' },
           { text: 'Customization', link: '/en/customization/mcp', activeMatch: '/en/customization/' },
           { text: 'Configuration', link: '/en/configuration/config-files', activeMatch: '/en/configuration/' },
-          { text: 'Reference', link: '/en/reference/kimi-command', activeMatch: '/en/reference/' },
+          { text: 'Reference', link: '/en/reference/codrus-command', activeMatch: '/en/reference/' },
           { text: 'FAQ', link: '/en/faq' },
           { text: 'Release Notes', link: '/en/release-notes/changelog', activeMatch: '/en/release-notes/' },
         ],
@@ -157,13 +157,13 @@ export default withMermaid(defineConfig({
             {
               text: 'Reference',
               items: [
-                { text: 'kimi Command', link: '/en/reference/kimi-command' },
-                { text: 'kimi info Subcommand', link: '/en/reference/kimi-info' },
-                { text: 'kimi acp Subcommand', link: '/en/reference/kimi-acp' },
-                { text: 'kimi mcp Subcommand', link: '/en/reference/kimi-mcp' },
-                { text: 'kimi term Subcommand', link: '/en/reference/kimi-term' },
-                { text: 'kimi vis Subcommand', link: '/en/reference/kimi-vis' },
-                { text: 'kimi web Subcommand', link: '/en/reference/kimi-web' },
+                { text: 'codrus Command', link: '/en/reference/codrus-command' },
+                { text: 'codrus info Subcommand', link: '/en/reference/codrus-info' },
+                { text: 'codrus acp Subcommand', link: '/en/reference/codrus-acp' },
+                { text: 'codrus mcp Subcommand', link: '/en/reference/codrus-mcp' },
+                { text: 'codrus term Subcommand', link: '/en/reference/codrus-term' },
+                { text: 'codrus vis Subcommand', link: '/en/reference/codrus-vis' },
+                { text: 'codrus web Subcommand', link: '/en/reference/codrus-web' },
                 { text: 'Slash Commands', link: '/en/reference/slash-commands' },
                 { text: 'Keyboard Shortcuts', link: '/en/reference/keyboard' },
               ],
@@ -187,7 +187,7 @@ export default withMermaid(defineConfig({
     outline: [2, 3],
     search: { provider: 'local' },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/MoonshotAI/kimi-cli' },
+      { icon: 'github', link: 'https://github.com/MoonshotAI/codrus-cli' },
     ],
   },
 

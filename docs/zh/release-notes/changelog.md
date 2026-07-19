@@ -1,20 +1,20 @@
 # 变更记录
 
-本页面记录 Kimi Code CLI 各版本的变更内容。
+本页面记录 CodrusCLI powered by Codrus models 各版本的变更内容。
 
 ## 未发布
 
 ## 1.49.0 (2026-07-16)
 
-**亮点**：Kimi 供应商的补全 token 预算现在会根据模型剩余上下文窗口动态调整，减少长轮次中的上下文超限错误
+**亮点**：Codrus 供应商的补全 token 预算现在会根据模型剩余上下文窗口动态调整，减少长轮次中的上下文超限错误
 
-- LLM：将 Kimi 的补全 token 预算钳制在模型剩余上下文窗口内——CLI 不再固定发送 `max_tokens=32000`，而是按每次请求估算剩余上下文并据此设置 `max_completion_tokens` 上限。可通过新的环境变量 `KIMI_MODEL_MAX_COMPLETION_TOKENS` 设置显式硬上限（`KIMI_MODEL_MAX_TOKENS` 仍为兼容别名；设为 `0` 或负值可关闭钳制）
-- Kosong：配置 Thinking 模式时不再自动向 Kimi 请求发送旧版 `reasoning_effort` 参数——请求现在仅使用 `thinking.type`，同时保留显式传递旧版参数的兼容能力
+- LLM：将 Codrus 的补全 token 预算钳制在模型剩余上下文窗口内——CLI 不再固定发送 `max_tokens=32000`，而是按每次请求估算剩余上下文并据此设置 `max_completion_tokens` 上限。可通过新的环境变量 `KIMI_MODEL_MAX_COMPLETION_TOKENS` 设置显式硬上限（`KIMI_MODEL_MAX_TOKENS` 仍为兼容别名；设为 `0` 或负值可关闭钳制）
+- Kosong：配置 Thinking 模式时不再自动向 Codrus 请求发送旧版 `reasoning_effort` 参数——请求现在仅使用 `thinking.type`，同时保留显式传递旧版参数的兼容能力
 - Kosong：修复 Thinking 模型返回的空字符串 `reasoning_content` 被从历史中丢弃的问题——此前「思考过但内容为空」的回复会被当作「没有思考」，导致要求每条 Assistant 消息都携带 `reasoning_content` 的 Preserved Thinking 后端在下一次请求时返回 400
 
 ## 1.47.0 (2026-06-05)
 
-- Shell：引导用户升级到新版独立 Kimi Code——新增 `/upgrade` 命令一键安装（自动迁移现有配置与会话），并新增欢迎界面提示与每天一次的退出提示
+- Shell：引导用户升级到新版独立 Codrus Code——新增 `/upgrade` 命令一键安装（自动迁移现有配置与会话），并新增欢迎界面提示与每天一次的退出提示
 - Shell：命令执行失败时在工具错误简报中显示末尾输出
 
 ## 1.46.0 (2026-05-28)
@@ -41,11 +41,11 @@
 - Shell：恢复 Markdown 链接高亮样式（链接文本为亮蓝色下划线，URL 为青色下划线），并为 h2-h6 标题添加下划线分隔符；调整表格渲染为带可见边框的方形样式
 - Core：后台任务完成时的系统通知现在包含完成时间戳和运行时长，通知 payload 中新增 `finished_at` 和 `duration_s` 字段，方便追踪
 - MCP：将 MCP 客户端栈升级到 FastMCP 3.2.4，避免 FastMCP OAuth 启动路径打印 Authlib 弃用警告
-- MCP：使用 FastMCP 3 的持久化存储 API，将 OAuth MCP token 存储在 `~/.kimi/mcp-oauth/`；已有 OAuth MCP 授权的用户升级后可能需要重新运行一次 `kimi mcp auth <name>`
+- MCP：使用 FastMCP 3 的持久化存储 API，将 OAuth MCP token 存储在 `~/.codrus/mcp-oauth/`；已有 OAuth MCP 授权的用户升级后可能需要重新运行一次 `codrus mcp auth <name>`
 
 ## 1.42.0 (2026-05-11)
 
-- Shell：把 Windows 上的 Shell 后端从 PowerShell 切换到 Git Bash——Shell 工具现在通过 `bash.exe`（POSIX 语义）执行命令，而不再使用 `powershell.exe`。Windows 用户能使用与 Linux/macOS 一致的 Unix 风格语法（`&&`、`||`、`|`、`/dev/null`、`grep`、`sed` 等）。**需要先安装 Git for Windows**：kimi-cli 按以下顺序查找 `bash.exe`：环境变量 `KIMI_CLI_GIT_BASH_PATH` → `where.exe git` → 标准安装路径（`C:\Program Files\Git\bin\bash.exe`）；如果都找不到，启动时打印安装提示并退出
+- Shell：把 Windows 上的 Shell 后端从 PowerShell 切换到 Git Bash——Shell 工具现在通过 `bash.exe`（POSIX 语义）执行命令，而不再使用 `powershell.exe`。Windows 用户能使用与 Linux/macOS 一致的 Unix 风格语法（`&&`、`||`、`|`、`/dev/null`、`grep`、`sed` 等）。**需要先安装 Git for Windows**：codrus-cli 按以下顺序查找 `bash.exe`：环境变量 `KIMI_CLI_GIT_BASH_PATH` → `where.exe git` → 标准安装路径（`C:\Program Files\Git\bin\bash.exe`）；如果都找不到，启动时打印安装提示并退出
 - Shell：防御 Windows 上模型偶尔幻觉出的 CMD 风格 `2>nul` 重定向——在命令进入 git-bash 前自动改写为 `2>/dev/null`；如果不防御，git-bash 会真的创建一个名为 `nul` 的文件（Windows 保留设备名），破坏 `git add .` 和 `git clone`。该改写仅在 Windows 上生效；Linux/macOS 上 `>nul` 是合法的写入到名为 `nul` 文件的重定向，保持原样
 - File：`ReadFile`、`WriteFile`、`StrReplaceFile`、`Glob`、`Grep` 在 Windows 上接受 POSIX 形式的路径——除原生 Windows 路径外，这些工具现在能识别 `/c/Users/foo`（Git Bash 形式）、`/cygdrive/c/Users/foo`（Cygwin 形式）和 `\\server\share`（UNC 形式），并在文件系统操作前自动转换为原生形式
 - Shell：在 LLM 步骤重试时清除已流式输出的不完整内容——以前，如果某个步骤在流式输出中途失败（例如触发速率限制或服务器错误），被中断尝试所产生的未完成文本和未结束的工具调用块会留在屏幕上，并与新尝试的输出混在一起。现在 Shell 界面会丢弃这部分不完整状态，并打印一条重试横幅，显示失败原因、尝试次数和等待时间；Print 模式也会在重试时丢弃已缓冲的 Assistant 消息
@@ -54,7 +54,7 @@
 
 ## 1.41.0 (2026-04-30)
 
-- Plugin：支持直接从 `.zip` URL 安装插件——`kimi plugin install` 现在可以接受以 `.zip` 结尾的 HTTP(S) URL（例如 GitHub/GitLab 的 archive 链接 `.../archive/refs/heads/main.zip`），下载后解压再解析 `plugin.json`，与原有的 git URL、本地目录、本地 zip 文件三种来源并列
+- Plugin：支持直接从 `.zip` URL 安装插件——`codrus plugin install` 现在可以接受以 `.zip` 结尾的 HTTP(S) URL（例如 GitHub/GitLab 的 archive 链接 `.../archive/refs/heads/main.zip`），下载后解压再解析 `plugin.json`，与原有的 git URL、本地目录、本地 zip 文件三种来源并列
 - Shell：在无显示环境的 Linux（如 SSH 远程）上启用剪贴板图片粘贴——当 pyperclip 不可用（例如 DISPLAY 未设置）时，Ctrl-V 现在会回退到 xclip 或 wl-paste，使远程剪贴板桥接仍能注入图片；同时防止 pyperclip 失效时内置剪贴板快捷键造成 UI 崩溃
 
 ## 1.40.0 (2026-04-28)
@@ -66,7 +66,7 @@
 - Web：修复 AI 标题生成在用户已手动重命名后才返回时覆盖手动标题的问题——最终写入前会重新读取状态，若另一请求已将 `title_generated` 标记为完成，则尊重新标题不再覆盖
 - Web：会话重命名、归档、取消归档、生成标题失败时弹出 toast 提示，而不仅仅是记录到 console
 - Web：折叠工具详情后仍保留工具媒体预览——工具返回的图片和视频现在渲染在工具卡片下方，而不是折叠详情区域内部，因此折叠工具后预览缩略图仍然可见
-- Kosong：修复 Kimi 供应商在 OAuth 令牌刷新后仍使用过期的 API 密钥的问题——`on_retryable_error` 现在从当前 client 读取 `api_key`，而不是缓存的 `_api_key`，因此在可重试错误后重建 client 时会保留通过 `client.api_key` 应用的 OAuth 令牌刷新
+- Kosong：修复 Codrus 供应商在 OAuth 令牌刷新后仍使用过期的 API 密钥的问题——`on_retryable_error` 现在从当前 client 读取 `api_key`，而不是缓存的 `_api_key`，因此在可重试错误后重建 client 时会保留通过 `client.api_key` 应用的 OAuth 令牌刷新
 - Core：修复审批请求 5 分钟自动超时并被误报为 `Rejected by user` 的问题；现在活跃的前台和子 Agent 审批请求都会无限等待用户响应
 - Shell：修复 `/usage` 剩余额度渲染错误——进度条、告警颜色和 `% left` 文案现在都统一基于剩余额度比例计算，剩余额度充足时显示为绿色满格，接近耗尽时显示为黄色或红色
 - Shell：在提示框状态栏显示当前正在运行的后台 Agent 任务数——原有的 `⚙ bash: N` 徽章只统计后台 Shell 任务，把后台 Agent 子代理过滤掉了，所以多个子代理同时在跑时提示框看起来像空闲，用户无法判断工作是否还在进行；现在状态栏会渲染 `⚙ bash: N` 与 `⚙ agent: N` 两个相互独立的徽章（任一计数为 0 时自动隐藏），终端太窄无法同时容纳两者时优先丢弃 agent 徽章
@@ -77,23 +77,23 @@
 
 ## 1.39.0 (2026-04-24)
 
-- Skill：修复项目级 Skill 被忽略、用户级 Skill 在同名冲突时静默获胜的问题——系统提示现在会把发现到的 Skill 按 `### Project` / `### User` / `### Extra` / `### Built-in` 四个分组呈现，让模型能分辨出每个 Skill 来自哪一层；当同一 Skill 名称同时存在于多个作用域时，越具体的作用域优先（Project > User > Extra > Built-in），项目自身的 `.kimi/skills/foo` 或 `.claude/skills/foo` 现在能正确覆盖用户级或内置的同名 `foo`，而不是被它们覆盖
+- Skill：修复项目级 Skill 被忽略、用户级 Skill 在同名冲突时静默获胜的问题——系统提示现在会把发现到的 Skill 按 `### Project` / `### User` / `### Extra` / `### Built-in` 四个分组呈现，让模型能分辨出每个 Skill 来自哪一层；当同一 Skill 名称同时存在于多个作用域时，越具体的作用域优先（Project > User > Extra > Built-in），项目自身的 `.codrus/skills/foo` 或 `.claude/skills/foo` 现在能正确覆盖用户级或内置的同名 `foo`，而不是被它们覆盖
 - Skill：除了标准的 `<name>/SKILL.md` 子目录结构之外，现在也会识别 Skills 目录下的扁平 `<name>.md` 单文件 Skill——便于将扁平 Markdown 集合迁移到 Skills 目录；`name` 默认取文件名去掉 `.md` 后的部分（frontmatter 里显式写了 `name:` 时以 frontmatter 为准），描述解析与子目录形式统一走同一条三级链（frontmatter `description:` → 正文第一个非空行，超过 240 字符会截断 → `"No description provided."` 兜底）；当同目录下扁平 `.md` 和子目录形式同名时，以子目录为准，并记录一条警告日志
 - Skill：新增 `extra_skill_dirs` 配置项，用于在内置 / 用户级 / 项目级自动发现的基础上追加自定义 Skills 目录——每一项可以是绝对路径、`~` 前缀路径（会按 `$HOME` 展开），或相对于项目根的路径（即 `work_dir` 向上第一个包含 `.git` 的目录，不是当前工作目录）；不存在的条目会被静默跳过，同一路径的软链接或带尾部斜杠的写法会被 canonicalize 归并为一条根，避免同一目录在系统提示里重复出现
 - Skill：强化 Skill 发现对 `is_dir` / `iterdir` 抛出 `OSError` 的容错（例如 `extra_skill_dirs` 指向一个权限受限的目录）——受影响的条目会被记录并跳过，不会让整轮 Skill 发现失败中断
 - Core：修复 DeepSeek V4（以及其它走 `openai_legacy` 的 OpenAI 兼容 Thinking 模式后端）在思考轮次后紧跟工具调用时，被 API 以 400 `The reasoning_content in the thinking mode must be passed back to the API` 拒绝的问题——`openai_legacy` 供应商现在默认 `reasoning_key = "reasoning_content"`，模型响应中的推理内容会被正确存入历史，并在后续轮次自动回传给 API。同时给 `LLMProvider` 新增可选字段 `reasoning_key`，便于覆盖字段名（例如非标网关使用的 `"reasoning"`）或设置为 `""` 完全关闭推理内容回传
 - Core：新增 `skip_yolo_prompt_injection` 配置项，用于抑制 yolo 模式下注入的系统提示词——基于 `KimiSoul` 构建自定义应用且不需要该提示时很有用
-- Kimi：新增环境变量 `KIMI_MODEL_THINKING_KEEP`，将其值原样作为 `thinking.keep` 字段发送给 Moonshot API，用于启用 Preserved Thinking（例如 `export KIMI_MODEL_THINKING_KEEP=all` 可让模型在多轮之间保留历史 `reasoning_content`）；仅对支持 Preserved Thinking 的 Moonshot 模型（如 `kimi-k2.6` / `kimi-k2-thinking`）生效，未设置或空字符串时请求体不携带该字段、等同当前默认行为，且仅在当前模型真正处于 Thinking 模式时才注入，以避免 API 收到只有 `thinking.keep` 而缺少 `thinking.type` 的无效请求体。注意 `keep=all` 会因为重新发送历史推理内容而显著增加输入 token 与 API 费用
-- Kosong：修复 `Kimi.with_extra_body` 在后续调用新增其它 `thinking.*` 字段时静默丢掉已有 `thinking.type` 的问题——`thinking` 子对象现在按字段合并，而不是被整体浅覆盖，使得 `with_thinking(...)` 与 `with_extra_body({"thinking": {...}})` 组合使用时两次设置的字段都能保留
-- Kosong：修复 Kimi provider 在 `tool_calls` 旁发送空 `content` 导致 Moonshot API 返回 400 "text content is empty" 错误的问题。当 Assistant 消息带有工具调用且可见内容实际为空（无文本或仅包含空白 / think 部分）时，现在会完全省略 `content` 字段
+- Codrus：新增环境变量 `KIMI_MODEL_THINKING_KEEP`，将其值原样作为 `thinking.keep` 字段发送给 Moonshot API，用于启用 Preserved Thinking（例如 `export KIMI_MODEL_THINKING_KEEP=all` 可让模型在多轮之间保留历史 `reasoning_content`）；仅对支持 Preserved Thinking 的 Moonshot 模型（如 `codrus-k2.6` / `codrus-k2-thinking`）生效，未设置或空字符串时请求体不携带该字段、等同当前默认行为，且仅在当前模型真正处于 Thinking 模式时才注入，以避免 API 收到只有 `thinking.keep` 而缺少 `thinking.type` 的无效请求体。注意 `keep=all` 会因为重新发送历史推理内容而显著增加输入 token 与 API 费用
+- Kosong：修复 `Codrus.with_extra_body` 在后续调用新增其它 `thinking.*` 字段时静默丢掉已有 `thinking.type` 的问题——`thinking` 子对象现在按字段合并，而不是被整体浅覆盖，使得 `with_thinking(...)` 与 `with_extra_body({"thinking": {...}})` 组合使用时两次设置的字段都能保留
+- Kosong：修复 Codrus provider 在 `tool_calls` 旁发送空 `content` 导致 Moonshot API 返回 400 "text content is empty" 错误的问题。当 Assistant 消息带有工具调用且可见内容实际为空（无文本或仅包含空白 / think 部分）时，现在会完全省略 `content` 字段
 - Shell：修复审批请求反馈文本输入的光标渲染问题——光标块现在根据实际光标位置正确渲染，不再始终固定在行尾；当光标位于文本中间时，光标所在字符会以反色显示（模拟终端原生块光标效果）
-- Kosong：修复接入某些 MCP 服务端（如 JetBrains Rider MCP 的 `truncateMode`）时，Moonshot API 以 `400 At path 'properties.X': type is not defined` 拒绝每次请求导致会话完全无法使用的问题——这些 MCP 工具的参数 schema 里有仅声明 `enum`/`const` 或根本没有类型提示的属性，符合 JSON Schema 规范但过不了 Moonshot 的严格校验；现在 Kimi 供应商会在发送前为每个工具 schema 补齐 JSON Schema `type`（尽量从 `enum`/`const` 值推断，否则默认 `"string"`），OpenAI 和 Anthropic 路径不受影响
-- Skill：项目级 Skill 发现现在会先向上查找最近的 `.git` 祖先目录，再查 `.kimi/skills` / `.claude/skills` / `.codex/skills` / `.agents/skills`，这样即使从子目录（例如 monorepo 的某个 package 内部）启动 kimi-cli，也能正确识别仓库根目录下定义的 Skills；找不到 `.git` 标记时，回退到工作目录本身，避免误入无关的上层目录
-- Skill：`merge_all_available_skills` 的默认值从 `false` 改为 `true`。kimi-cli 现在默认会合并用户级和项目级所有已存在的品牌 Skills 目录（`.kimi/skills`、`.claude/skills`、`.codex/skills`），而不是仅使用找到的第一个——让同时拥有多个品牌目录（例如同时保留 `~/.kimi/skills` 和 `~/.claude/skills`）的用户开箱即看到所有 Skills。**行为变更**：依赖旧默认（仅取第一个）的用户可通过在配置中显式设置 `merge_all_available_skills = false` 恢复旧行为。
+- Kosong：修复接入某些 MCP 服务端（如 JetBrains Rider MCP 的 `truncateMode`）时，Moonshot API 以 `400 At path 'properties.X': type is not defined` 拒绝每次请求导致会话完全无法使用的问题——这些 MCP 工具的参数 schema 里有仅声明 `enum`/`const` 或根本没有类型提示的属性，符合 JSON Schema 规范但过不了 Moonshot 的严格校验；现在 Codrus 供应商会在发送前为每个工具 schema 补齐 JSON Schema `type`（尽量从 `enum`/`const` 值推断，否则默认 `"string"`），OpenAI 和 Anthropic 路径不受影响
+- Skill：项目级 Skill 发现现在会先向上查找最近的 `.git` 祖先目录，再查 `.codrus/skills` / `.claude/skills` / `.codex/skills` / `.agents/skills`，这样即使从子目录（例如 monorepo 的某个 package 内部）启动 codrus-cli，也能正确识别仓库根目录下定义的 Skills；找不到 `.git` 标记时，回退到工作目录本身，避免误入无关的上层目录
+- Skill：`merge_all_available_skills` 的默认值从 `false` 改为 `true`。codrus-cli 现在默认会合并用户级和项目级所有已存在的品牌 Skills 目录（`.codrus/skills`、`.claude/skills`、`.codex/skills`），而不是仅使用找到的第一个——让同时拥有多个品牌目录（例如同时保留 `~/.codrus/skills` 和 `~/.claude/skills`）的用户开箱即看到所有 Skills。**行为变更**：依赖旧默认（仅取第一个）的用户可通过在配置中显式设置 `merge_all_available_skills = false` 恢复旧行为。
 
 ## 1.38.0 (2026-04-22)
 - Shell：修复 approval 弹窗超时后被误报为 `Rejected by user` 的问题——300 秒安全超时后，工具调用会以 `Rejected: approval timed out` 拒绝，让离开电脑一段时间后回来的用户能分辨出这是超时而非自己的手动拒绝。经常长时间离开的话可以加 `--yolo`/`-y` 自动批准工具调用
-- Auth：修复 OAuth 用户因并发实例的 refresh token 轮换竞态被反复要求 `/login` 的问题——当另一个并发运行的 kimi-cli 实例（终端、VS Code 插件或 `kimi -p` 一次性命令）合法地轮换了 refresh token，当前实例手里过期的 refresh 请求会从服务端拿回 401，“别的实例是否刚轮换过”的磁盘检查与 `delete_tokens` 调用之间存在 TOCTOU 竞态，即使磁盘上马上会被写入一份有效的新 token，凭证文件也会被误删，迫使用户重新登录；现在依旧清理内存缓存（真正失效的 token 会在下一次请求时浮现），但保留文件，让并发实例刚写入的新 token 有机会被恢复，最终的 `/login` 仍会原子覆盖该文件
+- Auth：修复 OAuth 用户因并发实例的 refresh token 轮换竞态被反复要求 `/login` 的问题——当另一个并发运行的 codrus-cli 实例（终端、VS Code 插件或 `codrus -p` 一次性命令）合法地轮换了 refresh token，当前实例手里过期的 refresh 请求会从服务端拿回 401，“别的实例是否刚轮换过”的磁盘检查与 `delete_tokens` 调用之间存在 TOCTOU 竞态，即使磁盘上马上会被写入一份有效的新 token，凭证文件也会被误删，迫使用户重新登录；现在依旧清理内存缓存（真正失效的 token 会在下一次请求时浮现），但保留文件，让并发实例刚写入的新 token 有机会被恢复，最终的 `/login` 仍会原子覆盖该文件
 - Kosong：修复 Anthropic 供应商将并行工具结果拆分到多个 user message 的问题——现在会将仅包含工具结果的连续 user message 合并为单条消息，以符合 Anthropic Messages API 规范（assistant 一轮中的所有 `tool_use` 必须在同一条 user message 内回答）；修复了严格兼容后端（如 DeepSeek `/anthropic` 接口）返回 400 错误的问题，并避免官方后端静默地引导模型放弃并行工具调用
 
 ## 1.37.0 (2026-04-20)
@@ -126,12 +126,12 @@
 
 ## 1.33.0 (2026-04-13)
 
-- Shell：将托管模型显示统一为 "Kimi for Code"，移除欢迎界面和 `/login` 提示中硬编码的 `kimi-k2.5` 版本号
+- Shell：将托管模型显示统一为 "Codrus for Code"，移除欢迎界面和 `/login` 提示中硬编码的 `codrus-k2.5` 版本号
 
 ## 1.32.0 (2026-04-13)
 
 - Core：将 MCP 工具输出截断至 10 万字符以防止上下文溢出——所有内容类型（文本和内联媒体如 image/audio/video data URL）共享同一字符预算；Playwright 等返回完整 DOM（500KB+）或大型 base64 截图的工具现在会被截断并附加提示信息；超出预算的媒体部分会被丢弃；不支持的 MCP 内容类型会被优雅处理而非导致当前轮次崩溃
-- CLI：修复 PyInstaller 二进制包缺少延迟加载 CLI 子命令的问题——`kimi info`、`kimi export`、`kimi mcp`、`kimi plugin`、`kimi vis` 和 `kimi web` 现在在独立二进制分发中可正常使用
+- CLI：修复 PyInstaller 二进制包缺少延迟加载 CLI 子命令的问题——`codrus info`、`codrus export`、`codrus mcp`、`codrus plugin`、`codrus vis` 和 `codrus web` 现在在独立二进制分发中可正常使用
 - Shell：将思考指示器精简为紧凑的单行布局——显示 `Thinking` 标签、动画点、耗时、token 数和实时的 tokens/秒脉冲；结束后在历史中留下 `Thought for Xs · N tokens` 痕迹
 
 ## 1.31.0 (2026-04-10)
@@ -150,10 +150,10 @@
 - Shell：新增 `BtwBegin`/`BtwEnd` Wire 事件，支持跨客户端侧问
 - Shell：改进 spinner 中的耗时格式——超过 60 秒的时长现在显示为 `"1m 23s"` 而非 `"83s"`；低于 1 秒的显示为 `"<1s"`
 - Shell：修复 btw 面板中的 Rich markup 注入问题——包含 `[`/`]` 字符的用户问题现在会被转义，防止 spinner 文本和面板标题出现渲染错误或样式注入
-- Core：改进错误诊断——丰富内部日志覆盖，在 `kimi export` 导出的归档中包含相关日志文件和系统信息，并为常见错误（认证、网络、超时、配额）提供可操作的提示消息
+- Core：改进错误诊断——丰富内部日志覆盖，在 `codrus export` 导出的归档中包含相关日志文件和系统信息，并为常见错误（认证、网络、超时、配额）提供可操作的提示消息
 - Shell：当工作目录在会话期间不可访问时优雅退出并显示崩溃报告——检测 CWD 丢失场景（外置硬盘拔出、目录被删除或文件系统卸载），打印包含会话 ID 和工作目录的恢复面板后干净退出
 - Shell：使用 `git ls-files` 进行 `@` 文件引用发现——文件补全器现在优先使用 `git ls-files --recurse-submodules` 查询文件列表（5 秒超时），非 Git 仓库则回退到 `os.walk`；此修复解决了大型仓库（如包含 6.5 万+文件的 apache/superset）中 1000 文件限制导致字母顺序靠后的目录无法访问的问题（修复 #1375）
-- Core：新增共享的 `file_filter` 模块——通过 `src/kimi_cli/utils/file_filter.py` 统一 Shell 和 Web 的文件引用逻辑，提供一致的路径过滤、忽略目录排除和 Git 感知文件发现
+- Core：新增共享的 `file_filter` 模块——通过 `src/codrus_cli/utils/file_filter.py` 统一 Shell 和 Web 的文件引用逻辑，提供一致的路径过滤、忽略目录排除和 Git 感知文件发现
 - Shell：防止文件引用 scope 参数的路径遍历——文件补全器请求中的 `scope` 参数现在会经过验证，防止目录遍历攻击
 - Web：恢复文件浏览器 API 中的未过滤目录列表——文件浏览器端点不再应用 Git 感知过滤，确保 Web UI 文件选择器中显示所有文件
 - Todo：重构 `SetTodoList` 工具，支持状态持久化并防止工具调用风暴——待办事项现在会持久化到会话状态（主 Agent）和独立状态文件（子 Agent）；新增查询模式（省略 `todos` 参数可读取当前状态）和清空模式（传 `[]` 清空）；工具描述中增加了防风暴指导，防止在没有实际进展的情况下反复调用（修复 #1710）
@@ -165,22 +165,22 @@
 - Shell：细化空闲时后台完成的自动触发行为——恢复的 Shell 会话在用户发送消息前，不会因为历史遗留的后台通知而自动启动新的前景轮次；当用户正在输入时，新的后台完成事件也会短暂延后触发，避免抢占提示符或打断 CJK 输入法组合态
 - Core：修复前景轮次在中断后残留不平衡 Wire 事件的问题——轮次因取消或步骤中断退出时，现在也会补发 `TurnEnd`，避免恢复多次后会话 `wire.jsonl` 越来越脏
 - Core：提升会话启动恢复的鲁棒性——`--continue`/`--resume` 现在可容忍损坏的 `context.jsonl` 记录，以及损坏的子 Agent、后台任务或通知持久化工件；CLI 会尽可能跳过无效状态并继续恢复会话，而不是直接启动失败
-- CLI：改进 `kimi export` 会话导出体验——`kimi export` 现在默认预览并确认当前工作目录的上一个会话，显示会话 ID、标题和最后一条用户消息时间；新增 `--yes` 跳过确认；同时修复显式会话 ID 时 `--output` 放在参数后面会被错误解析为子命令的问题
+- CLI：改进 `codrus export` 会话导出体验——`codrus export` 现在默认预览并确认当前工作目录的上一个会话，显示会话 ID、标题和最后一条用户消息时间；新增 `--yes` 跳过确认；同时修复显式会话 ID 时 `--output` 放在参数后面会被错误解析为子命令的问题
 - Grep：新增 `include_ignored` 参数，支持搜索被 `.gitignore` 排除的文件——设为 `true` 时启用 ripgrep 的 `--no-ignore` 标志，可搜索构建产物或 `node_modules` 等通常被忽略的文件；敏感文件（如 `.env`）仍由敏感文件保护层过滤；默认 `false`，不影响现有行为
 - Core：为 Grep 和 Read 工具添加敏感文件保护——`.env`、SSH 私钥（`id_rsa`、`id_ed25519`、`id_ecdsa`）和云凭据（`.aws/credentials`、`.gcp/credentials`）会被检测并拦截；Grep 从结果中过滤并显示警告，Read 直接拒绝读取；`.env.example`/`.env.sample`/`.env.template` 不受影响
 - Core：修复并行 foreground 子 Agent 审批请求导致会话挂死的问题——在交互式 Shell 模式下，`_set_active_approval_sink` 不再将待处理的审批请求 flush 到 live view sink（该 sink 无法渲染审批弹窗）；请求保留在 pending 队列中由 prompt modal 路径处理；同时为 `wait_for_response` 增加 300 秒超时，确保未被 resolve 的审批请求最终抛出 `ApprovalCancelledError` 而非永久挂起
 - CLI：新增 `--session`/`--resume`（`-S`/`-r`）参数用于恢复会话——不带参数时打开交互式会话选择器（仅 Shell UI）；带会话 ID 时恢复指定会话；以统一的可选值参数设计替代了被回退的 `--pick-session`/`--list-sessions`
 - CLI：新增 CJK 安全的 `shorten()` 工具函数——替换所有 `textwrap.shorten` 调用，使不含空格的中日韩文本能优雅截断，而非被折叠成仅剩省略号
-- Core：修复当通用目录（如 `~/.config/agents/skills/`）存在但为空时，品牌目录（如 `~/.kimi/skills/`）中的 Skills 静默消失的问题——Skill 目录发现现在独立搜索品牌组和通用组目录并合并结果，而非在所有候选目录中找到第一个就停止
-- Core：新增 `merge_all_available_skills` 配置项——启用后，所有存在的品牌目录（`~/.kimi/skills/`、`~/.claude/skills/`、`~/.codex/skills/`）中的 Skills 都会被加载并合并，而非仅使用找到的第一个；同名 Skill 按 kimi > claude > codex 的优先级解析；默认关闭
-- CLI：新增 `--plan` 启动参数和 `default_plan_mode` 配置项——通过 `kimi --plan` 或在 `~/.kimi/config.toml` 中设置 `default_plan_mode = true` 可让新会话直接进入计划模式；恢复的会话保留其原有的计划模式状态
+- Core：修复当通用目录（如 `~/.config/agents/skills/`）存在但为空时，品牌目录（如 `~/.codrus/skills/`）中的 Skills 静默消失的问题——Skill 目录发现现在独立搜索品牌组和通用组目录并合并结果，而非在所有候选目录中找到第一个就停止
+- Core：新增 `merge_all_available_skills` 配置项——启用后，所有存在的品牌目录（`~/.codrus/skills/`、`~/.claude/skills/`、`~/.codex/skills/`）中的 Skills 都会被加载并合并，而非仅使用找到的第一个；同名 Skill 按 codrus > claude > codex 的优先级解析；默认关闭
+- CLI：新增 `--plan` 启动参数和 `default_plan_mode` 配置项——通过 `codrus --plan` 或在 `~/.codrus/config.toml` 中设置 `default_plan_mode = true` 可让新会话直接进入计划模式；恢复的会话保留其原有的计划模式状态
 - Shell：新增 `/undo` 和 `/fork` 命令用于会话分支——`/undo` 支持选择一个历史轮次并 fork 出新会话，被选中轮次的用户消息会预填到输入框供重新编辑；`/fork` 将当前完整对话历史复制到新会话；原会话始终保留不丢失
-- CLI：新增 `-r` 作为 `--session` 的简写别名，并在会话退出时输出恢复提示（`kimi -r <session-id>`）——覆盖正常退出、Ctrl-C、`/undo`、`/fork` 和 `/sessions` 切换等场景，确保用户始终能找到回到会话的方式
-- Core：修复 `custom_headers` 未传递给非 Kimi provider 的问题——OpenAI、Anthropic、Google GenAI 和 Vertex AI provider 现在能正确转发 `providers.*.custom_headers` 中配置的自定义请求头
+- CLI：新增 `-r` 作为 `--session` 的简写别名，并在会话退出时输出恢复提示（`codrus -r <session-id>`）——覆盖正常退出、Ctrl-C、`/undo`、`/fork` 和 `/sessions` 切换等场景，确保用户始终能找到回到会话的方式
+- Core：修复 `custom_headers` 未传递给非 Codrus provider 的问题——OpenAI、Anthropic、Google GenAI 和 Vertex AI provider 现在能正确转发 `providers.*.custom_headers` 中配置的自定义请求头
 
 ## 1.29.0 (2026-04-01)
 
-- Core：支持层级化 `AGENTS.md` 加载——CLI 现在会从 git 项目根目录到工作目录逐层发现并合并 `AGENTS.md` 文件，包括每层目录中的 `.kimi/AGENTS.md`；在 32 KiB 预算上限下，更深层目录的文件优先保留，确保最具体的指令不会被截断
+- Core：支持层级化 `AGENTS.md` 加载——CLI 现在会从 git 项目根目录到工作目录逐层发现并合并 `AGENTS.md` 文件，包括每层目录中的 `.codrus/AGENTS.md`；在 32 KiB 预算上限下，更深层目录的文件优先保留，确保最具体的指令不会被截断
 - Core：修复空会话在退出后残留在磁盘上的问题——创建但未使用的会话现在会在所有退出路径（失败退出、会话切换、异常错误）中被清理，而不仅限于成功退出
 - Shell：新增 `KIMI_CLI_PASTE_CHAR_THRESHOLD` 和 `KIMI_CLI_PASTE_LINE_THRESHOLD` 环境变量，控制粘贴文本折叠为占位符的阈值——降低这些阈值可规避部分终端（如通过 SSH 连接的 XShell）在粘贴多行文本后 CJK 输入法失效的问题
 - Shell：修复不支持 truecolor 的终端（如 Xshell）上 diff 面板渲染异常的问题——`render_to_ansi` 不再硬编码 24 位色；Rich 现在通过 `COLORTERM`/`TERM` 环境变量自动检测终端颜色能力
@@ -208,7 +208,7 @@
 - Grep：新增 Token 效率优化——默认 `head_limit` 为 250 并支持 `offset` 分页、启用 `--hidden` 搜索同时排除 VCS 目录、`files_with_matches` 按修改时间排序、输出相对路径、非 content 模式限制最大列宽 500
 - Grep：content 模式的 `line_number`（`-n`）现在默认为 `true`——默认包含行号，以便模型引用精确的代码位置
 - Grep：`count_matches` 模式现在在 message 中包含汇总信息——例如 "Found 30 total occurrences across 10 files."
-- ACP：修复通过 `kimi-code` 或 `kimi-cli` 入口启动 ACP 时 `ValueError: list.index(x): x not in list` 崩溃的问题（如 JetBrains AI Assistant 场景）
+- ACP：修复通过 `codrus-code` 或 `codrus-cli` 入口启动 ACP 时 `ValueError: list.index(x): x not in list` 崩溃的问题（如 JetBrains AI Assistant 场景）
 - Core：修复 OpenAI 兼容 API（如 One API）在多轮对话中返回 400 错误的问题——当服务端默认返回 `reasoning_content` 时，现在会在历史消息包含思考内容且配置了 `reasoning_key` 的情况下自动设置 `reasoning_effort` 为 `"medium"`
 - Shell：新增 `/theme` 命令和深色/浅色主题支持——使用浅色终端背景的用户可通过 `/theme light` 或在 `config.toml` 中设置 `theme = "light"` 切换到浅色配色方案；diff 高亮、任务浏览器、提示符 UI 和 MCP 状态颜色均会跟随所选主题自动适配
 - Core：修复压缩前上下文溢出问题——工具结果的 Token 数现在会被估算并纳入自动压缩触发检查，防止大量工具输出在 API 调用间隙将上下文推超模型限制时出现"exceeded model token limit"错误
@@ -221,7 +221,7 @@
 - Web：工作区顶部的 "Open" 按钮现在会记住上次使用的应用——点击 "Open" 直接以上次选择的应用打开，点击下拉箭头可重新选择其他应用
 - Web：修复 Archived 会话计数仅显示已加载页面大小的问题——当存在更多 Archived 会话时，计数标签现在显示 "100+"
 - Shell：修复粘贴文本占位符在模态回答中未展开的问题——粘贴到审批面板或问题面板中的剪贴板内容现在会在发送给模型前正确插值
-- Vis：新增 `--network / -n` 启动参数——在所有网络接口上启动可视化工具并自动探测和显示 LAN IP 地址，与 `kimi web` 行为一致
+- Vis：新增 `--network / -n` 启动参数——在所有网络接口上启动可视化工具并自动探测和显示 LAN IP 地址，与 `codrus web` 行为一致
 - Vis：新增 `/vis` 斜杠命令——在交互式 Shell 中一步切换到 Tracing 可视化工具，与现有 `/web` 命令对称
 - Vis：改进会话列表性能——后端异步扫描、请求并发限制、无限滚动分页，防止大量会话时浏览器卡顿
 - Vis：补齐 7 个缺失的 Wire 事件类型——`SteerInput`、`MCPLoadingBegin/End`、`Notification`、`PlanDisplay`、`ToolCallRequest` 和 `QuestionRequest` 现在以正确的颜色和摘要显示
@@ -265,14 +265,14 @@
 
 ## 1.25.0 (2026-03-23)
 
-- Core：新增插件系统（Skills + Tools）——插件通过 `plugin.json` 为 Kimi Code CLI 扩展自定义工具；工具是在独立子进程中运行的命令，其 stdout 返回给 Agent；插件支持通过 `inject` 配置自动注入凭证
-- Core：支持多插件仓库——`kimi plugin install` 接受带 subpath 的 Git URL，从 monorepo 中安装特定插件（如 `https://github.com/org/repo.git/plugins/my-plugin`）；当未提供 subpath 且根目录无 `plugin.json` 时，CLI 会列出直接子目录中可用的插件
+- Core：新增插件系统（Skills + Tools）——插件通过 `plugin.json` 为 CodrusCLI powered by Codrus models 扩展自定义工具；工具是在独立子进程中运行的命令，其 stdout 返回给 Agent；插件支持通过 `inject` 配置自动注入凭证
+- Core：支持多插件仓库——`codrus plugin install` 接受带 subpath 的 Git URL，从 monorepo 中安装特定插件（如 `https://github.com/org/repo.git/plugins/my-plugin`）；当未提供 subpath 且根目录无 `plugin.json` 时，CLI 会列出直接子目录中可用的插件
 - Core：统一插件凭证注入——插件可在 `plugin.json` 中声明 `inject` 字段，从主机的 LLM 提供商配置接收 `api_key` 和 `base_url`；支持 OAuth 托管 token 和静态 API key 两种凭证类型
 - Core：新增 `Agent` 工具支持子 Agent 委派——Agent 现在可以创建持久的子 Agent 实例，内置三种类型（`coder`、`explore`、`plan`）处理聚焦的子任务；每个实例在会话内维护独立的上下文历史，支持前台或后台运行并自动汇总结果
 - Core：统一审批运行时——前台工具调用和后台子 Agent 的审批请求现在通过统一的运行时协调，并由根 UI 通道呈现；拒绝响应可包含反馈文本以指导模型的下一次尝试
 - Shell：新增交互式审批请求面板——内联面板展示工具调用详情（Diff、Shell 命令等），提供批准一次、批准本次会话、拒绝或附带反馈文字拒绝等选项
 - Wire：协议版本升级至 1.6——`SubagentEvent` 新增 `agent_id`、`subagent_type`、`parent_tool_call_id` 字段；`ApprovalRequest` 包含来源元数据（`source_kind`、`source_id`）；`ApprovalResponse` 支持 `feedback` 字段
-- Vis：新增 Agents 面板——`kimi vis` 中新增 "Agents" 标签页，可查看子 Agent 实例及其事件，并按 Agent 范围筛选 Wire 时间线
+- Vis：新增 Agents 面板——`codrus vis` 中新增 "Agents" 标签页，可查看子 Agent 实例及其事件，并按 Agent 范围筛选 Wire 时间线
 - Core：`TaskOutput` 的 `block` 参数默认值从 `true` 改为 `false`——`TaskOutput` 现在默认返回非阻塞的状态/输出快照；仅在需要等待任务完成时设置 `block=true`
 - Shell：在提示工具栏中显示当前工作目录、Git 分支、脏状态以及与远端的 ahead/behind 同步状态
 - Shell：在工具栏中显示活跃后台 Bash 任务数量，按时间轮换快捷键提示，并在窄终端中优雅截断内容以避免溢出
@@ -288,11 +288,11 @@
 
 - Shell：提高长文本粘贴自动折叠阈值至 1000 字符或 15 行（之前为 300 字符或 3 行），改善语音/无键盘输入等场景下的体验
 - Core：Plan 模式现在支持多选方案——当 Agent 的计划包含多个不同路径时，`ExitPlanMode` 可展示 2–3 个带标签的选项供用户选择执行哪一个方案；用户选择的方案会作为选定路径返回给 Agent
-- Core：跨进程重启持久化 Plan 会话 ID 和文件路径——Plan 会话标识符和文件 slug 保存到 `SessionState`，重启 Kimi Code 后会继续使用 `~/.kimi/plans/` 下的同一计划文件，而非创建新文件
+- Core：跨进程重启持久化 Plan 会话 ID 和文件路径——Plan 会话标识符和文件 slug 保存到 `SessionState`，重启 Codrus Code 后会继续使用 `~/.codrus/plans/` 下的同一计划文件，而非创建新文件
 - Core：Plan 模式现在支持增量编辑计划文件——Agent 可以使用 `StrReplaceFile` 精准更新计划文件的特定部分，而无需通过 `WriteFile` 重写整个文件；同时非计划文件的编辑现在会被直接阻止，而非弹出审批请求
 - Core：延迟 MCP 启动并展示加载进度——MCP 服务器现在在 Shell UI 启动后异步初始化，并提供实时进度指示器显示连接状态；Shell 在状态区域显示连接中和就绪状态，Web 显示服务器连接状态
 - Core：优化轻量级启动路径——对 CLI 子命令和版本元数据实现延迟加载，显著缩短 `--version` 和 `--help` 等常用命令的启动时间
-- Build：修复 Nix `FileCollisionError` for `bin/kimi`——从 `kimi-code` 包中移除重复的入口点，使 `kimi-cli` 独占 `bin/kimi`
+- Build：修复 Nix `FileCollisionError` for `bin/codrus`——从 `codrus-code` 包中移除重复的入口点，使 `codrus-cli` 独占 `bin/codrus`
 - Shell：Agent 运行期间保留用户未提交的输入——在模型运行时在提示符中键入的文本不再在轮次结束时丢失，用户可以按回车键将草稿作为下一条消息提交
 - Shell：修复 Agent 运行结束后 Ctrl-C 和 Ctrl-D 无法正常工作的问题——键盘中断和 EOF 信号被静默吞没，而非显示提示信息或退出 Shell
 
@@ -319,7 +319,7 @@
 - Shell：改进会话回放对 steer 输入的支持——回放现在能正确重建并展示 steer 消息与常规轮次，并过滤内部 system-reminder 消息
 - Shell：修复 toast 通知中升级命令不一致的问题——升级命令文本统一从 `UPGRADE_COMMAND` 常量获取
 - Core：在 `context.jsonl` 中持久化系统提示词——系统提示词作为上下文文件的第一条记录写入，并在会话生命周期内冻结，使可视化工具能读取完整对话上下文，会话恢复时复用原始提示词而非重新生成
-- Vis：为 `kimi vis` 新增会话目录快捷操作——可在会话页面直接打开当前会话文件夹，使用 `Copy DIR` 复制原始会话目录路径，并支持在 macOS 和 Windows 上打开目录
+- Vis：为 `codrus vis` 新增会话目录快捷操作——可在会话页面直接打开当前会话文件夹，使用 `Copy DIR` 复制原始会话目录路径，并支持在 macOS 和 Windows 上打开目录
 - Shell：优化 API 密钥登录体验——验证密钥时显示加载动画，当 401 错误可能因选错平台导致时显示提示信息，登录成功后展示配置摘要，并将 Thinking 模式默认设为开启
 
 ## 1.20.0 (2026-03-11)
@@ -329,14 +329,14 @@
 - Core：修复工具触发的 Plan 模式变更未正确反映在 StatusUpdate 中的问题——在 `EnterPlanMode`/`ExitPlanMode` 工具执行后发送更新的 `StatusUpdate`，确保客户端看到最新状态
 - Core：修复部分 Linux 系统（如内核版本 6.8.0-101）上 HTTP 请求头包含尾部空白/换行符导致连接错误的问题——发送前对 ASCII 请求头值执行空白裁剪
 - Core：修复 OpenAI Responses provider 隐式发送 `reasoning.effort=null` 导致需要推理的 Responses 兼容端点报错的问题——现在仅在显式设置时才发送推理参数
-- Vis：新增会话下载、导入、导出与删除功能——在会话浏览器和详情页支持一键 ZIP 下载，支持将 ZIP 文件导入到独立的 `~/.kimi/imported_sessions/` 目录并通过"Imported"筛选器切换查看，新增 `kimi export <session_id>` CLI 命令，支持删除导入的会话并提供 AlertDialog 二次确认
+- Vis：新增会话下载、导入、导出与删除功能——在会话浏览器和详情页支持一键 ZIP 下载，支持将 ZIP 文件导入到独立的 `~/.codrus/imported_sessions/` 目录并通过"Imported"筛选器切换查看，新增 `codrus export <session_id>` CLI 命令，支持删除导入的会话并提供 AlertDialog 二次确认
 - Core：修复对话包含媒体内容（图片、音频、视频）时上下文压缩失败的问题——将过滤策略从黑名单（排除 `ThinkPart`）改为白名单（仅保留 `TextPart`），防止不支持的内容类型被发送到压缩 API
 - Web：修复 `@` 文件提及索引在切换会话或工作区文件变更后不刷新的问题——切换会话时重置索引，30 秒过期自动刷新，输入路径前缀可查找超出 500 文件上限的文件
 
 ## 1.19.0 (2026-03-10)
 
 - Core：新增 Plan 模式——AI 在编码前先制定实施方案并提交审批。Plan 模式下仅允许使用只读工具（`Glob`、`Grep`、`ReadFile`）探索代码库，将方案写入 plan 文件后通过 `ExitPlanMode` 提交审批，用户可批准、拒绝或提供修改意见；支持 `Shift-Tab` 快捷键和 `/plan` 斜杠命令切换
-- Vis：新增 `kimi vis` 命令，启动交互式可视化仪表板以检查会话追踪——包括 Wire 事件时间线、上下文查看器、会话浏览器和用量统计
+- Vis：新增 `codrus vis` 命令，启动交互式可视化仪表板以检查会话追踪——包括 Wire 事件时间线、上下文查看器、会话浏览器和用量统计
 - Web：修复会话流状态管理问题——修复状态重置时的空引用错误，并在切换会话时保留斜杠命令，避免初始化响应返回前出现短暂的空白
 
 ## 1.18.0 (2026-03-09)
@@ -366,7 +366,7 @@
 - Core：新增 `--add-dir` CLI 选项和 `/add-dir` 斜杠命令，支持将额外目录添加到工作区范围——添加的目录可被所有文件工具（读取、写入、glob、替换）访问，跨会话持久化保存，并在系统提示词中展示
 - Shell：新增 `Ctrl-O` 快捷键，在外部编辑器中编辑当前输入内容（`$VISUAL`/`$EDITOR`），支持自动检测 VS Code、Vim、Vi 或 Nano
 - Shell：新增 `/editor` 斜杠命令，可交互式配置和切换默认外部编辑器，设置持久保存到配置文件
-- Shell：新增 `/new` 斜杠命令，无需重启 Kimi Code CLI 即可创建并切换到新会话
+- Shell：新增 `/new` 斜杠命令，无需重启 CodrusCLI powered by Codrus models 即可创建并切换到新会话
 - Wire：当客户端不支持 `supports_question` 能力时，自动隐藏 `AskUserQuestion` 工具，避免 LLM 调用不受支持的交互
 - Core：在压缩后估算上下文 Token 数量，使上下文用量百分比不再显示为 0%
 - Web：上下文用量百分比显示精确到一位小数，提升精度
@@ -379,7 +379,7 @@
 - Shell：为多问题面板添加标签式导航——使用左右方向键或 Tab 键在问题间切换，并以可视化指示器区分已答、当前和待答状态，重新访问已答问题时自动恢复选择状态
 - Shell：在问题面板中支持使用空格键提交单选问题
 - Web：为多问题对话框添加标签式导航，支持可点击标签栏、键盘导航，以及重新访问已答问题时恢复选择状态
-- Core：将进程标题设置为 "Kimi Code"（在 `ps` / 活动监视器 / 终端标签页标题中可见），并将 Web Worker 子进程标记为 "kimi-code-worker"
+- Core：将进程标题设置为 "Codrus Code"（在 `ps` / 活动监视器 / 终端标签页标题中可见），并将 Web Worker 子进程标记为 "codrus-code-worker"
 
 ## 1.14.0 (2026-02-26)
 
@@ -454,7 +454,7 @@
 - Web：改进聊天中的自动滚动行为，更流畅地跟随新内容
 - Web：会话流开始时更新工作目录的最近会话 ID（`last_session_id`）
 - Shell：移除 `Ctrl-/` 快捷键（此前用于触发 `/help` 命令）
-- Rust：Rust 版实现迁移到 `MoonshotAI/kimi-agent-rs` 并独立发版；二进制更名为 `kimi-agent`
+- Rust：Rust 版实现迁移到 `MoonshotAI/codrus-agent-rs` 并独立发版；二进制更名为 `codrus-agent`
 - Core：重新加载配置时保留会话 ID，确保会话正确恢复
 - Shell：修复会话回放时显示已被 `/clear` 或 `/reset` 清除的消息的问题
 - Web：修复会话中断或取消时审批请求状态未更新的问题
@@ -467,7 +467,7 @@
 
 ## 1.7.0 (2026-02-05)
 
-- Rust：添加 `kagent`，Kimi Agent 内核的 Rust 实现，支持 Wire 模式（实验性）
+- Rust：添加 `kagent`，Codrus Agent 内核的 Rust 实现，支持 Wire 模式（实验性）
 - Auth：修复多个会话同时运行时的 OAuth 令牌刷新冲突
 - Web：添加文件提及菜单（`@`），支持引用已上传附件和工作区文件，带自动补全功能
 - Web：添加斜杠命令菜单，支持自动补全、键盘导航和别名匹配
@@ -501,9 +501,9 @@
 
 - Shell：合并 `/login` 和 `/setup` 命令，`/setup` 现为 `/login` 的别名
 - Shell：`/usage` 命令现在显示剩余配额百分比；添加 `/status` 别名
-- Config：添加 `KIMI_SHARE_DIR` 环境变量，用于自定义共享目录路径（默认 `~/.kimi`）
+- Config：添加 `KIMI_SHARE_DIR` 环境变量，用于自定义共享目录路径（默认 `~/.codrus`）
 - Web：新增 Web UI，支持基于浏览器的交互
-- CLI：添加 `kimi web` 子命令以启动 Web UI 服务器
+- CLI：添加 `codrus web` 子命令以启动 Web UI 服务器
 - Auth：修复设备名称或操作系统版本包含非 ASCII 字符时的编码错误
 - Auth：OAuth 凭据现在存储在文件中而非 keyring；启动时自动迁移现有令牌
 - Auth：修复系统休眠或睡眠后的授权失败问题
@@ -515,16 +515,16 @@
 
 ## 1.2 (2026-01-27)
 
-- UI：显示 `kimi-for-coding` 模型的说明
+- UI：显示 `codrus-for-coding` 模型的说明
 
 ## 1.1 (2026-01-27)
 
-- LLM：修复 `kimi-for-coding` 模型的能力
+- LLM：修复 `codrus-for-coding` 模型的能力
 
 ## 1.0 (2026-01-27)
 
 - Shell：添加 `/login` 和 `/logout` 斜杠命令，用于登录和登出
-- CLI：添加 `kimi login` 和 `kimi logout` 子命令
+- CLI：添加 `codrus login` 和 `codrus logout` 子命令
 - Core：修复子 Agent 审批请求处理问题
 
 ## 0.88 (2026-01-26)
@@ -571,7 +571,7 @@
 ## 0.82 (2026-01-21)
 
 - Tool：`WriteFile` 和 `StrReplaceFile` 工具支持使用绝对路径编辑/写入工作目录外的文件
-- Tool：使用 Kimi 供应商时，视频文件上传到 Kimi Files API，使用 `ms://` 引用替代 inline data URL
+- Tool：使用 Codrus 供应商时，视频文件上传到 Codrus Files API，使用 `ms://` 引用替代 inline data URL
 - Config：添加 `reserved_context_size` 配置项，自定义自动压缩触发阈值（默认 50000 tokens）
 
 ## 0.81 (2026-01-21)
@@ -588,7 +588,7 @@
 
 ## 0.79 (2026-01-19)
 
-- Skills：添加项目级 Skills 支持，从 `.agents/skills/`（或 `.kimi/skills/`、`.claude/skills/`）发现
+- Skills：添加项目级 Skills 支持，从 `.agents/skills/`（或 `.codrus/skills/`、`.claude/skills/`）发现
 - Skills：统一 Skills 发现机制，采用分层加载（内置 → 用户 → 项目）；用户级 Skills 现在优先使用 `~/.config/agents/skills/`
 - Shell：斜杠命令自动补全支持模糊匹配
 - Shell：增强审批请求预览，显示 Shell 命令和 Diff 内容，使用 `Ctrl-E` 展开完整内容
@@ -625,13 +625,13 @@
 ## 0.75 (2026-01-09)
 
 - Tool：改进 `ReadFile` 工具描述
-- Skills：添加内置 `kimi-cli-help` Skill，解答 Kimi Code CLI 使用和配置问题
+- Skills：添加内置 `codrus-cli-help` Skill，解答 CodrusCLI powered by Codrus models 使用和配置问题
 
 ## 0.74 (2026-01-09)
 
 - ACP：允许 ACP 客户端选择和切换模型（包含 Thinking 变体）
 - ACP：添加 `terminal-auth` 认证方式，用于配置流程
-- CLI：弃用 `--acp` 选项，请使用 `kimi acp` 子命令
+- CLI：弃用 `--acp` 选项，请使用 `codrus acp` 子命令
 - Tool：`ReadFile` 工具现支持读取图片和视频文件
 
 ## 0.73 (2026-01-09)
@@ -641,7 +641,7 @@
 - MCP：确保 MCP 工具加载完成后再开始 Agent 循环
 - Wire：修复 Wire 模式无法接受有效 `cancel` 请求的问题
 - Setup：`/model` 命令现在可以切换所选供应商的所有可用模型
-- Lib：从 `kimi_cli.wire.types` 重新导出所有 Wire 消息类型，作为 `kimi_cli.wire.message` 的替代
+- Lib：从 `codrus_cli.wire.types` 重新导出所有 Wire 消息类型，作为 `codrus_cli.wire.message` 的替代
 - Loop：添加 `max_ralph_iterations` 循环控制配置，限制额外的 Ralph 迭代次数
 - Config：将循环控制配置中的 `max_steps_per_run` 重命名为 `max_steps_per_turn`（向后兼容）
 - CLI：添加 `--max-steps-per-turn`、`--max-retries-per-step` 和 `--max-ralph-iterations` 选项，覆盖循环控制配置
@@ -657,8 +657,8 @@
 - ACP：通过 ACP 客户端路由文件读写和 Shell 命令，实现同步编辑/输出
 - Shell：添加 `/model` 斜杠命令，在使用默认配置时切换默认模型并重新加载
 - Skills：添加 `/skill:<name>` 斜杠命令，按需加载 `SKILL.md` 指引
-- CLI：添加 `kimi info` 子命令，显示版本和协议信息（支持 `--json`）
-- CLI：添加 `kimi term` 命令，启动 Toad 终端 UI
+- CLI：添加 `codrus info` 子命令，显示版本和协议信息（支持 `--json`）
+- CLI：添加 `codrus term` 命令，启动 Toad 终端 UI
 - Python：将默认工具/CI 版本升级到 3.14
 
 ## 0.70 (2025-12-31)
@@ -668,10 +668,10 @@
 
 ## 0.69 (2025-12-29)
 
-- Core：支持在 `~/.kimi/skills` 或 `~/.claude/skills` 中发现 Skills
+- Core：支持在 `~/.codrus/skills` 或 `~/.claude/skills` 中发现 Skills
 - Python：降低最低 Python 版本要求至 3.12
-- Nix：添加 flake 打包支持；可通过 `nix profile install .#kimi-cli` 安装或 `nix run .#kimi-cli` 运行
-- CLI：添加 `kimi-cli` 脚本别名；可通过 `uvx kimi-cli` 运行
+- Nix：添加 flake 打包支持；可通过 `nix profile install .#codrus-cli` 安装或 `nix run .#codrus-cli` 运行
+- CLI：添加 `codrus-cli` 脚本别名；可通过 `uvx codrus-cli` 运行
 - Lib：将 LLM 配置验证移入 `create_llm`，配置缺失时返回 `None`
 
 ## 0.68 (2025-12-24)
@@ -685,11 +685,11 @@
 - ACP：如果支持，在 ACP 客户端终端中运行 Shell 命令
 - Lib：添加 `KimiToolset.find` 方法，按类或名称查找工具
 - Lib：添加 `ToolResultBuilder.display` 方法，向工具结果追加显示块
-- MCP：添加 `kimi mcp auth` 及相关子命令，管理 MCP 授权
+- MCP：添加 `codrus mcp auth` 及相关子命令，管理 MCP 授权
 
 ## 0.67 (2025-12-22)
 
-- ACP：在单会话 ACP 模式（`kimi --acp`）中广播斜杠命令
+- ACP：在单会话 ACP 模式（`codrus --acp`）中广播斜杠命令
 - MCP：添加 `mcp.client` 配置节，用于配置 MCP 工具调用超时等选项
 - Core：改进默认系统提示词和 `ReadFile` 工具
 - UI：修复某些罕见情况下 Ctrl-C 不工作的问题
@@ -699,9 +699,9 @@
 - Lib：在 `StatusUpdate` Wire 消息中提供 `token_usage` 和 `message_id`
 - Lib：添加 `KimiToolset.load_tools` 方法，支持依赖注入加载工具
 - Lib：添加 `KimiToolset.load_mcp_tools` 方法，加载 MCP 工具
-- Lib：将 `MCPTool` 从 `kimi_cli.tools.mcp` 移至 `kimi_cli.soul.toolset`
+- Lib：将 `MCPTool` 从 `codrus_cli.tools.mcp` 移至 `codrus_cli.soul.toolset`
 - Lib：添加 `InvalidToolError`、`MCPConfigError` 和 `MCPRuntimeError` 异常类
-- Lib：使 Kimi Code CLI 详细异常类扩展 `ValueError` 或 `RuntimeError`
+- Lib：使 CodrusCLI powered by Codrus models 详细异常类扩展 `ValueError` 或 `RuntimeError`
 - Lib：`KimiCLI.create` 和 `load_agent` 的 `mcp_configs` 参数支持传入验证后的 `list[fastmcp.mcp_config.MCPConfig]`
 - Lib：修复 `KimiCLI.create`、`load_agent`、`KimiToolset.load_tools` 和 `KimiToolset.load_mcp_tools` 的异常抛出
 - LLM：添加 `vertexai` 供应商类型，支持 Vertex AI
@@ -721,21 +721,21 @@
 - CLI：退出时删除空会话，列表中忽略上下文文件为空的会话
 - UI：改进会话回放
 - Lib：在 `LLM` 类中添加 `model_config: LLMModel | None` 和 `provider_config: LLMProvider | None` 属性
-- MetaCmd：添加 `/usage` 元命令，为 Kimi Code 用户显示 API 使用情况
+- MetaCmd：添加 `/usage` 元命令，为 Codrus Code 用户显示 API 使用情况
 
 ## 0.64 (2025-12-15)
 
 - UI：修复 Windows 上 UTF-16 代理字符输入问题
 - Core：添加 `/sessions` 元命令，列出现有会话并切换到选中的会话
 - CLI：添加 `--session/-S` 选项，指定要恢复的会话 ID
-- MCP：添加 `kimi mcp` 子命令组，管理全局 MCP 配置文件 `~/.kimi/mcp.json`
+- MCP：添加 `codrus mcp` 子命令组，管理全局 MCP 配置文件 `~/.codrus/mcp.json`
 
 ## 0.63 (2025-12-12)
 
 - Tool：修复 `FetchURL` 工具通过服务获取失败时输出不正确的问题
 - Tool：在 `Shell` 工具中使用 `bash` 而非 `sh`，提高兼容性
 - Tool：修复 Windows 上 `Grep` 工具的 Unicode 解码错误
-- ACP：通过 `kimi acp` 子命令支持 ACP 会话续接（列出/加载会话）
+- ACP：通过 `codrus acp` 子命令支持 ACP 会话续接（列出/加载会话）
 - Lib：添加 `Session.find` 和 `Session.list` 静态方法，查找和列出会话
 - ACP：调用 `SetTodoList` 工具时在客户端更新 Agent 计划
 - UI：防止以 `/` 开头的普通消息被误当作元命令处理
@@ -758,16 +758,16 @@
 
 ## 0.60 (2025-12-01)
 
-- LLM：修复 Kimi 和 OpenAI 兼容供应商的交错思考问题
+- LLM：修复 Codrus 和 OpenAI 兼容供应商的交错思考问题
 
 ## 0.59 (2025-11-28)
 
-- Core：将上下文文件位置移至 `.kimi/sessions/{workdir_md5}/{session_id}/context.jsonl`
-- Lib：将 `WireMessage` 类型别名移至 `kimi_cli.wire.message`
-- Lib：添加 `kimi_cli.wire.message.Request` 类型别名，用于请求消息（目前仅包含 `ApprovalRequest`）
-- Lib：添加 `kimi_cli.wire.message.is_event`、`is_request` 和 `is_wire_message` 工具函数，检查 Wire 消息类型
-- Lib：添加 `kimi_cli.wire.serde` 模块，用于 Wire 消息的序列化和反序列化
-- Lib：修改 `StatusUpdate` Wire 消息，不再使用 `kimi_cli.soul.StatusSnapshot`
+- Core：将上下文文件位置移至 `.codrus/sessions/{workdir_md5}/{session_id}/context.jsonl`
+- Lib：将 `WireMessage` 类型别名移至 `codrus_cli.wire.message`
+- Lib：添加 `codrus_cli.wire.message.Request` 类型别名，用于请求消息（目前仅包含 `ApprovalRequest`）
+- Lib：添加 `codrus_cli.wire.message.is_event`、`is_request` 和 `is_wire_message` 工具函数，检查 Wire 消息类型
+- Lib：添加 `codrus_cli.wire.serde` 模块，用于 Wire 消息的序列化和反序列化
+- Lib：修改 `StatusUpdate` Wire 消息，不再使用 `codrus_cli.soul.StatusSnapshot`
 - Core：在会话目录中记录 Wire 消息到 JSONL 文件
 - Core：引入 `TurnBegin` Wire 消息，标记每个 Agent 轮次的开始
 - UI：Shell 模式下用面板重新打印用户输入
@@ -786,7 +786,7 @@
 - Core：修复使用 `extend` 时 Agent 规格文件的字段继承问题
 - Core：支持在子代理中使用 MCP 工具
 - Tool：添加 `CreateSubagent` 工具，动态创建子代理（默认 Agent 中未启用）
-- Tool：Kimi Code 方案在 `FetchURL` 工具中使用 MoonshotFetch 服务
+- Tool：Codrus Code 方案在 `FetchURL` 工具中使用 MoonshotFetch 服务
 - Tool：截断 Grep 工具输出，避免超出 token 限制
 
 ## 0.57 (2025-11-20)
@@ -795,7 +795,7 @@
 - UI：改进审批请求措辞
 - Tool：移除 `PatchFile` 工具
 - Tool：将 `Bash`/`CMD` 工具重命名为 `Shell` 工具
-- Tool：将 `Task` 工具移至 `kimi_cli.tools.multiagent` 模块
+- Tool：将 `Task` 工具移至 `codrus_cli.tools.multiagent` 模块
 
 ## 0.56 (2025-11-19)
 
@@ -803,7 +803,7 @@
 
 ## 0.55 (2025-11-18)
 
-- Lib：添加 `kimi_cli.app.enable_logging` 函数，直接使用 `KimiCLI` 类时启用日志
+- Lib：添加 `codrus_cli.app.enable_logging` 函数，直接使用 `KimiCLI` 类时启用日志
 - Core：修复 Agent 规格文件中的相对路径解析
 - Core：防止 LLM API 连接失败时 panic
 - Tool：优化 `FetchURL` 工具，改进内容提取
@@ -814,7 +814,7 @@
 
 ## 0.54 (2025-11-13)
 
-- Lib：将 `WireMessage` 从 `kimi_cli.wire.message` 移至 `kimi_cli.wire`
+- Lib：将 `WireMessage` 从 `codrus_cli.wire.message` 移至 `codrus_cli.wire`
 - Print：修复 `stream-json` 输出格式缺少最后一条助手消息的问题
 - UI：当 API 密钥被 `KIMI_API_KEY` 环境变量覆盖时添加警告
 - UI：审批请求时发出提示音
@@ -842,7 +842,7 @@
 ## 0.51 (2025-11-08)
 
 - Lib：将 `Soul.model` 重命名为 `Soul.model_name`
-- Lib：将 `LLMModelCapability` 重命名为 `ModelCapability` 并移至 `kimi_cli.llm`
+- Lib：将 `LLMModelCapability` 重命名为 `ModelCapability` 并移至 `codrus_cli.llm`
 - Lib：在 `ModelCapability` 中添加 `"thinking"`
 - Lib：移除 `LLM.supports_image_in` 属性
 - Lib：添加必需的 `Soul.model_capabilities` 属性
@@ -865,7 +865,7 @@
 
 ## 0.48 (2025-11-06)
 
-- 支持 Kimi K2 思考模式
+- 支持 Codrus K2 思考模式
 
 ## 0.47 (2025-11-05)
 
@@ -997,7 +997,7 @@
 
 - 修复 Ctrl-C 中断步骤的问题
 
-- 在 Kimi Koder Agent 中禁用 `SendDMail` 工具
+- 在 Codrus Koder Agent 中禁用 `SendDMail` 工具
 
 ## 0.28 (2025-10-13)
 
@@ -1018,7 +1018,7 @@
 
 ## 0.25 (2025-10-11)
 
-- 将包名从 `ensoul` 重命名为 `kimi-cli`
+- 将包名从 `ensoul` 重命名为 `codrus-cli`
 - 将 `ENSOUL_*` 内置系统提示词参数重命名为 `KIMI_*`
 - 进一步解耦 `App` 与 `Soul`
 - 拆分 `Soul` 协议和 `KimiSoul` 实现以提高模块化
@@ -1045,8 +1045,8 @@
 - 添加 `SearchWeb` 工具，使用 `services.moonshot_search` 配置。需要在配置文件中配置 `"services": {"moonshot_search": {"api_key": "your-search-api-key"}}`
 - 添加 `FetchURL` 工具
 - 添加 `Think` 工具
-- 添加 `PatchFile` 工具，Kimi Koder Agent 中未启用
-- 在 Kimi Koder Agent 中启用 `SendDMail` 和 `Task` 工具，改进工具提示词
+- 添加 `PatchFile` 工具，Codrus Koder Agent 中未启用
+- 在 Codrus Koder Agent 中启用 `SendDMail` 和 `Task` 工具，改进工具提示词
 - 添加 `ENSOUL_NOW` 内置系统提示词参数
 
 - 改进 `/release-notes` 外观
@@ -1081,7 +1081,7 @@
 
 ## 0.16.0 (2025-09-26)
 
-- 添加 `SendDMail` 工具（Kimi Koder 中禁用，可在自定义 Agent 中启用）
+- 添加 `SendDMail` 工具（Codrus Koder 中禁用，可在自定义 Agent 中启用）
 
 - 可通过 `_history_file` 参数在创建新会话时指定会话历史文件
 
@@ -1155,4 +1155,4 @@
 - 支持中断 Agent 循环
 - 支持项目级 `AGENTS.md`
 - 支持 YAML 定义的自定义 Agent
-- 支持通过 `kimi -c` 执行一次性任务
+- 支持通过 `codrus -c` 执行一次性任务

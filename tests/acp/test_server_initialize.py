@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from kimi_cli.acp.server import ACPServer
+from codrus_cli.acp.server import ACPServer
 
 pytestmark = pytest.mark.asyncio
 
@@ -14,16 +14,16 @@ pytestmark = pytest.mark.asyncio
 @pytest.mark.parametrize(
     "argv, expected_command, expected_terminal_args",
     [
-        # Standard entry-point: kimi acp
-        (["/usr/local/bin/kimi", "acp"], "/usr/local/bin/kimi", ["login"]),
-        # kimi-code entry-point (JetBrains scenario)
-        (["/usr/local/bin/kimi-code", "acp"], "/usr/local/bin/kimi-code", ["login"]),
-        # kimi-cli entry-point
-        (["/usr/local/bin/kimi-cli", "acp"], "/usr/local/bin/kimi-cli", ["login"]),
+        # Standard entry-point: codrus acp
+        (["/usr/local/bin/codrus", "acp"], "/usr/local/bin/codrus", ["login"]),
+        # codrus-code entry-point (JetBrains scenario)
+        (["/usr/local/bin/codrus-code", "acp"], "/usr/local/bin/codrus-code", ["login"]),
+        # codrus-cli entry-point
+        (["/usr/local/bin/codrus-cli", "acp"], "/usr/local/bin/codrus-cli", ["login"]),
         # Arbitrary wrapper script
         (["/opt/wrapper.sh", "acp"], "/opt/wrapper.sh", ["login"]),
     ],
-    ids=["kimi", "kimi-code", "kimi-cli", "wrapper-script"],
+    ids=["codrus", "codrus-code", "codrus-cli", "wrapper-script"],
 )
 async def test_initialize_argv_handling(
     argv: list[str],
@@ -33,7 +33,7 @@ async def test_initialize_argv_handling(
     """initialize() should not crash regardless of sys.argv content."""
     server = ACPServer()
 
-    with patch("kimi_cli.acp.server.sys") as mock_sys:
+    with patch("codrus_cli.acp.server.sys") as mock_sys:
         mock_sys.argv = argv
         resp = await server.initialize(protocol_version=1)
 

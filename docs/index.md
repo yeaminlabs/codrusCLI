@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: Kimi Code CLI
+  name: CodrusCLI powered by Codrus models
   text: ' '
   actions:
     - theme: brand

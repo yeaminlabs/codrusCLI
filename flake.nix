@@ -1,5 +1,5 @@
 {
-  description = "kimi-cli flake";
+  description = "codrus-cli flake";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixpkgs-unstable";
     systems.url = "github:nix-systems/default";
@@ -47,7 +47,7 @@
       packages = forAllSystems (
         { pkgs, ... }:
         let
-          kimi-cli =
+          codrus-cli =
             let
               inherit (pkgs)
                 lib
@@ -71,7 +71,7 @@
                   nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.setuptools ];
                 });
                 # Replace README symlink with real file for Nix builds.
-                "kimi-code" = prev."kimi-code".overrideAttrs (old: {
+                "codrus-code" = prev."codrus-code".overrideAttrs (old: {
                   postPatch = (old.postPatch or "") + ''
                     rm -f README.md
                     cp ${./README.md} README.md
@@ -85,10 +85,10 @@
                   extraBuildOverlay
                 ]
               );
-              kimiCliPackage = pythonSet.mkVirtualEnv "kimi-cli-virtual-env-${pyproject.project.version}" workspace.deps.default;
+              kimiCliPackage = pythonSet.mkVirtualEnv "codrus-cli-virtual-env-${pyproject.project.version}" workspace.deps.default;
             in
             stdenvNoCC.mkDerivation ({
-              pname = "kimi-cli";
+              pname = "codrus-cli";
               version = pyproject.project.version;
 
               dontUnpack = true;
@@ -100,7 +100,7 @@
                 runHook preInstall
 
                 mkdir -p $out/bin
-                makeWrapper ${kimiCliPackage}/bin/kimi $out/bin/kimi \
+                makeWrapper ${kimiCliPackage}/bin/codrus $out/bin/codrus \
                   --prefix PATH : ${lib.makeBinPath [ ripgrep ]} \
                   --set KIMI_CLI_NO_AUTO_UPDATE "1"
 
@@ -114,19 +114,19 @@
               doInstallCheck = true;
 
               meta = {
-                description = "Kimi Code CLI is a new CLI agent that can help you with your software development tasks and terminal operations";
+                description = "CodrusCLI powered by Codrus models is a new CLI agent that can help you with your software development tasks and terminal operations";
                 license = lib.licenses.asl20;
                 sourceProvenance = with lib.sourceTypes; [ fromSource ];
                 maintainers = with lib.maintainers; [
                   xiaoxiangmoe
                 ];
-                mainProgram = "kimi";
+                mainProgram = "codrus";
               };
             });
         in
         {
-          inherit kimi-cli;
-          default = kimi-cli;
+          inherit codrus-cli;
+          default = codrus-cli;
         }
       );
       formatter = forAllSystems ({ pkgs, ... }: pkgs.nixfmt-tree);

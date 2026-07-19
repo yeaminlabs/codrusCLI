@@ -8,12 +8,12 @@ from unittest.mock import Mock
 
 from kosong.tooling.empty import EmptyToolset
 
-from kimi_cli.config import get_default_config
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.ui.shell import Shell
-from kimi_cli.ui.shell import slash as shell_slash
+from codrus_cli.config import get_default_config
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.ui.shell import Shell
+from codrus_cli.ui.shell import slash as shell_slash
 
 
 def _make_shell_app(runtime: Runtime, tmp_path: Path) -> SimpleNamespace:

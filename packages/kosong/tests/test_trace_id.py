@@ -1,7 +1,7 @@
 """Verify ``x-trace-id`` response header capture and propagation.
 
 The KFC inference service returns a trace id in the ``x-trace-id`` response
-header. It must be captured by the Kimi provider (both success and error
+header. It must be captured by the Codrus provider (both success and error
 paths) and propagated through ``generate``/``step`` results and the
 ``on_trace_id`` early callback.
 """
@@ -11,11 +11,11 @@ from typing import Any, cast
 import httpx
 import pytest
 import respx
+from kosong.chat_provider.codrus import Codrus
 from openai.types.chat import ChatCompletion
 
 import kosong
 from kosong.chat_provider import APIStatusError, StreamedMessage
-from kosong.chat_provider.kimi import Kimi
 from kosong.tooling.empty import EmptyToolset
 
 TRACE_ID = "trace-abc-123"
@@ -69,7 +69,7 @@ async def test_kimi_captures_trace_id_header():
                 200, json=_completion_payload(), headers={"x-trace-id": TRACE_ID}
             )
         )
-        provider = Kimi(model="test-model", api_key="token", stream=False)
+        provider = Codrus(model="test-model", api_key="token", stream=False)
         stream = await provider.generate("", [], [])
         assert stream.trace_id == TRACE_ID
         async for _ in stream:
@@ -80,7 +80,7 @@ async def test_kimi_captures_trace_id_header():
 async def test_kimi_trace_id_none_without_header():
     with respx.mock:
         respx.post(URL).mock(return_value=httpx.Response(200, json=_completion_payload()))
-        provider = Kimi(model="test-model", api_key="token", stream=False)
+        provider = Codrus(model="test-model", api_key="token", stream=False)
         stream = await provider.generate("", [], [])
         assert stream.trace_id is None
 
@@ -105,7 +105,7 @@ async def test_kimi_streaming_captures_trace_id():
                 content=sse,
             )
         )
-        provider = Kimi(model="test-model", api_key="token", stream=True)
+        provider = Codrus(model="test-model", api_key="token", stream=True)
         stream = await provider.generate("", [], [])
         assert stream.trace_id == TRACE_ID
         parts = [part async for part in stream]
@@ -128,7 +128,7 @@ async def test_kimi_streaming_uses_stream_response_headers():
             assert kwargs["stream"] is True
             return DelayedStream()
 
-    provider = Kimi(model="test-model", api_key="token", stream=True)
+    provider = Codrus(model="test-model", api_key="token", stream=True)
     cast(Any, provider).client = type(
         "FakeClient",
         (),
@@ -154,7 +154,7 @@ async def test_kimi_accepts_async_raw_response_parse():
 
         with_raw_response = WithRawResponse()
 
-    provider = Kimi(model="test-model", api_key="token", stream=False)
+    provider = Codrus(model="test-model", api_key="token", stream=False)
     cast(Any, provider).client = type(
         "FakeClient",
         (),
@@ -177,7 +177,7 @@ async def test_api_status_error_carries_trace_id():
                 headers={"x-trace-id": TRACE_ID},
             )
         )
-        provider = Kimi(model="test-model", api_key="token", stream=False)
+        provider = Codrus(model="test-model", api_key="token", stream=False)
         with pytest.raises(APIStatusError) as exc_info:
             await provider.generate("", [], [])
         assert exc_info.value.trace_id == TRACE_ID
@@ -192,7 +192,7 @@ async def test_step_result_and_on_trace_id_callback():
                 200, json=_completion_payload(), headers={"x-trace-id": TRACE_ID}
             )
         )
-        provider = Kimi(model="test-model", api_key="token", stream=False)
+        provider = Codrus(model="test-model", api_key="token", stream=False)
         result = await kosong.step(
             chat_provider=provider,
             system_prompt="",

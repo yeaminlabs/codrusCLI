@@ -1,10 +1,10 @@
 # 会话与上下文
 
-Kimi Code CLI 会自动保存你的对话历史，方便你随时继续之前的工作。
+CodrusCLI powered by Codrus models 会自动保存你的对话历史，方便你随时继续之前的工作。
 
 ## 会话续接
 
-每次启动 Kimi Code CLI 时，都会创建一个新的会话。在运行过程中，你也可以输入 `/new` 命令随时创建并切换到一个新会话，无需退出程序。
+每次启动 CodrusCLI powered by Codrus models 时，都会创建一个新的会话。在运行过程中，你也可以输入 `/new` 命令随时创建并切换到一个新会话，无需退出程序。
 
 如果你想继续之前的对话，有几种方式：
 
@@ -13,7 +13,7 @@ Kimi Code CLI 会自动保存你的对话历史，方便你随时继续之前的
 使用 `--continue` 参数可以继续当前工作目录下最近的会话：
 
 ```sh
-kimi --continue
+codrus --continue
 ```
 
 **交互式选择会话**
@@ -21,7 +21,7 @@ kimi --continue
 使用 `--session`（或 `--resume`、`-S`、`-r`）不带参数可以打开交互式会话选择器，用方向键选择要恢复的会话：
 
 ```sh
-kimi --session
+codrus --session
 ```
 
 > 交互式选择器仅在 Shell 模式下可用。
@@ -31,7 +31,7 @@ kimi --session
 使用 `--session`（或 `--resume`）加上会话 ID 可以恢复指定的会话：
 
 ```sh
-kimi -r abc123
+codrus -r abc123
 ```
 
 如果指定的会话 ID 不存在，会自动创建一个新会话。
@@ -48,21 +48,21 @@ kimi -r abc123
 
 **退出时的续接提示**
 
-当会话退出时（包括正常退出、`Ctrl-C` 中断、`/undo`、`/fork`、`/sessions` 切换等场景），Kimi Code CLI 会自动打印一条续接命令提示：
+当会话退出时（包括正常退出、`Ctrl-C` 中断、`/undo`、`/fork`、`/sessions` 切换等场景），CodrusCLI powered by Codrus models 会自动打印一条续接命令提示：
 
 ```
-To resume this session: kimi -r <session-id>
+To resume this session: codrus -r <session-id>
 ```
 
 你可以直接复制这条命令，下次在终端中运行即可快速恢复该会话。空会话不会显示此提示。
 
 **启动回放**
 
-当你继续一个已有会话时，Kimi Code CLI 会回放之前的对话历史，让你快速了解上下文。回放过程中会显示之前的消息和 AI 的回复。
+当你继续一个已有会话时，CodrusCLI powered by Codrus models 会回放之前的对话历史，让你快速了解上下文。回放过程中会显示之前的消息和 AI 的回复。
 
 ## 会话状态持久化
 
-除了对话历史，Kimi Code CLI 还会自动保存和恢复会话的运行状态。当你恢复一个会话时，以下状态会自动还原：
+除了对话历史，CodrusCLI powered by Codrus models 还会自动保存和恢复会话的运行状态。当你恢复一个会话时，以下状态会自动还原：
 
 - **审批决策**：YOLO 和 AFK 模式的开关状态、通过 "本会话允许" 批准过的操作类型
 - **Plan 模式**：Plan 模式的开关状态
@@ -73,7 +73,7 @@ To resume this session: kimi -r <session-id>
 
 ## 导出与导入
 
-Kimi Code CLI 支持将会话上下文导出为文件，或从外部文件和其他会话导入上下文。
+CodrusCLI powered by Codrus models 支持将会话上下文导出为文件，或从外部文件和其他会话导入上下文。
 
 **导出会话**
 
@@ -106,7 +106,7 @@ Kimi Code CLI 支持将会话上下文导出为文件，或从外部文件和其
 
 ## 清空与压缩
 
-随着对话的进行，上下文会越来越长。Kimi Code CLI 会在需要的时候自动对上下文进行压缩，确保对话能够继续。
+随着对话的进行，上下文会越来越长。CodrusCLI powered by Codrus models 会在需要的时候自动对上下文进行压缩，确保对话能够继续。
 
 你也可以使用斜杠命令手动管理上下文：
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Clean up .kimi sessions whose workdir is under a temporary directory.
+"""Clean up .codrus sessions whose workdir is under a temporary directory.
 
 This script handles two cases:
-  1. Entries in kimi.json whose path is a tmp directory -> remove entry + session dir.
-  2. Orphan session directories on disk that have no matching kimi.json entry
+  1. Entries in codrus.json whose path is a tmp directory -> remove entry + session dir.
+  2. Orphan session directories on disk that have no matching codrus.json entry
      (e.g. leftover from previously cleaned entries or tests).
 
 Temporary directories are detected by checking if the path starts with
@@ -23,8 +23,8 @@ import sys
 from hashlib import md5
 from pathlib import Path
 
-KIMI_DIR = Path.home() / ".kimi"
-METADATA_FILE = KIMI_DIR / "kimi.json"
+KIMI_DIR = Path.home() / ".codrus"
+METADATA_FILE = KIMI_DIR / "codrus.json"
 SESSIONS_DIR = KIMI_DIR / "sessions"
 
 TMP_PREFIXES = (
@@ -68,7 +68,7 @@ def main() -> None:
 
     work_dirs: list[dict] = metadata.get("work_dirs", [])
 
-    # --- Phase 1: tmp entries in kimi.json ---
+    # --- Phase 1: tmp entries in codrus.json ---
     tmp_entries: list[dict] = []
     keep_entries: list[dict] = []
     keep_hashes: set[str] = set()
@@ -86,7 +86,7 @@ def main() -> None:
         if session_dir.is_dir():
             tmp_dirs.append(session_dir)
 
-    # --- Phase 2: orphan directories (on disk but not in kimi.json) ---
+    # --- Phase 2: orphan directories (on disk but not in codrus.json) ---
     orphan_dirs: list[Path] = []
     if SESSIONS_DIR.is_dir():
         for d in SESSIONS_DIR.iterdir():

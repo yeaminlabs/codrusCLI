@@ -11,13 +11,13 @@ from kosong.tooling import CallableTool2, ToolError, ToolOk, ToolReturnValue
 from kosong.tooling.error import ToolNotFoundError as KosongToolNotFoundError
 from pydantic import BaseModel
 
-from kimi_cli.soul.toolset import (
+from codrus_cli.soul.toolset import (
     _REMINDER_TEXT_1,
     _REMINDER_TEXT_3,
     KimiToolset,
     _build_repeat_reminder,
 )
-from kimi_cli.wire.types import ToolCall, ToolResult
+from codrus_cli.wire.types import ToolCall, ToolResult
 
 
 class DummyParams(BaseModel):
@@ -612,7 +612,7 @@ async def test_tool_call_repeat_telemetry_matches_kimi_code(
     def fake_track(event: str, **props: object) -> None:
         events.append((event, props))
 
-    monkeypatch.setattr("kimi_cli.telemetry.track", fake_track)
+    monkeypatch.setattr("codrus_cli.telemetry.track", fake_track)
 
     ts = _make_toolset()
     previous_calls: list[tuple[str, str]] = []
@@ -642,7 +642,7 @@ async def test_tool_call_dedup_detected_telemetry(monkeypatch: pytest.MonkeyPatc
     def fake_track(event: str, **props: object) -> None:
         events.append((event, props))
 
-    monkeypatch.setattr("kimi_cli.telemetry.track", fake_track)
+    monkeypatch.setattr("codrus_cli.telemetry.track", fake_track)
 
     ts = _make_toolset()
     args = '{"value":"x"}'
@@ -679,7 +679,7 @@ async def test_tool_call_error_uses_enum_and_error_class(monkeypatch: pytest.Mon
     def fake_track(event: str, **props: object) -> None:
         events.append((event, props))
 
-    monkeypatch.setattr("kimi_cli.telemetry.track", fake_track)
+    monkeypatch.setattr("codrus_cli.telemetry.track", fake_track)
 
     class FailingTool(CallableTool2[DummyParams]):
         name: str = "FailingTool"
@@ -713,7 +713,7 @@ async def test_tool_call_cancelled_outcome(monkeypatch: pytest.MonkeyPatch):
     def fake_track(event: str, **props: object) -> None:
         events.append((event, props))
 
-    monkeypatch.setattr("kimi_cli.telemetry.track", fake_track)
+    monkeypatch.setattr("codrus_cli.telemetry.track", fake_track)
 
     class SlowTool(CallableTool2[DummyParams]):
         name: str = "SlowTool"

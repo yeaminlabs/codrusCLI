@@ -31,7 +31,7 @@ import {
   PanelLeftClose,
 } from "lucide-react";
 import { Virtuoso } from "react-virtuoso";
-import { KimiCliBrand } from "@/components/kimi-cli-brand";
+import { KimiCliBrand } from "@/components/codrus-cli-brand";
 import {
   Dialog,
   DialogContent,
@@ -76,7 +76,7 @@ type SessionGroup = {
   sessions: SessionSummary[];
 };
 
-const VIEW_MODE_KEY = "kimi-sessions-view-mode";
+const VIEW_MODE_KEY = "codrus-sessions-view-mode";
 
 /**
  * Shorten a path to fit in limited space

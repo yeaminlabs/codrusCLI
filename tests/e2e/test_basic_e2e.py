@@ -32,7 +32,7 @@ def _run_print_mode(config_path: Path, work_dir: Path, user_prompt: str) -> tupl
     cmd = [
         "uv",
         "run",
-        "kimi",
+        "codrus",
         "--print",
         "--yolo",
         "--input-format",
@@ -64,7 +64,7 @@ def _run_shell_mode(config_path: Path, work_dir: Path, user_prompt: str) -> tupl
     cmd = [
         "uv",
         "run",
-        "kimi",
+        "codrus",
         "--yolo",
         "--prompt",
         user_prompt,
@@ -145,7 +145,7 @@ def _run_wire_mode(
     cmd = [
         "uv",
         "run",
-        "kimi",
+        "codrus",
         "--wire",
         "--yolo",
         "--config-file",
@@ -193,7 +193,7 @@ def _run_wire_mode(
 
 
 @pytest.mark.parametrize("mode", ["print", "wire", "shell"])
-async def test_scripted_echo_kimi_cli_agent_e2e(
+async def test_scripted_echo_codrus_cli_agent_e2e(
     temp_work_dir: KaosPath, tmp_path: Path, mode: str
 ) -> None:
     sample_js = "\n".join(

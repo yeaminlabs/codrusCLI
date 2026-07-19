@@ -1,12 +1,12 @@
 # Environment Variables
 
-Kimi Code CLI supports overriding configuration or controlling runtime behavior through environment variables. This page lists all supported environment variables.
+CodrusCLI powered by Codrus models supports overriding configuration or controlling runtime behavior through environment variables. This page lists all supported environment variables.
 
 For detailed information on how environment variables override configuration files, see [Config Overrides](./overrides.md).
 
-## Kimi environment variables
+## Codrus environment variables
 
-The following environment variables take effect when using `kimi` type providers, used to override provider and model configuration.
+The following environment variables take effect when using `codrus` type providers, used to override provider and model configuration.
 
 | Environment Variable | Description |
 | --- | --- |
@@ -42,7 +42,7 @@ export KIMI_API_KEY="sk-xxx"
 Overrides the model's `model` field in the configuration file (the model identifier used in API calls).
 
 ```sh
-export KIMI_MODEL_NAME="kimi-k2-thinking-turbo"
+export KIMI_MODEL_NAME="codrus-k2-thinking-turbo"
 ```
 
 ### `KIMI_MODEL_MAX_CONTEXT_SIZE`
@@ -80,7 +80,7 @@ export KIMI_MODEL_TOP_P="0.9"
 ### `KIMI_MODEL_MAX_COMPLETION_TOKENS`
 
 Sets an explicit hard cap for the generation parameter `max_completion_tokens`. When unset,
-Kimi Code CLI uses the model's remaining context window. The value is dynamically clamped to
+CodrusCLI powered by Codrus models uses the model's remaining context window. The value is dynamically clamped to
 `max_context_size - input_tokens` for every request.
 
 ```sh
@@ -93,7 +93,7 @@ integer to disable completion-token clamping.
 
 ### `KIMI_MODEL_THINKING_KEEP`
 
-Forwards the value verbatim to the Moonshot API as `thinking.keep`, enabling Preserved Thinking (see the [Moonshot docs](https://platform.kimi.com/docs/guide/use-kimi-k2-thinking-model#preserved-thinking)). Setting it to `all` causes the provider to preserve the reasoning content of previous assistant turns across requests. The value is passed through unchanged, no validation or case normalization is performed.
+Forwards the value verbatim to the Moonshot API as `thinking.keep`, enabling Preserved Thinking (see the [Moonshot docs](https://platform.codrus.com/docs/guide/use-codrus-k2-thinking-model#preserved-thinking)). Setting it to `all` causes the provider to preserve the reasoning content of previous assistant turns across requests. The value is passed through unchanged, no validation or case normalization is performed.
 
 ```sh
 export KIMI_MODEL_THINKING_KEEP="all"
@@ -101,7 +101,7 @@ export KIMI_MODEL_THINKING_KEEP="all"
 
 Empty string or unset means the field is omitted from the request (current default behavior). The override only applies when the model is actually in thinking mode; it is ignored for non-thinking runs so the API never receives a `thinking.keep` without the companion `thinking.type`.
 
-This parameter only takes effect on Moonshot models that support Preserved Thinking (e.g., `kimi-k2.6` / `kimi-k2-thinking`). Passing it to other models has no effect or may be rejected by the API; the CLI does not validate the model.
+This parameter only takes effect on Moonshot models that support Preserved Thinking (e.g., `codrus-k2.6` / `codrus-k2-thinking`). Passing it to other models has no effect or may be rejected by the API; the CLI does not validate the model.
 
 ::: warning Cost
 `thinking.keep=all` instructs the API to retain historical reasoning content across turns, which increases input tokens and therefore API cost. Only enable it when the preserved thinking behavior is required.
@@ -136,17 +136,17 @@ export OPENAI_API_KEY="sk-xxx"
 
 | Environment Variable | Description |
 | --- | --- |
-| `KIMI_SHARE_DIR` | Customize the share directory path (default: `~/.kimi`) |
+| `KIMI_SHARE_DIR` | Customize the share directory path (default: `~/.codrus`) |
 | `KIMI_CLI_NO_AUTO_UPDATE` | Disable all update-related features |
 | `KIMI_CLI_PASTE_CHAR_THRESHOLD` | Character threshold for folding pasted text (default: `1000`) |
 | `KIMI_CLI_PASTE_LINE_THRESHOLD` | Line threshold for folding pasted text (default: `15`) |
 
 ### `KIMI_SHARE_DIR`
 
-Customize the share directory path for Kimi Code CLI. The default path is `~/.kimi`, where configuration, sessions, logs, and other runtime data are stored.
+Customize the share directory path for CodrusCLI powered by Codrus models. The default path is `~/.codrus`, where configuration, sessions, logs, and other runtime data are stored.
 
 ```sh
-export KIMI_SHARE_DIR="/path/to/custom/kimi"
+export KIMI_SHARE_DIR="/path/to/custom/codrus"
 ```
 
 See [Data Locations](./data-locations.md) for details.
@@ -164,7 +164,7 @@ export KIMI_CLI_NO_AUTO_UPDATE="1"
 ```
 
 ::: tip
-If you installed Kimi Code CLI via Nix or other package managers, this environment variable is typically set automatically since updates are handled by the package manager.
+If you installed CodrusCLI powered by Codrus models via Nix or other package managers, this environment variable is typically set automatically since updates are handled by the package manager.
 :::
 
 ### `KIMI_CLI_PASTE_CHAR_THRESHOLD`

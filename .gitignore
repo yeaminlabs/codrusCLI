@@ -18,15 +18,15 @@ uv.toml
 .idea/*
 
 # Build dependencies
-src/kimi_cli/deps/bin
-src/kimi_cli/deps/tmp
-src/kimi_cli/_build_info.py
+src/codrus_cli/deps/bin
+src/codrus_cli/deps/tmp
+src/codrus_cli/_build_info.py
 
 # Web build artifacts
-src/kimi_cli/web/static/assets/
+src/codrus_cli/web/static/assets/
 
 # Vis build artifacts
-src/kimi_cli/vis/static/
+src/codrus_cli/vis/static/
 
 # Generated reports
 tests_ai/report.json

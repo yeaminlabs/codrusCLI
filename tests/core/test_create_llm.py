@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from inline_snapshot import snapshot
+from kosong.chat_provider.codrus import Codrus
 from kosong.chat_provider.echo import EchoChatProvider
-from kosong.chat_provider.kimi import Kimi
 from kosong.contrib.chat_provider.openai_responses import OpenAIResponses
 from pydantic import SecretStr
 
-from kimi_cli.config import Config, LLMModel, LLMProvider
-from kimi_cli.llm import (
+from codrus_cli.config import Config, LLMModel, LLMProvider
+from codrus_cli.llm import (
     augment_provider_with_env_vars,
     clone_llm_with_model_alias,
     compute_max_completion_tokens,
@@ -17,20 +17,20 @@ from kimi_cli.llm import (
 
 def test_augment_provider_with_env_vars_kimi(monkeypatch):
     provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://original.test/v1",
         api_key=SecretStr("orig-key"),
     )
     model = LLMModel(
-        provider="kimi",
-        model="kimi-base",
+        provider="codrus",
+        model="codrus-base",
         max_context_size=4096,
         capabilities=None,
     )
 
     monkeypatch.setenv("KIMI_BASE_URL", "https://env.test/v1")
     monkeypatch.setenv("KIMI_API_KEY", "env-key")
-    monkeypatch.setenv("KIMI_MODEL_NAME", "kimi-env-model")
+    monkeypatch.setenv("KIMI_MODEL_NAME", "codrus-env-model")
     monkeypatch.setenv("KIMI_MODEL_MAX_CONTEXT_SIZE", "8192")
     monkeypatch.setenv("KIMI_MODEL_CAPABILITIES", "Image_In,THINKING,unknown")
 
@@ -38,15 +38,15 @@ def test_augment_provider_with_env_vars_kimi(monkeypatch):
 
     assert provider == snapshot(
         LLMProvider(
-            type="kimi",
+            type="codrus",
             base_url="https://env.test/v1",
             api_key=SecretStr("env-key"),
         )
     )
     assert model == snapshot(
         LLMModel(
-            provider="kimi",
-            model="kimi-env-model",
+            provider="codrus",
+            model="codrus-env-model",
             max_context_size=8192,
             capabilities={"image_in", "thinking"},
         )
@@ -55,13 +55,13 @@ def test_augment_provider_with_env_vars_kimi(monkeypatch):
 
 def test_create_llm_kimi_model_parameters(monkeypatch):
     provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://api.test/v1",
         api_key=SecretStr("test-key"),
     )
     model = LLMModel(
-        provider="kimi",
-        model="kimi-base",
+        provider="codrus",
+        model="codrus-base",
         max_context_size=4096,
         capabilities=None,
     )
@@ -72,7 +72,7 @@ def test_create_llm_kimi_model_parameters(monkeypatch):
 
     llm = create_llm(provider, model)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     assert llm.chat_provider.model_parameters == snapshot(
         {
@@ -86,13 +86,13 @@ def test_create_llm_kimi_model_parameters(monkeypatch):
 
 def test_create_llm_kimi_prefers_max_completion_tokens_env(monkeypatch):
     provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://api.test/v1",
         api_key=SecretStr("test-key"),
     )
     model = LLMModel(
-        provider="kimi",
-        model="kimi-base",
+        provider="codrus",
+        model="codrus-base",
         max_context_size=4096,
         capabilities=None,
     )
@@ -102,7 +102,7 @@ def test_create_llm_kimi_prefers_max_completion_tokens_env(monkeypatch):
 
     llm = create_llm(provider, model)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     assert llm.chat_provider.model_parameters["max_completion_tokens"] == 5678
 
@@ -154,17 +154,17 @@ def test_compute_max_completion_tokens_uses_fallback_for_unknown_context():
 
 def test_create_llm_kimi_non_positive_completion_cap_disables_clamping(monkeypatch):
     provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://api.test/v1",
         api_key=SecretStr("test-key"),
     )
-    model = LLMModel(provider="kimi", model="kimi-base", max_context_size=4096)
+    model = LLMModel(provider="codrus", model="codrus-base", max_context_size=4096)
     monkeypatch.setenv("KIMI_MODEL_MAX_COMPLETION_TOKENS", "0")
 
     llm = create_llm(provider, model)
 
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
     assert llm.chat_provider.model_parameters["max_completion_tokens"] is None
 
 
@@ -219,8 +219,8 @@ def test_create_llm_anthropic_without_session_id():
 
 
 def test_create_llm_requires_base_url_for_kimi():
-    provider = LLMProvider(type="kimi", base_url="", api_key=SecretStr("test-key"))
-    model = LLMModel(provider="kimi", model="kimi-base", max_context_size=4096)
+    provider = LLMProvider(type="codrus", base_url="", api_key=SecretStr("test-key"))
+    model = LLMModel(provider="codrus", model="codrus-base", max_context_size=4096)
 
     assert create_llm(provider, model) is None
 
@@ -483,15 +483,15 @@ def test_create_llm_openai_responses_thinking_false_no_reasoning_in_params():
 
 
 def _make_kimi_thinking_model() -> tuple[LLMProvider, LLMModel]:
-    """Helper: build a kimi provider + always-thinking model pair."""
+    """Helper: build a codrus provider + always-thinking model pair."""
     provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://api.test/v1",
         api_key=SecretStr("test-key"),
     )
     model = LLMModel(
-        provider="kimi",
-        model="kimi-k2-thinking-turbo",
+        provider="codrus",
+        model="codrus-k2-thinking-turbo",
         max_context_size=4096,
         capabilities=None,
     )
@@ -499,15 +499,15 @@ def _make_kimi_thinking_model() -> tuple[LLMProvider, LLMModel]:
 
 
 def _make_kimi_plain_model() -> tuple[LLMProvider, LLMModel]:
-    """Helper: build a kimi provider + non-thinking model pair."""
+    """Helper: build a codrus provider + non-thinking model pair."""
     provider = LLMProvider(
-        type="kimi",
+        type="codrus",
         base_url="https://api.test/v1",
         api_key=SecretStr("test-key"),
     )
     model = LLMModel(
-        provider="kimi",
-        model="kimi-k2-turbo-preview",
+        provider="codrus",
+        model="codrus-k2-turbo-preview",
         max_context_size=4096,
         capabilities=None,
     )
@@ -522,7 +522,7 @@ def test_create_llm_kimi_thinking_keep_not_set_omits_field(monkeypatch):
 
     llm = create_llm(provider, model)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     extra_body = llm.chat_provider.model_parameters.get("extra_body") or {}
     thinking = extra_body.get("thinking") or {}
@@ -540,7 +540,7 @@ def test_create_llm_kimi_thinking_keep_empty_string_omits_field(monkeypatch):
 
     llm = create_llm(provider, model)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     extra_body = llm.chat_provider.model_parameters.get("extra_body") or {}
     thinking = extra_body.get("thinking") or {}
@@ -556,7 +556,7 @@ def test_create_llm_kimi_thinking_keep_all_injects_field(monkeypatch):
 
     llm = create_llm(provider, model)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     assert llm.chat_provider.model_parameters.get("extra_body") == snapshot(
         {"thinking": {"type": "enabled", "keep": "all"}}
@@ -571,7 +571,7 @@ def test_create_llm_kimi_thinking_keep_arbitrary_value_passes_through(monkeypatc
 
     llm = create_llm(provider, model)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     extra_body = llm.chat_provider.model_parameters.get("extra_body") or {}
     assert extra_body.get("thinking", {}).get("keep") == "xYz"
@@ -588,7 +588,7 @@ def test_create_llm_kimi_thinking_keep_skipped_when_thinking_off(monkeypatch):
     # with_thinking("off").
     llm = create_llm(provider, model, thinking=False)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     extra_body = llm.chat_provider.model_parameters.get("extra_body") or {}
     thinking = extra_body.get("thinking") or {}
@@ -606,7 +606,7 @@ def test_create_llm_kimi_thinking_keep_skipped_when_no_thinking_branch(monkeypat
 
     llm = create_llm(provider, model, thinking=None)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     extra_body = llm.chat_provider.model_parameters.get("extra_body") or {}
     # extra_body might be missing entirely (no thinking branch ran), or present
@@ -633,7 +633,7 @@ def test_create_llm_kimi_thinking_keep_injected_on_explicit_thinking_true(monkey
 
     llm = create_llm(provider, model, thinking=True)
     assert llm is not None
-    assert isinstance(llm.chat_provider, Kimi)
+    assert isinstance(llm.chat_provider, Codrus)
 
     assert llm.chat_provider.model_parameters.get("extra_body") == snapshot(
         {"thinking": {"type": "enabled", "keep": "all"}}
@@ -648,10 +648,10 @@ def test_clone_llm_with_model_alias_preserves_kimi_thinking_off():
     llm = create_llm(provider, model, thinking=False)
     assert llm is not None
 
-    target_model = model.model_copy(update={"model": "kimi-code"})
+    target_model = model.model_copy(update={"model": "codrus-code"})
     config = Config(
         models={"target": target_model},
-        providers={"kimi": provider},
+        providers={"codrus": provider},
     )
     cloned = clone_llm_with_model_alias(
         llm,
@@ -662,7 +662,7 @@ def test_clone_llm_with_model_alias_preserves_kimi_thinking_off():
     )
 
     assert cloned is not None
-    assert isinstance(cloned.chat_provider, Kimi)
+    assert isinstance(cloned.chat_provider, Codrus)
     assert cloned.chat_provider.thinking_effort == "off"
     assert cloned.chat_provider.model_parameters["extra_body"] == {"thinking": {"type": "disabled"}}
     assert "reasoning_effort" not in cloned.chat_provider.model_parameters

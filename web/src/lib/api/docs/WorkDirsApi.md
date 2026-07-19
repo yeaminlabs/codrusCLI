@@ -15,7 +15,7 @@ All URIs are relative to *http://localhost*
 
 Get the startup directory
 
-Get the directory where kimi web was started.
+Get the directory where codrus web was started.
 
 ### Example
 

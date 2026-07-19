@@ -18,9 +18,9 @@ def _repo_root() -> Path:
 
 
 def _kimi_bin() -> str:
-    """Return the path to the kimi entry-point script inside the venv."""
+    """Return the path to the codrus entry-point script inside the venv."""
     script_dir = "Scripts" if os.name == "nt" else "bin"
-    executable = "kimi.exe" if os.name == "nt" else "kimi"
+    executable = "codrus.exe" if os.name == "nt" else "codrus"
     return str(_repo_root() / ".venv" / script_dir / executable)
 
 
@@ -144,7 +144,7 @@ def acp_share_dir(tmp_path: Path) -> Path:
 
     credentials_dir = share_dir / "credentials"
     credentials_dir.mkdir(parents=True, exist_ok=True)
-    (credentials_dir / "kimi-code.json").write_text(
+    (credentials_dir / "codrus-code.json").write_text(
         json.dumps(
             {
                 "access_token": "test-token-for-ci",
@@ -164,7 +164,7 @@ def acp_share_dir(tmp_path: Path) -> Path:
 async def acp_client(
     acp_share_dir: Path, tmp_path: Path
 ) -> AsyncIterator[tuple[acp.ClientSideConnection, ACPTestClient]]:
-    """Spawn a kimi ACP subprocess and return the SDK connection + test client."""
+    """Spawn a codrus ACP subprocess and return the SDK connection + test client."""
     test_client = ACPTestClient()
     env = {
         **os.environ,

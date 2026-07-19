@@ -9,11 +9,11 @@ from kaos.path import KaosPath
 from kosong.message import Message
 from typer.testing import CliRunner
 
-from kimi_cli.cli import cli
-from kimi_cli.cli.export import _format_message_timestamp
-from kimi_cli.metadata import load_metadata, save_metadata
-from kimi_cli.session import Session
-from kimi_cli.wire.types import TextPart, TurnBegin
+from codrus_cli.cli import cli
+from codrus_cli.cli.export import _format_message_timestamp
+from codrus_cli.metadata import load_metadata, save_metadata
+from codrus_cli.session import Session
+from codrus_cli.wire.types import TextPart, TurnBegin
 
 
 @pytest.fixture
@@ -25,8 +25,8 @@ def isolated_share_dir(monkeypatch, tmp_path: Path) -> Path:
         share_dir.mkdir(parents=True, exist_ok=True)
         return share_dir
 
-    monkeypatch.setattr("kimi_cli.share.get_share_dir", _get_share_dir)
-    monkeypatch.setattr("kimi_cli.metadata.get_share_dir", _get_share_dir)
+    monkeypatch.setattr("codrus_cli.share.get_share_dir", _get_share_dir)
+    monkeypatch.setattr("codrus_cli.metadata.get_share_dir", _get_share_dir)
     return share_dir
 
 

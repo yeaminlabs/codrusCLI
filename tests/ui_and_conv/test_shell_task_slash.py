@@ -9,15 +9,15 @@ from unittest.mock import Mock
 import pytest
 from kosong.tooling.empty import EmptyToolset
 
-from kimi_cli.approval_runtime import ApprovalSource
-from kimi_cli.soul.agent import Agent, Runtime
-from kimi_cli.soul.context import Context
-from kimi_cli.soul.kimisoul import KimiSoul
-from kimi_cli.subagents import AgentLaunchSpec
-from kimi_cli.tools.display import ShellDisplayBlock
-from kimi_cli.ui.shell import Shell
-from kimi_cli.ui.shell import slash as shell_slash
-from kimi_cli.wire.types import ApprovalRequest
+from codrus_cli.approval_runtime import ApprovalSource
+from codrus_cli.soul.agent import Agent, Runtime
+from codrus_cli.soul.context import Context
+from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.subagents import AgentLaunchSpec
+from codrus_cli.tools.display import ShellDisplayBlock
+from codrus_cli.ui.shell import Shell
+from codrus_cli.ui.shell import slash as shell_slash
+from codrus_cli.wire.types import ApprovalRequest
 
 
 class _FakePlaceholderManager:

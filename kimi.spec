@@ -2,7 +2,7 @@
 
 import os
 
-from kimi_cli.utils.pyinstaller import datas, hiddenimports
+from codrus_cli.utils.pyinstaller import datas, hiddenimports
 
 # Read codesign identity from environment variable (for macOS signing in CI)
 codesign_identity = os.environ.get("APPLE_SIGNING_IDENTITY", None)
@@ -11,7 +11,7 @@ codesign_identity = os.environ.get("APPLE_SIGNING_IDENTITY", None)
 onedir_mode = os.environ.get("PYINSTALLER_ONEDIR", "0") == "1"
 
 a = Analysis(
-    ["src/kimi_cli/cli/__main__.py"],
+    ["src/codrus_cli/cli/__main__.py"],
     pathex=[],
     binaries=[],
     datas=datas,
@@ -32,7 +32,7 @@ if onedir_mode:
         pyz,
         a.scripts,
         exclude_binaries=True,
-        name="kimi-exe",
+        name="codrus-exe",
         debug=False,
         bootloader_ignore_signals=False,
         strip=False,
@@ -53,7 +53,7 @@ if onedir_mode:
         strip=False,
         upx=True,
         upx_exclude=[],
-        name="kimi",
+        name="codrus",
     )
 else:
     # one-file mode (default): all binaries/datas bundled into single executable
@@ -63,7 +63,7 @@ else:
         a.binaries,
         a.datas,
         [],
-        name="kimi",
+        name="codrus",
         debug=False,
         bootloader_ignore_signals=False,
         strip=False,

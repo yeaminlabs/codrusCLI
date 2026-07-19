@@ -1,6 +1,6 @@
 # Accuracy Smoke (Harbor + Terminal-Bench-2)
 
-This directory hosts a benchmark-backed accuracy smoke layer for `kimi-cli`.
+This directory hosts a benchmark-backed accuracy smoke layer for `codrus-cli`.
 
 It is intentionally separate from `tests_ai/` root so we can:
 
@@ -56,7 +56,7 @@ GH_MIRROR_PREFIX=http://ghfast.top/ \
 
 ## API key configuration
 
-Harbor's custom local `kimi-cli` agent reads credentials from environment variables.
+Harbor's custom local `codrus-cli` agent reads credentials from environment variables.
 Set one of the following before running smoke tasks:
 
 - `KIMI_API_KEY`
@@ -74,14 +74,14 @@ variable at runtime. Do not commit API keys into this repository.
 
 Model selection:
 
-- `HARBOR_MODEL` (default: `kimi/kimi-for-coding`)
+- `HARBOR_MODEL` (default: `codrus/codrus-for-coding`)
 
-## Use current kimi-cli source (not release build)
+## Use current codrus-cli source (not release build)
 
 `run_smoke.sh` defaults to evaluating the current repository commit by using a
 custom Harbor agent import path:
 
-- `tests_ai.accuracy_smoke.local_kimi_cli_agent:LocalKimiCli`
+- `tests_ai.accuracy_smoke.local_codrus_cli_agent:LocalKimiCli`
 
 By default, it builds a local wheel from your current workspace and installs
 that wheel inside the benchmark container. This means local unpushed changes
@@ -97,7 +97,7 @@ Wheel controls:
 Example override:
 
 ```bash
-KIMI_CLI_WHEEL_DIR=/tmp/kimi-wheel-cache \
+KIMI_CLI_WHEEL_DIR=/tmp/codrus-wheel-cache \
   bash tests_ai/accuracy_smoke/scripts/run_smoke.sh
 ```
 

@@ -87,7 +87,7 @@ def deref_json_schema(schema: JsonDict) -> JsonDict:
 def ensure_property_types(schema: JsonDict) -> JsonDict:
     """Return a deep copy of ``schema`` with an explicit ``type`` on every property.
 
-    The Moonshot (Kimi) API rejects tool parameter schemas where a property
+    The Moonshot (Codrus) API rejects tool parameter schemas where a property
     schema omits ``type`` — for example ``{"enum": ["smart", "full"]}`` with no
     ``"type": "string"``. JSON Schema itself permits this (the property then
     accepts any value), and providers such as OpenAI and Anthropic accept it,

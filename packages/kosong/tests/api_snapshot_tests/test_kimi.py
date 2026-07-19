@@ -1,4 +1,4 @@
-"""Snapshot tests for Kimi chat provider."""
+"""Snapshot tests for Codrus chat provider."""
 
 import json
 from collections.abc import AsyncIterator
@@ -9,10 +9,10 @@ import respx
 from common import COMMON_CASES, Case, make_chat_completion_response, run_test_cases
 from httpx import Response
 from inline_snapshot import snapshot
+from kosong.chat_provider.codrus import Codrus, KimiStreamedMessage
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
 from kosong.chat_provider import ThinkingEffort
-from kosong.chat_provider.kimi import Kimi, KimiStreamedMessage
 from kosong.message import Message, TextPart, ThinkPart, ToolCall
 from kosong.tooling import Tool
 
@@ -92,9 +92,9 @@ TEST_CASES: dict[str, Case] = {
 async def test_kimi_message_conversion():
     with respx.mock(base_url="https://api.moonshot.ai") as mock:
         mock.post("/v1/chat/completions").mock(
-            return_value=Response(200, json=make_chat_completion_response("kimi-k2"))
+            return_value=Response(200, json=make_chat_completion_response("codrus-k2"))
         )
-        provider = Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+        provider = Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
         results = await run_test_cases(mock, provider, TEST_CASES, ("messages", "tools"))
 
         assert results == snapshot(
@@ -391,8 +391,8 @@ async def test_kimi_generation_kwargs():
         mock.post("/v1/chat/completions").mock(
             return_value=Response(200, json=make_chat_completion_response())
         )
-        provider = Kimi(
-            model="kimi-k2-turbo-preview", api_key="test-key", stream=False
+        provider = Codrus(
+            model="codrus-k2-turbo-preview", api_key="test-key", stream=False
         ).with_generation_kwargs(temperature=0.7, max_tokens=2048)
         stream = await provider.generate("", [], [Message(role="user", content="Hi")])
         async for _ in stream:
@@ -406,7 +406,7 @@ async def test_kimi_default_omits_completion_cap():
         mock.post("/v1/chat/completions").mock(
             return_value=Response(200, json=make_chat_completion_response())
         )
-        provider = Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+        provider = Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
         stream = await provider.generate("", [], [Message(role="user", content="Hi")])
         async for _ in stream:
             pass
@@ -421,7 +421,7 @@ async def test_kimi_max_tokens_alias_preserves_explicit_none():
             return_value=Response(200, json=make_chat_completion_response())
         )
         provider = (
-            Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+            Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
             .with_generation_kwargs(max_tokens=2048)
             .with_generation_kwargs(max_tokens=None)
         )
@@ -436,8 +436,8 @@ async def test_kimi_max_tokens_alias_preserves_explicit_none():
 
 
 def test_kimi_max_tokens_alias_defers_to_canonical_key():
-    provider = Kimi(
-        model="kimi-k2-turbo-preview", api_key="test-key", stream=False
+    provider = Codrus(
+        model="codrus-k2-turbo-preview", api_key="test-key", stream=False
     ).with_generation_kwargs(max_tokens=2048, max_completion_tokens=None)
 
     assert provider.model_parameters["max_completion_tokens"] is None
@@ -449,8 +449,8 @@ async def test_kimi_generation_overrides_per_call():
         mock.post("/v1/chat/completions").mock(
             return_value=Response(200, json=make_chat_completion_response())
         )
-        provider = Kimi(
-            model="kimi-k2-turbo-preview", api_key="test-key", stream=False
+        provider = Codrus(
+            model="codrus-k2-turbo-preview", api_key="test-key", stream=False
         ).with_generation_kwargs(temperature=0.7)
         stream = await provider.generate(
             "",
@@ -472,7 +472,7 @@ async def test_kimi_generation_overrides_normalize_max_tokens_alias():
         mock.post("/v1/chat/completions").mock(
             return_value=Response(200, json=make_chat_completion_response())
         )
-        provider = Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+        provider = Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
         stream = await provider.generate(
             "",
             [],
@@ -492,8 +492,8 @@ async def test_kimi_generation_overrides_take_precedence_over_provider_kwargs():
         mock.post("/v1/chat/completions").mock(
             return_value=Response(200, json=make_chat_completion_response())
         )
-        provider = Kimi(
-            model="kimi-k2-turbo-preview", api_key="test-key", stream=False
+        provider = Codrus(
+            model="codrus-k2-turbo-preview", api_key="test-key", stream=False
         ).with_generation_kwargs(max_completion_tokens=8000)
         stream = await provider.generate(
             "",
@@ -528,8 +528,8 @@ async def test_kimi_with_thinking_omits_legacy_reasoning_effort(
         mock.post("/v1/chat/completions").mock(
             return_value=Response(200, json=make_chat_completion_response())
         )
-        provider = Kimi(
-            model="kimi-k2-turbo-preview", api_key="test-key", stream=False
+        provider = Codrus(
+            model="codrus-k2-turbo-preview", api_key="test-key", stream=False
         ).with_thinking(effort)
         stream = await provider.generate("", [], [Message(role="user", content="Think")])
         async for _ in stream:
@@ -541,7 +541,7 @@ async def test_kimi_with_thinking_omits_legacy_reasoning_effort(
 
 
 def test_kimi_thinking_effort_preserves_caller_value_without_mapping():
-    provider = Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+    provider = Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
 
     assert provider.thinking_effort is None
     for configured, expected in (
@@ -557,8 +557,8 @@ def test_kimi_thinking_effort_preserves_caller_value_without_mapping():
 
 
 def test_kimi_explicit_legacy_reasoning_effort_is_independent_from_thinking_state():
-    provider = Kimi(
-        model="kimi-k2-turbo-preview", api_key="test-key", stream=False
+    provider = Codrus(
+        model="codrus-k2-turbo-preview", api_key="test-key", stream=False
     ).with_generation_kwargs(reasoning_effort="medium")
 
     assert provider.thinking_effort is None
@@ -582,7 +582,7 @@ async def test_kimi_with_extra_body_thinking_deep_merge():
             return_value=Response(200, json=make_chat_completion_response())
         )
         provider = (
-            Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+            Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
             .with_thinking("high")
             .with_extra_body({"thinking": {"keep": "all"}})
         )
@@ -601,7 +601,7 @@ async def test_kimi_with_extra_body_thinking_empty_dict_is_noop():
             return_value=Response(200, json=make_chat_completion_response())
         )
         provider = (
-            Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+            Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
             .with_thinking("high")
             .with_extra_body({"thinking": {}})
         )
@@ -621,7 +621,7 @@ async def test_kimi_with_extra_body_thinking_starts_from_empty_dict():
             return_value=Response(200, json=make_chat_completion_response())
         )
         provider = (
-            Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+            Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
             .with_extra_body({"thinking": {}})
             .with_thinking("high")
         )
@@ -641,7 +641,7 @@ async def test_kimi_with_extra_body_non_thinking_key_shallow_merge():
             return_value=Response(200, json=make_chat_completion_response())
         )
         provider = (
-            Kimi(model="kimi-k2-turbo-preview", api_key="test-key", stream=False)
+            Codrus(model="codrus-k2-turbo-preview", api_key="test-key", stream=False)
             .with_extra_body({"custom": {"a": 1}})  # pyright: ignore[reportArgumentType]
             .with_extra_body({"custom": {"b": 2}})  # pyright: ignore[reportArgumentType]
         )
@@ -658,7 +658,7 @@ def _make_chunk(delta: dict[str, Any], finish_reason: str | None = None) -> Chat
             "id": "chatcmpl-test",
             "object": "chat.completion.chunk",
             "created": 1,
-            "model": "kimi-k2-thinking",
+            "model": "codrus-k2-thinking",
             "choices": [{"index": 0, "delta": delta, "finish_reason": finish_reason}],
         }
     )
@@ -705,7 +705,7 @@ async def test_kimi_non_stream_preserves_empty_reasoning_content():
             "id": "chatcmpl-test",
             "object": "chat.completion",
             "created": 1,
-            "model": "kimi-k2-thinking",
+            "model": "codrus-k2-thinking",
             "choices": [
                 {
                     "index": 0,

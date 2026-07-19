@@ -1,8 +1,8 @@
-# Example: Kimi Code CLI Stream JSON
+# Example: CodrusCLI powered by Codrus models Stream JSON
 
-This example demonstrates how to run Kimi Code CLI in a subprocess and interact with it using JSON messages over standard input and output.
+This example demonstrates how to run CodrusCLI powered by Codrus models in a subprocess and interact with it using JSON messages over standard input and output.
 
 ```sh
-cd examples/kimi-cli-stream-json
+cd examples/codrus-cli-stream-json
 uv run main.py
 ```
