@@ -10,7 +10,7 @@ from codrus_cli.auth.oauth import login_kimi_code, logout_kimi_code
 from codrus_cli.auth.platforms import is_managed_provider_key, parse_managed_provider_key
 from codrus_cli.cli import Reload
 from codrus_cli.config import save_config
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell.console import console
 from codrus_cli.ui.shell.setup import select_platform, setup_platform
 from codrus_cli.ui.shell.slash import ensure_kimi_soul, registry
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from codrus_cli.ui.shell import Shell
 
 
-async def _login_kimi_code(soul: KimiSoul) -> bool:
+async def _login_kimi_code(soul: CodrusSoul) -> bool:
     status: Status | None = None
     ok = True
     try:
@@ -48,7 +48,7 @@ async def _login_kimi_code(soul: KimiSoul) -> bool:
     return ok
 
 
-def current_model_key(soul: KimiSoul) -> str | None:
+def current_model_key(soul: CodrusSoul) -> str | None:
     config = soul.runtime.config
     curr_model_cfg = soul.runtime.llm.model_config if soul.runtime.llm else None
     if curr_model_cfg is not None:

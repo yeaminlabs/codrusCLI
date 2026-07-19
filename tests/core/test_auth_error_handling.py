@@ -34,7 +34,7 @@ from codrus_cli.llm import LLM
 from codrus_cli.soul import run_soul
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.utils.aioqueue import QueueShutDown
 from codrus_cli.wire import Wire
 from codrus_cli.wire.jsonrpc import (
@@ -298,7 +298,7 @@ def _runtime_with_provider(runtime: Runtime, provider, *, oauth: bool = False) -
     )
 
 
-def _make_soul(runtime: Runtime, provider, tmp_path: Path, *, oauth: bool = False) -> KimiSoul:
+def _make_soul(runtime: Runtime, provider, tmp_path: Path, *, oauth: bool = False) -> CodrusSoul:
     rt = _runtime_with_provider(runtime, provider, oauth=oauth)
     agent = Agent(
         name="Auth Error Test Agent",
@@ -306,7 +306,7 @@ def _make_soul(runtime: Runtime, provider, tmp_path: Path, *, oauth: bool = Fals
         toolset=SimpleToolset(),
         runtime=rt,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
 async def _drain_ui_messages(wire: Wire) -> None:

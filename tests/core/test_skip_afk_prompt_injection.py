@@ -15,20 +15,20 @@ from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
 from codrus_cli.soul.dynamic_injections.afk_mode import AfkModeInjectionProvider
 from codrus_cli.soul.dynamic_injections.plan_mode import PlanModeInjectionProvider
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 
 
-def _make_soul(runtime: Runtime, tmp_path: Path) -> KimiSoul:
+def _make_soul(runtime: Runtime, tmp_path: Path) -> CodrusSoul:
     agent = Agent(
         name="Test Agent",
         system_prompt="Test system prompt.",
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
-def _provider_types(soul: KimiSoul) -> set[type]:
+def _provider_types(soul: CodrusSoul) -> set[type]:
     # Access the private list to introspect provider composition.
     return {type(p) for p in soul._injection_providers}  # pyright: ignore[reportPrivateUsage]
 

@@ -21,7 +21,7 @@ async def test_watcher_survives_handler_exception(runtime, tmp_path) -> None:
 
     from codrus_cli.soul.agent import Agent
     from codrus_cli.soul.context import Context
-    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.codrussoul import CodrusSoul
     from codrus_cli.ui.shell import Shell
     from codrus_cli.wire.types import ApprovalRequest
 
@@ -31,7 +31,7 @@ async def test_watcher_survives_handler_exception(runtime, tmp_path) -> None:
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "h.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "h.jsonl"))
     shell = Shell(soul)
 
     hub = runtime.root_wire_hub
@@ -95,7 +95,7 @@ async def test_watcher_exits_gracefully_on_queue_shutdown(runtime, tmp_path) -> 
 
     from codrus_cli.soul.agent import Agent
     from codrus_cli.soul.context import Context
-    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.codrussoul import CodrusSoul
     from codrus_cli.ui.shell import Shell
 
     agent = Agent(
@@ -104,7 +104,7 @@ async def test_watcher_exits_gracefully_on_queue_shutdown(runtime, tmp_path) -> 
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "h.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "h.jsonl"))
     shell = Shell(soul)
 
     watcher_task = asyncio.create_task(shell._watch_root_wire_hub())

@@ -11,7 +11,7 @@ from kosong.chat_provider import StreamedMessagePart, ThinkingEffort, TokenUsage
 from kosong.message import Message, TextPart
 from kosong.tooling.empty import EmptyToolset
 
-from codrus_cli.app import KimiCLI
+from codrus_cli.app import CodrusCLI
 from codrus_cli.approval_runtime import ApprovalSource, get_current_approval_source_or_none
 from codrus_cli.background import TaskRuntime, TaskSpec
 from codrus_cli.llm import LLM
@@ -19,7 +19,7 @@ from codrus_cli.notifications import NotificationEvent
 from codrus_cli.soul import RunCancelled, StatusSnapshot, _current_wire, run_soul
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.utils.aioqueue import QueueShutDown
 from codrus_cli.wire import Wire
 from codrus_cli.wire.types import ApprovalRequest, ApprovalResponse, Notification
@@ -96,7 +96,7 @@ def _runtime_with_llm(runtime: Runtime, llm: LLM) -> Runtime:
     )
 
 
-def _make_soul(runtime: Runtime, tmp_path: Path) -> tuple[KimiSoul, Context]:
+def _make_soul(runtime: Runtime, tmp_path: Path) -> tuple[CodrusSoul, Context]:
     llm = LLM(
         chat_provider=_SequenceProvider([TextPart(text="done")]),
         max_context_size=100_000,
@@ -109,7 +109,7 @@ def _make_soul(runtime: Runtime, tmp_path: Path) -> tuple[KimiSoul, Context]:
         runtime=_runtime_with_llm(runtime, llm),
     )
     context = Context(file_backend=tmp_path / "history.jsonl")
-    return KimiSoul(agent, context=context), context
+    return CodrusSoul(agent, context=context), context
 
 
 def _write_completed_task(runtime: Runtime, task_id: str) -> None:
@@ -141,7 +141,7 @@ def _write_completed_task(runtime: Runtime, task_id: str) -> None:
 
 
 @pytest.mark.asyncio
-async def test_kimisoul_appends_notification_message(runtime: Runtime, tmp_path: Path) -> None:
+async def test_codrussoul_appends_notification_message(runtime: Runtime, tmp_path: Path) -> None:
     _write_completed_task(runtime, "b3333333")
     runtime.background_tasks.publish_terminal_notifications()
 
@@ -243,7 +243,7 @@ async def test_codrus_cli_run_yields_root_hub_approvals(runtime: Runtime) -> Non
                 source=ApprovalSource(kind="foreground_turn", id="turn-run-1"),
             )
 
-    cli = KimiCLI(_ApprovalOnlySoul(runtime), runtime, {})  # type: ignore[arg-type]
+    cli = CodrusCLI(_ApprovalOnlySoul(runtime), runtime, {})  # type: ignore[arg-type]
 
     seen: list[ApprovalRequest] = []
     async for msg in cli.run("ping", asyncio.Event()):
@@ -304,7 +304,7 @@ async def test_codrus_cli_run_bridges_approval_resolution_back_to_runtime(runtim
             )
 
     soul = _ApprovalRoundTripSoul(runtime)
-    cli = KimiCLI(soul, runtime, {})  # type: ignore[arg-type]
+    cli = CodrusCLI(soul, runtime, {})  # type: ignore[arg-type]
 
     seen_responses: list[ApprovalResponse] = []
 
@@ -353,10 +353,10 @@ async def test_codrus_cli_run_cancels_abandoned_approval_stream(
     async def fake_ensure_fresh(_runtime):
         return None
 
-    monkeypatch.setattr(KimiSoul, "_turn", fake_turn)
+    monkeypatch.setattr(CodrusSoul, "_turn", fake_turn)
     monkeypatch.setattr(runtime.oauth, "ensure_fresh", fake_ensure_fresh)
 
-    soul = KimiSoul(
+    soul = CodrusSoul(
         Agent(
             name="Approval Stream Agent",
             system_prompt="System prompt.",
@@ -365,7 +365,7 @@ async def test_codrus_cli_run_cancels_abandoned_approval_stream(
         ),
         context=Context(file_backend=tmp_path / "history.jsonl"),
     )
-    cli = KimiCLI(soul, runtime, {})
+    cli = CodrusCLI(soul, runtime, {})
     cancel_event = asyncio.Event()
     stream = cli.run("ping", cancel_event)
 
@@ -413,10 +413,10 @@ async def test_codrus_cli_run_propagates_external_cancel_event(
     async def fake_ensure_fresh(_runtime):
         return None
 
-    monkeypatch.setattr(KimiSoul, "_turn", fake_turn)
+    monkeypatch.setattr(CodrusSoul, "_turn", fake_turn)
     monkeypatch.setattr(runtime.oauth, "ensure_fresh", fake_ensure_fresh)
 
-    soul = KimiSoul(
+    soul = CodrusSoul(
         Agent(
             name="Approval Stream Agent",
             system_prompt="System prompt.",
@@ -425,7 +425,7 @@ async def test_codrus_cli_run_propagates_external_cancel_event(
         ),
         context=Context(file_backend=tmp_path / "history.jsonl"),
     )
-    cli = KimiCLI(soul, runtime, {})
+    cli = CodrusCLI(soul, runtime, {})
     cancel_event = asyncio.Event()
     stream = cli.run("ping", cancel_event)
 
@@ -497,7 +497,7 @@ async def test_codrus_cli_run_replays_pending_approvals_from_previous_turn(runti
             )
 
     soul = _PendingApprovalSoul(runtime)
-    cli = KimiCLI(soul, runtime, {})  # type: ignore[arg-type]
+    cli = CodrusCLI(soul, runtime, {})  # type: ignore[arg-type]
 
     seen_requests: list[ApprovalRequest] = []
 

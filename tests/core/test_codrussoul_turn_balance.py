@@ -7,11 +7,11 @@ from types import SimpleNamespace
 import pytest
 from kosong.tooling.empty import EmptyToolset
 
-import codrus_cli.soul.kimisoul as kimisoul_module
+import codrus_cli.soul.codrussoul as codrussoul_module
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.approval import Approval
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.wire.types import StepBegin, StepInterrupted, TextPart, TurnBegin, TurnEnd
 
 
@@ -21,14 +21,14 @@ def approval() -> Approval:
     return Approval(yolo=False)
 
 
-def _make_soul(runtime: Runtime, tmp_path: Path) -> KimiSoul:
+def _make_soul(runtime: Runtime, tmp_path: Path) -> CodrusSoul:
     agent = Agent(
         name="Turn Balance Agent",
         system_prompt="Test prompt.",
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
 @pytest.mark.asyncio
@@ -49,7 +49,7 @@ async def test_run_emits_turn_end_when_step_interrupts(
     monkeypatch.setattr(soul, "_checkpoint", fake_checkpoint)
     monkeypatch.setattr(soul._denwa_renji, "set_n_checkpoints", lambda _n: None)
     monkeypatch.setattr(soul, "_step", fake_step)
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda msg: sent.append(msg))
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda msg: sent.append(msg))
 
     with pytest.raises(RuntimeError, match="boom"):
         await soul.run("hello")
@@ -79,7 +79,7 @@ async def test_run_emits_turn_end_on_cancelled_error(
     monkeypatch.setattr(soul, "_checkpoint", fake_checkpoint)
     monkeypatch.setattr(soul._denwa_renji, "set_n_checkpoints", lambda _n: None)
     monkeypatch.setattr(soul, "_step", fake_step)
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda msg: sent.append(msg))
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda msg: sent.append(msg))
 
     with pytest.raises(asyncio.CancelledError):
         await soul.run("hello")
@@ -104,7 +104,7 @@ async def test_run_does_not_duplicate_turn_end_for_blocked_prompt(
         return [SimpleNamespace(action="block", reason="blocked by hook")]
 
     monkeypatch.setattr(soul._hook_engine, "trigger", fake_trigger)
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda msg: sent.append(msg))
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda msg: sent.append(msg))
 
     await soul.run("hello")
 

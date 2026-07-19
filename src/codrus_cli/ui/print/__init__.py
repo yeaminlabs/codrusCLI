@@ -27,7 +27,7 @@ from codrus_cli.soul import (
     Soul,
     run_soul,
 )
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.print.visualize import visualize
 from codrus_cli.utils.logging import logger, open_original_stderr
 from codrus_cli.utils.signals import install_sigint_handler
@@ -89,7 +89,7 @@ class Print:
                     logger.info("Running agent with command: {command}", command=command)
                     if self.output_format == "text" and not self.final_only:
                         print(command)
-                    runtime = self.soul.runtime if isinstance(self.soul, KimiSoul) else None
+                    runtime = self.soul.runtime if isinstance(self.soul, CodrusSoul) else None
                     await run_soul(
                         self.soul,
                         command,

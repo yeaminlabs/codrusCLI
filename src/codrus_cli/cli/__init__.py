@@ -380,7 +380,7 @@ def codrus(
     from kaos.path import KaosPath
 
     from codrus_cli.agentspec import DEFAULT_AGENT_FILE, OKABE_AGENT_FILE
-    from codrus_cli.app import KimiCLI, enable_logging
+    from codrus_cli.app import CodrusCLI, enable_logging
     from codrus_cli.config import Config, load_config_from_string
     from codrus_cli.exception import ConfigError
     from codrus_cli.hooks import events as hook_events
@@ -393,7 +393,7 @@ def codrus(
 
     # Don't redirect stderr during argument parsing. Our stderr redirector
     # replaces fd=2 with a pipe, which would swallow Click/Typer startup errors.
-    # Redirection is installed later, right before KimiCLI.create(), so that
+    # Redirection is installed later, right before CodrusCLI.create(), so that
     # MCP server stderr noise is captured into logs from the start.
     enable_logging(debug, redirect_stderr=False)
 
@@ -607,7 +607,7 @@ def codrus(
                 if changed:
                     session.save_state()
 
-            # Redirect stderr *before* KimiCLI.create() so that MCP server
+            # Redirect stderr *before* CodrusCLI.create() so that MCP server
             # subprocesses (e.g. mcp-remote OAuth debug logs) write to the log
             # file instead of polluting the user's terminal.  CLI argument
             # parsing has already succeeded at this point, so Typer/Click
@@ -616,7 +616,7 @@ def codrus(
             # the saved original stderr fd.
             redirect_stderr_to_logger()
 
-            instance = await KimiCLI.create(
+            instance = await CodrusCLI.create(
                 session,
                 config=config,
                 model_name=model_name,

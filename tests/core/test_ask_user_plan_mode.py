@@ -6,7 +6,7 @@ from pathlib import Path
 
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.toolset import KimiToolset
 from codrus_cli.tools.ask_user import _BASE_DESCRIPTION, AskUserQuestion
 
@@ -15,7 +15,7 @@ class TestAskUserDescriptionStability:
     def test_description_stays_static_when_soul_toggles_plan_mode(
         self, runtime: Runtime, tmp_path: Path
     ) -> None:
-        """KimiSoul plan mode toggles must not alter AskUserQuestion's description."""
+        """CodrusSoul plan mode toggles must not alter AskUserQuestion's description."""
         toolset = KimiToolset()
         tool = AskUserQuestion()
         toolset.add(tool)
@@ -26,7 +26,7 @@ class TestAskUserDescriptionStability:
             toolset=toolset,
             runtime=runtime,
         )
-        soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+        soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
         before = tool.base.description
         soul._set_plan_mode(True, source="tool")

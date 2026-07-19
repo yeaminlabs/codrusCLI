@@ -10,13 +10,13 @@ from kosong.tooling.empty import EmptyToolset
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
 from codrus_cli.soul.dynamic_injection import DynamicInjection, DynamicInjectionProvider
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.slash import afk as afk_slash
 from codrus_cli.soul.slash import yolo as yolo_slash
 from codrus_cli.wire.types import TextPart
 
 
-def _make_soul(runtime: Runtime, tmp_path: Path) -> KimiSoul:
+def _make_soul(runtime: Runtime, tmp_path: Path) -> CodrusSoul:
     # The shared `approval` fixture in conftest defaults to yolo=True; reset both
     # flags so each test starts from a clean state.
     runtime.approval.set_yolo(False)
@@ -27,10 +27,10 @@ def _make_soul(runtime: Runtime, tmp_path: Path) -> KimiSoul:
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
-async def _run(fn, soul: KimiSoul, args: str = "") -> None:
+async def _run(fn, soul: CodrusSoul, args: str = "") -> None:
     result = fn(soul, args)
     if result is not None:
         await result

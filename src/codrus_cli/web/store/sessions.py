@@ -27,7 +27,7 @@ from uuid import UUID
 from pydantic import ConfigDict, Field
 
 from codrus_cli.metadata import WorkDirMeta, load_metadata
-from codrus_cli.session import Session as KimiCLISession
+from codrus_cli.session import Session as CodrusCLISession
 from codrus_cli.session_state import SessionState, load_session_state, save_session_state
 from codrus_cli.web.models import Session
 from codrus_cli.wire.file import WireFile
@@ -62,7 +62,7 @@ class JointSession(Session):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    codrus_cli_session: KimiCLISession = Field(exclude=True)
+    codrus_cli_session: CodrusCLISession = Field(exclude=True)
 
 
 @dataclass(slots=True)
@@ -150,10 +150,10 @@ def _ensure_title(entry: SessionIndexEntry, *, refresh: bool) -> None:
     entry.title = _derive_title_from_wire(entry.session_dir)
 
 
-def _build_kimi_session(entry: SessionIndexEntry) -> KimiCLISession:
+def _build_kimi_session(entry: SessionIndexEntry) -> CodrusCLISession:
     from kaos.path import KaosPath
 
-    return KimiCLISession(
+    return CodrusCLISession(
         id=str(entry.session_id),
         work_dir=KaosPath.unsafe_from_local_path(Path(entry.work_dir)),
         work_dir_meta=entry.work_dir_meta,

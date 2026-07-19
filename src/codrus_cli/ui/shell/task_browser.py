@@ -16,7 +16,7 @@ from rich.panel import Panel
 from rich.text import Text
 
 from codrus_cli.background import TaskView, is_terminal_status
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell.console import console
 from codrus_cli.utils.datetime import format_duration, format_relative_time
 
@@ -46,7 +46,7 @@ def format_task_choice(view: TaskView, *, now: float | None = None) -> str:
 
 @dataclass(slots=True)
 class TaskBrowserModel:
-    soul: KimiSoul
+    soul: CodrusSoul
     filter_mode: TaskBrowserFilter = "all"
     message: str = ""
     message_expires_at: float | None = None
@@ -233,7 +233,7 @@ class TaskBrowserModel:
 
 
 class TaskBrowserApp:
-    def __init__(self, soul: KimiSoul):
+    def __init__(self, soul: CodrusSoul):
         self._model = TaskBrowserModel(soul)
         task_values, selected = self._model.refresh()
         self._task_list = RadioList(

@@ -27,20 +27,20 @@ from codrus_cli.soul.compaction import (
     CompactionResult,
 )
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.message import system
 
 
 def _make_soul(
     runtime: Runtime, tmp_path: Path, *, system_prompt: str = "Test prompt."
-) -> KimiSoul:
+) -> CodrusSoul:
     agent = Agent(
         name="Completion Budget Test Agent",
         system_prompt=system_prompt,
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
 def _make_kimi_llm(chat_provider: ChatProvider, *, max_context_size: int = 100_000) -> LLM:
@@ -62,7 +62,7 @@ def _make_kimi_llm(chat_provider: ChatProvider, *, max_context_size: int = 100_0
 
 
 def _compute_overrides(
-    soul: KimiSoul,
+    soul: CodrusSoul,
     chat_provider: Any,
     *,
     system_prompt: str = "Test prompt.",
@@ -359,10 +359,10 @@ async def test_compaction_budget_reserves_next_main_request_overhead(
 
     monkeypatch.setattr(soul._compaction, "compact", fake_compact)
     monkeypatch.setattr(
-        "codrus_cli.soul.kimisoul.with_kimi_generation_overrides",
+        "codrus_cli.soul.codrussoul.with_kimi_generation_overrides",
         fake_with_overrides,
     )
-    monkeypatch.setattr("codrus_cli.soul.kimisoul.wire_send", lambda _message: None)
+    monkeypatch.setattr("codrus_cli.soul.codrussoul.wire_send", lambda _message: None)
 
     await soul.compact_context(manual=True)
 

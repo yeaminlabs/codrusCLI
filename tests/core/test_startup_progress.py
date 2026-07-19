@@ -9,7 +9,7 @@ import pytest
 
 import codrus_cli.app as app_module
 import codrus_cli.ui.shell.startup as startup_module
-from codrus_cli.app import KimiCLI
+from codrus_cli.app import CodrusCLI
 from codrus_cli.ui.shell.startup import ShellStartupProgress
 
 
@@ -104,11 +104,11 @@ async def test_codrus_cli_create_reports_startup_phases(session, config, monkeyp
         def set_hook_engine(self, engine):
             pass
 
-    monkeypatch.setattr(app_module, "KimiSoul", _FakeSoul)
+    monkeypatch.setattr(app_module, "CodrusSoul", _FakeSoul)
 
-    cli = await KimiCLI.create(session, config=config, startup_progress=phases.append)
+    cli = await CodrusCLI.create(session, config=config, startup_progress=phases.append)
 
-    assert isinstance(cli, KimiCLI)
+    assert isinstance(cli, CodrusCLI)
     assert phases == [
         "Loading configuration...",
         "Scanning workspace...",
@@ -146,7 +146,7 @@ async def test_run_shell_adds_kimi_code_migration_card(runtime, monkeypatch) -> 
     monkeypatch.setattr("codrus_cli.ui.shell.Shell", FakeShell)
 
     soul = SimpleNamespace(model_name="codrus-code", name="CodrusCLI powered by Codrus models")
-    cli = KimiCLI(soul, runtime, {})  # type: ignore[arg-type]
+    cli = CodrusCLI(soul, runtime, {})  # type: ignore[arg-type]
     monkeypatch.setattr(cli, "_env", fake_env)
 
     assert await cli.run_shell(command="status") is True
@@ -209,8 +209,8 @@ async def test_codrus_cli_create_cleans_stale_running_foreground_subagents(
         def set_hook_engine(self, engine):
             pass
 
-    monkeypatch.setattr(app_module, "KimiSoul", _FakeSoul)
+    monkeypatch.setattr(app_module, "CodrusSoul", _FakeSoul)
 
-    await KimiCLI.create(session, config=config)
+    await CodrusCLI.create(session, config=config)
 
     update_instance.assert_called_once_with("afg1", status="failed")

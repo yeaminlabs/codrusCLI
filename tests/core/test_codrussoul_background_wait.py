@@ -26,7 +26,7 @@ import pytest
 
 from codrus_cli.cli import ExitCode, InputFormat
 from codrus_cli.soul import RunCancelled
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.print import Print
 
 
@@ -111,7 +111,7 @@ def _make_print_with_runtime(
     print_wait_ceiling_s: int = 3600,
     agent_task_timeout_s: int = 900,
 ) -> tuple[Print, AsyncMock]:
-    soul = AsyncMock(spec=KimiSoul)
+    soul = AsyncMock(spec=CodrusSoul)
     soul.runtime = MagicMock()
     soul.runtime.role = "root"
     soul.runtime.background_tasks = manager

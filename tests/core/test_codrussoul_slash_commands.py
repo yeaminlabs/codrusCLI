@@ -7,12 +7,12 @@ import pytest
 from kaos.path import KaosPath
 from kosong.tooling.empty import EmptyToolset
 
-import codrus_cli.soul.kimisoul as kimisoul_module
+import codrus_cli.soul.codrussoul as codrussoul_module
 from codrus_cli.skill import Skill
 from codrus_cli.skill.flow import Flow, FlowEdge, FlowNode
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.utils.slashcmd import SlashCommand
 
 
@@ -50,7 +50,7 @@ def test_flow_skill_registers_skill_and_flow_commands(runtime: Runtime, tmp_path
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
     command_names = {cmd.name for cmd in soul.available_slash_commands}
     assert "skill:flow-skill" in command_names
@@ -93,9 +93,9 @@ async def test_skill_slash_run_does_not_auto_generate_session_title(
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
     soul._turn = AsyncMock(return_value=None)  # type: ignore[method-assign]
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda _msg: None)
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda _msg: None)
 
     await soul.run("/skill:demo-skill fix login")
 
@@ -112,14 +112,14 @@ async def test_flow_slash_run_does_not_auto_generate_session_title(
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
     soul._slash_command_map["flow:demo-flow"] = SlashCommand(
         name="flow:demo-flow",
         description="Demo flow",
         func=lambda *_args, **_kwargs: None,
         aliases=[],
     )
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda _msg: None)
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda _msg: None)
 
     await soul.run("/flow:demo-flow")
 

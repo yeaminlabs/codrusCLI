@@ -1,7 +1,7 @@
-"""Worker module for running KimiCLI in a subprocess.
+"""Worker module for running CodrusCLI in a subprocess.
 
-This module is the entry point for the subprocess that runs KimiCLI in wire mode.
-It reads the session configuration from disk and runs KimiCLI.run_wire_stdio().
+This module is the entry point for the subprocess that runs CodrusCLI in wire mode.
+It reads the session configuration from disk and runs CodrusCLI.run_wire_stdio().
 
 Usage:
     python -m codrus_cli.web.runner.worker <session_id>
@@ -16,14 +16,14 @@ from typing import Any
 from uuid import UUID
 
 from codrus_cli import logger
-from codrus_cli.app import KimiCLI, enable_logging
+from codrus_cli.app import CodrusCLI, enable_logging
 from codrus_cli.cli.mcp import get_global_mcp_config_file
 from codrus_cli.exception import MCPConfigError
 from codrus_cli.web.store.sessions import load_session_by_id
 
 
 async def run_worker(session_id: UUID) -> None:
-    """Run the KimiCLI worker for a session."""
+    """Run the CodrusCLI worker for a session."""
     # Find session by ID using the web store
     joint_session = load_session_by_id(session_id)
     if joint_session is None:
@@ -49,9 +49,9 @@ async def run_worker(session_id: UUID) -> None:
     # vs a brand-new session that should honor config.default_plan_mode.
     resumed = (session.dir / "state.json").exists()
 
-    # Create KimiCLI instance with MCP configuration
+    # Create CodrusCLI instance with MCP configuration
     try:
-        codrus_cli = await KimiCLI.create(
+        codrus_cli = await CodrusCLI.create(
             session, mcp_configs=mcp_configs or None, resumed=resumed, ui_mode="wire"
         )
     except MCPConfigError as exc:
@@ -60,7 +60,7 @@ async def run_worker(session_id: UUID) -> None:
             path=default_mcp_file,
             error=exc,
         )
-        codrus_cli = await KimiCLI.create(session, mcp_configs=None, resumed=resumed, ui_mode="wire")
+        codrus_cli = await CodrusCLI.create(session, mcp_configs=None, resumed=resumed, ui_mode="wire")
 
     # Run in wire stdio mode
     await codrus_cli.run_wire_stdio()

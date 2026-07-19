@@ -16,7 +16,7 @@ from codrus_cli.acp.session import ACPSession
 from codrus_cli.acp.tools import replace_tools
 from codrus_cli.acp.types import ACPContentBlock, MCPServer
 from codrus_cli.acp.version import ACPVersionSpec, negotiate_version
-from codrus_cli.app import KimiCLI
+from codrus_cli.app import CodrusCLI
 from codrus_cli.auth.oauth import KIMI_CODE_OAUTH_KEY, load_tokens
 from codrus_cli.config import LLMModel, OAuthRef, load_config, save_config
 from codrus_cli.constant import NAME, VERSION
@@ -160,7 +160,7 @@ class ACPServer:
         session = await Session.create(KaosPath.unsafe_from_local_path(Path(cwd)))
 
         mcp_config = acp_mcp_servers_to_mcp_config(mcp_servers or [])
-        cli_instance = await KimiCLI.create(
+        cli_instance = await CodrusCLI.create(
             session,
             mcp_configs=[mcp_config],
             ui_mode="acp",
@@ -230,7 +230,7 @@ class ACPServer:
             raise acp.RequestError.invalid_params({"session_id": "Session not found"})
 
         mcp_config = acp_mcp_servers_to_mcp_config(mcp_servers or [])
-        cli_instance = await KimiCLI.create(
+        cli_instance = await CodrusCLI.create(
             session,
             mcp_configs=[mcp_config],
             resumed=True,  # _setup_session loads existing sessions

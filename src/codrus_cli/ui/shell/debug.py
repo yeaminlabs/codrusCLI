@@ -10,7 +10,7 @@ from rich.rule import Rule
 from rich.syntax import Syntax
 from rich.text import Text
 
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell.console import console
 from codrus_cli.ui.shell.slash import registry
 from codrus_cli.wire.types import (
@@ -147,7 +147,7 @@ def _format_message(msg: Message, index: int) -> Panel:
 @registry.command
 def debug(app: Shell, args: str):
     """Debug the context"""
-    assert isinstance(app.soul, KimiSoul)
+    assert isinstance(app.soul, CodrusSoul)
 
     context = app.soul.context
     history = context.history

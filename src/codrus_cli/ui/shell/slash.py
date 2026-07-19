@@ -13,7 +13,7 @@ from codrus_cli.cli import Reload, SwitchToVis, SwitchToWeb
 from codrus_cli.config import load_config, save_config
 from codrus_cli.exception import ConfigError
 from codrus_cli.session import Session
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell.console import console
 from codrus_cli.ui.shell.mcp_status import render_mcp_console
 from codrus_cli.ui.shell.task_browser import TaskBrowserApp
@@ -36,9 +36,9 @@ registry = SlashCommandRegistry[ShellSlashCmdFunc]()
 shell_mode_registry = SlashCommandRegistry[ShellSlashCmdFunc]()
 
 
-def ensure_kimi_soul(app: Shell) -> KimiSoul | None:
-    if not isinstance(app.soul, KimiSoul):
-        console.print("[red]KimiSoul required[/red]")
+def ensure_kimi_soul(app: Shell) -> CodrusSoul | None:
+    if not isinstance(app.soul, CodrusSoul):
+        console.print("[red]CodrusSoul required[/red]")
         return None
     return app.soul
 

@@ -3,14 +3,14 @@ import asyncio
 from kaos.path import KaosPath
 from rich import print
 
-from codrus_cli.app import KimiCLI, enable_logging
+from codrus_cli.app import CodrusCLI, enable_logging
 from codrus_cli.session import Session
 
 
 async def main():
     enable_logging()
     session = await Session.create(KaosPath.cwd())
-    instance = await KimiCLI.create(session)
+    instance = await CodrusCLI.create(session)
     user_input = "Hello!"
 
     async for msg in instance.run(

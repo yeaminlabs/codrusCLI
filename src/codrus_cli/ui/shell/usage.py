@@ -16,7 +16,7 @@ from rich.text import Text
 from codrus_cli.auth import KIMI_CODE_PLATFORM_ID
 from codrus_cli.auth.platforms import get_platform_by_id, parse_managed_provider_key
 from codrus_cli.config import LLMModel
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell.console import console
 from codrus_cli.ui.shell.slash import registry
 from codrus_cli.utils.aiohttp import new_client_session
@@ -37,7 +37,7 @@ class UsageRow:
 @registry.command(aliases=["status"])
 async def usage(app: Shell, args: str):
     """Display API usage and quota information"""
-    assert isinstance(app.soul, KimiSoul)
+    assert isinstance(app.soul, CodrusSoul)
     if app.soul.runtime.llm is None:
         console.print("[red]LLM not set. Please run /login first.[/red]")
         return

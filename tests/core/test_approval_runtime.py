@@ -17,7 +17,7 @@ from codrus_cli.approval_runtime import (
 from codrus_cli.soul import RunCancelled, run_soul
 from codrus_cli.soul.agent import Agent as SoulAgent
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.utils.aioqueue import QueueShutDown
 from codrus_cli.wire import Wire
 from codrus_cli.wire.root_hub import RootWireHub
@@ -299,7 +299,7 @@ async def _drain_ui_messages(wire: Wire) -> None:
 
 
 @pytest.mark.asyncio
-async def test_kimisoul_run_preserves_existing_approval_source(
+async def test_codrussoul_run_preserves_existing_approval_source(
     runtime, tmp_path, monkeypatch
 ) -> None:
     seen_sources: list[ApprovalSource | None] = []
@@ -311,10 +311,10 @@ async def test_kimisoul_run_preserves_existing_approval_source(
     async def fake_ensure_fresh(_runtime):
         return None
 
-    monkeypatch.setattr(KimiSoul, "_turn", fake_turn)
+    monkeypatch.setattr(CodrusSoul, "_turn", fake_turn)
     monkeypatch.setattr(runtime.oauth, "ensure_fresh", fake_ensure_fresh)
 
-    soul = KimiSoul(
+    soul = CodrusSoul(
         SoulAgent(
             name="test",
             system_prompt="test prompt",
@@ -341,7 +341,7 @@ async def test_kimisoul_run_preserves_existing_approval_source(
 
 
 @pytest.mark.asyncio
-async def test_kimisoul_run_cancels_own_foreground_approvals_on_cancel(
+async def test_codrussoul_run_cancels_own_foreground_approvals_on_cancel(
     runtime, tmp_path, monkeypatch
 ) -> None:
     assert runtime.approval_runtime is not None
@@ -375,10 +375,10 @@ async def test_kimisoul_run_cancels_own_foreground_approvals_on_cancel(
     async def fake_ensure_fresh(_runtime):
         return None
 
-    monkeypatch.setattr(KimiSoul, "_turn", fake_turn)
+    monkeypatch.setattr(CodrusSoul, "_turn", fake_turn)
     monkeypatch.setattr(runtime.oauth, "ensure_fresh", fake_ensure_fresh)
 
-    soul = KimiSoul(
+    soul = CodrusSoul(
         SoulAgent(
             name="test",
             system_prompt="test prompt",

@@ -9,7 +9,7 @@ from kosong.tooling.empty import EmptyToolset
 
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.slash import plan
 from codrus_cli.tools.plan.heroes import _slug_cache
 from codrus_cli.wire.types import TextPart
@@ -22,17 +22,17 @@ def _clear_slug_cache():
     _slug_cache.clear()
 
 
-def _make_soul(runtime: Runtime, tmp_path: Path) -> KimiSoul:
+def _make_soul(runtime: Runtime, tmp_path: Path) -> CodrusSoul:
     agent = Agent(
         name="Test Agent",
         system_prompt="Test system prompt.",
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
-async def _run_plan(soul: KimiSoul, args: str) -> None:
+async def _run_plan(soul: CodrusSoul, args: str) -> None:
     result = plan(soul, args)
     if result is not None:
         await result

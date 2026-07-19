@@ -15,7 +15,7 @@ from codrus_cli.web.api.sessions import SESSION_TITLE_MAX_COMPLETION_TOKENS
 from codrus_cli.web.models import GenerateTitleRequest
 
 if TYPE_CHECKING:
-    from codrus_cli.web.runner.process import KimiCLIRunner
+    from codrus_cli.web.runner.process import CodrusCLIRunner
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ class _FakeOAuthManager:
 
 
 class _FakeRunner:
-    """Stand-in for ``KimiCLIRunner`` for tests that bypass FastAPI dependency injection."""
+    """Stand-in for ``CodrusCLIRunner`` for tests that bypass FastAPI dependency injection."""
 
     def get_session(self, _session_id: UUID) -> None:
         return None
@@ -107,7 +107,7 @@ async def test_generate_title_preserves_concurrent_manual_title(
             user_message="debug the flaky web session rename issue",
             assistant_response="I'll inspect the session state writes.",
         ),
-        runner=cast("KimiCLIRunner", _FakeRunner()),
+        runner=cast("CodrusCLIRunner", _FakeRunner()),
     )
 
     state = load_session_state(session.dir)
@@ -170,7 +170,7 @@ async def test_generate_title_caps_kimi_completion(
             user_message="investigate a completion budget regression",
             assistant_response="I will inspect the request construction.",
         ),
-        runner=cast("KimiCLIRunner", _FakeRunner()),
+        runner=cast("CodrusCLIRunner", _FakeRunner()),
     )
 
     assert response.title == "Bounded Title"

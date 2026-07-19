@@ -685,7 +685,7 @@ class KimiToolset:
         Load tools from paths like `codrus_cli.tools.shell:Shell`.
 
         Raises:
-            InvalidToolError(KimiCLIException, ValueError): When any tool cannot be loaded.
+            InvalidToolError(CodrusCLIException, ValueError): When any tool cannot be loaded.
         """
 
         good_tools: list[str] = []
@@ -748,7 +748,7 @@ class KimiToolset:
         Load MCP tools from specified MCP configs.
 
         Raises:
-            MCPRuntimeError(KimiCLIException, RuntimeError): When any MCP server cannot be
+            MCPRuntimeError(CodrusCLIException, RuntimeError): When any MCP server cannot be
                 connected.
         """
         import fastmcp

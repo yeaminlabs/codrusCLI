@@ -13,7 +13,7 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.subagents.builder import SubagentBuilder
 from codrus_cli.subagents.models import AgentLaunchSpec, AgentTypeDefinition
 from codrus_cli.subagents.store import SubagentStore
@@ -39,7 +39,7 @@ async def prepare_soul(
     builder: SubagentBuilder,
     store: SubagentStore,
     on_stage: Callable[[str], None] | None = None,
-) -> tuple[KimiSoul, str]:
+) -> tuple[CodrusSoul, str]:
     """Build agent, restore context, handle system prompt, write prompt file.
 
     Returns ``(soul, final_prompt)`` ready for execution via
@@ -82,5 +82,5 @@ async def prepare_soul(
     store.prompt_path(spec.agent_id).write_text(prompt, encoding="utf-8")
 
     # 6. Create soul
-    soul = KimiSoul(agent, context=context)
+    soul = CodrusSoul(agent, context=context)
     return soul, prompt

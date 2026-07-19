@@ -15,7 +15,7 @@ from codrus_cli.acp.convert import (
     tool_result_to_acp_content,
 )
 from codrus_cli.acp.types import ACPContentBlock
-from codrus_cli.app import KimiCLI
+from codrus_cli.app import CodrusCLI
 from codrus_cli.soul import LLMNotSet, LLMNotSupported, MaxStepsReached, RunCancelled
 from codrus_cli.tools import extract_key_argument
 from codrus_cli.utils.logging import logger
@@ -124,7 +124,7 @@ class ACPSession:
     def __init__(
         self,
         id: str,
-        cli: KimiCLI,
+        cli: CodrusCLI,
         acp_conn: acp.Client,
         kaos: Kaos | None = None,
     ) -> None:
@@ -140,7 +140,7 @@ class ACPSession:
         return self._id
 
     @property
-    def cli(self) -> KimiCLI:
+    def cli(self) -> CodrusCLI:
         """The CodrusCLI powered by Codrus models instance bound to this ACP session."""
         return self._cli
 

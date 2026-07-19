@@ -15,7 +15,7 @@ from codrus_cli.approval_runtime import (
     set_current_approval_source,
 )
 from codrus_cli.soul import MaxStepsReached, RunCancelled, UILoopFn, get_wire_or_none, run_soul
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.toolset import get_current_tool_call_or_none
 from codrus_cli.subagents.builder import SubagentBuilder
 from codrus_cli.subagents.core import SubagentRunSpec, prepare_soul
@@ -63,7 +63,7 @@ class SoulRunFailure:
 
 
 async def run_soul_checked(
-    soul: KimiSoul,
+    soul: CodrusSoul,
     prompt: str,
     ui_loop_fn: UILoopFn,
     wire_path: Path,
@@ -140,7 +140,7 @@ async def run_soul_checked(
 
 
 async def run_with_summary_continuation(
-    soul: KimiSoul,
+    soul: CodrusSoul,
     prompt: str,
     ui_loop_fn: UILoopFn,
     wire_path: Path,

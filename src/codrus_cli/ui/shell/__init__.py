@@ -34,7 +34,7 @@ from codrus_cli.soul import (
     Soul,
     run_soul,
 )
-from codrus_cli.soul.kimisoul import FLOW_COMMAND_PREFIX, KimiSoul
+from codrus_cli.soul.codrussoul import FLOW_COMMAND_PREFIX, CodrusSoul
 from codrus_cli.ui.shell import update as _update_mod
 from codrus_cli.ui.shell.console import console
 from codrus_cli.ui.shell.echo import render_user_echo_text
@@ -110,7 +110,7 @@ class _BackgroundCompletionWatcher:
         self._event: asyncio.Event | None = None
         self._notifications: NotificationManager | None = None
         self._can_auto_trigger_pending = can_auto_trigger_pending or (lambda: True)
-        if isinstance(soul, KimiSoul):
+        if isinstance(soul, CodrusSoul):
             self._event = soul.runtime.background_tasks.completion_event
             self._notifications = soul.runtime.notifications
 
@@ -243,7 +243,7 @@ class Shell:
 
     def _print_cwd_lost_crash(self) -> None:
         """Print a crash report when the working directory is no longer accessible."""
-        runtime = self.soul.runtime if isinstance(self.soul, KimiSoul) else None
+        runtime = self.soul.runtime if isinstance(self.soul, CodrusSoul) else None
         session_id = runtime.session.id if runtime else "unknown"
         work_dir = str(runtime.session.work_dir) if runtime else "unknown"
 
@@ -390,7 +390,7 @@ class Shell:
         _run_start_time = time.monotonic()
 
         # Initialize theme from config
-        if isinstance(self.soul, KimiSoul):
+        if isinstance(self.soul, CodrusSoul):
             from codrus_cli.ui.theme import set_active_theme
 
             set_active_theme(self.soul.runtime.config.theme)
@@ -398,7 +398,7 @@ class Shell:
         if command is not None:
             # run single command and exit
             logger.info("Running agent with command: {command}", command=command)
-            if isinstance(self.soul, KimiSoul):
+            if isinstance(self.soul, CodrusSoul):
                 self._start_background_task(self._watch_root_wire_hub())
             try:
                 return await self.run_soul_command(command)
@@ -421,7 +421,7 @@ class Shell:
             _telemetry_sink.start_periodic_flush()
             self._start_background_task(_telemetry_sink.retry_disk_events())
 
-        if isinstance(self.soul, KimiSoul):
+        if isinstance(self.soul, CodrusSoul):
             watcher = NotificationWatcher(
                 self.soul.runtime.notifications,
                 sink="shell",
@@ -442,12 +442,12 @@ class Shell:
             await self.soul.start_background_mcp_loading()
 
         async def _plan_mode_toggle() -> bool:
-            if isinstance(self.soul, KimiSoul):
+            if isinstance(self.soul, CodrusSoul):
                 return await self.soul.toggle_plan_mode_from_manual()
             return False
 
         def _mcp_status_block(columns: int):
-            if not isinstance(self.soul, KimiSoul):
+            if not isinstance(self.soul, CodrusSoul):
                 return None
             snapshot = self.soul.status.mcp_status
             if snapshot is None:
@@ -455,7 +455,7 @@ class Shell:
             return render_mcp_prompt(snapshot)
 
         def _mcp_status_loading() -> bool:
-            if not isinstance(self.soul, KimiSoul):
+            if not isinstance(self.soul, CodrusSoul):
                 return False
             snapshot = self.soul.status.mcp_status
             return bool(snapshot and snapshot.loading)
@@ -468,7 +468,7 @@ class Shell:
         _bg_cache = _BgCountCache()
 
         def _bg_task_counts() -> BgTaskCounts:
-            if not isinstance(self.soul, KimiSoul):
+            if not isinstance(self.soul, CodrusSoul):
                 return BgTaskCounts()
             now = time.monotonic()
             if now - _bg_cache.time < 1.0:
@@ -489,14 +489,14 @@ class Shell:
             model_name=model_display_name(
                 self.soul.model_name,
                 self.soul.runtime.llm.model_config
-                if isinstance(self.soul, KimiSoul) and self.soul.runtime.llm
+                if isinstance(self.soul, CodrusSoul) and self.soul.runtime.llm
                 else None,
             ),
             thinking=self.soul.thinking or False,
             agent_mode_slash_commands=list(self._available_slash_commands.values()),
             shell_mode_slash_commands=shell_mode_registry.list_commands(),
             editor_command_provider=lambda: (
-                self.soul.runtime.config.default_editor if isinstance(self.soul, KimiSoul) else ""
+                self.soul.runtime.config.default_editor if isinstance(self.soul, CodrusSoul) else ""
             ),
             plan_mode_toggle_callback=_plan_mode_toggle,
         ) as prompt_session:
@@ -504,7 +504,7 @@ class Shell:
             if self._prefill_text:
                 prompt_session.set_prefill_text(self._prefill_text)
                 self._prefill_text = None
-            if isinstance(self.soul, KimiSoul):
+            if isinstance(self.soul, CodrusSoul):
                 kimi_soul = self.soul
                 snapshot = kimi_soul.status.mcp_status
                 if snapshot and snapshot.loading:
@@ -651,7 +651,7 @@ class Shell:
                         else str(user_input)
                     )
                     action = classify_input(input_text, is_streaming=False)
-                    if action.kind == InputAction.BTW and isinstance(self.soul, KimiSoul):
+                    if action.kind == InputAction.BTW and isinstance(self.soul, CodrusSoul):
                         await self._run_btw_modal(action.args, prompt_session)
                         resume_prompt.set()
                         continue
@@ -850,7 +850,7 @@ class Shell:
         captured_view: _PromptLiveView | None = None
         pending: list[UserInput] = []  # queued messages being drained
         get_trace_id: Callable[[], str | None] | None = None
-        if isinstance(self.soul, KimiSoul):
+        if isinstance(self.soul, CodrusSoul):
             root_soul = self.soul
 
             def get_root_trace_id() -> str | None:
@@ -860,7 +860,7 @@ class Shell:
 
         try:
             snap = self.soul.status
-            runtime = self.soul.runtime if isinstance(self.soul, KimiSoul) else None
+            runtime = self.soul.runtime if isinstance(self.soul, CodrusSoul) else None
             show_thinking_stream = runtime.config.show_thinking_stream if runtime else False
             # Capture view reference via closure — _clear_active_view sets
             # _active_view=None inside visualize()'s finally (before run_soul
@@ -885,7 +885,7 @@ class Shell:
                     ),
                     cancel_event=cancel_event,
                     prompt_session=self._prompt_session,
-                    steer=self.soul.steer if isinstance(self.soul, KimiSoul) else None,
+                    steer=self.soul.steer if isinstance(self.soul, CodrusSoul) else None,
                     get_trace_id=get_trace_id,
                     btw_runner=self._make_btw_runner(),
                     bind_running_input=self._bind_running_input,
@@ -939,7 +939,7 @@ class Shell:
                         ),
                         cancel_event=cancel_event,
                         prompt_session=self._prompt_session,
-                        steer=self.soul.steer if isinstance(self.soul, KimiSoul) else None,
+                        steer=self.soul.steer if isinstance(self.soul, CodrusSoul) else None,
                         get_trace_id=get_trace_id,
                         btw_runner=self._make_btw_runner(),
                         bind_running_input=self._bind_running_input,
@@ -1100,7 +1100,7 @@ class Shell:
         return _PromptEvent(kind="input_activity")
 
     async def _watch_root_wire_hub(self) -> None:
-        if not isinstance(self.soul, KimiSoul):
+        if not isinstance(self.soul, CodrusSoul):
             return
         if self.soul.runtime.root_wire_hub is None:
             return
@@ -1119,7 +1119,7 @@ class Shell:
             self.soul.runtime.root_wire_hub.unsubscribe(queue)
 
     async def _handle_root_hub_message(self, msg: WireMessage) -> None:
-        if not isinstance(self.soul, KimiSoul):
+        if not isinstance(self.soul, CodrusSoul):
             return
         match msg:
             case ApprovalRequest() as request:
@@ -1158,7 +1158,7 @@ class Shell:
                 return
 
     def _enrich_approval_request_for_ui(self, request: ApprovalRequest) -> ApprovalRequest:
-        if not isinstance(self.soul, KimiSoul):
+        if not isinstance(self.soul, CodrusSoul):
             return request
         if request.agent_id is None:
             return request
@@ -1186,7 +1186,7 @@ class Shell:
             _BtwModalDelegate,  # pyright: ignore[reportPrivateUsage]
         )
 
-        assert isinstance(self.soul, KimiSoul)
+        assert isinstance(self.soul, CodrusSoul)
 
         dismiss_event = asyncio.Event()
         modal = _BtwModalDelegate(on_dismiss=lambda: dismiss_event.set())
@@ -1267,7 +1267,7 @@ class Shell:
 
     def _make_btw_runner(self):
         """Create a btw_runner callback bound to the current soul."""
-        if not isinstance(self.soul, KimiSoul):
+        if not isinstance(self.soul, CodrusSoul):
             return None
 
         soul = self.soul
@@ -1293,7 +1293,7 @@ class Shell:
         while self._pending_approval_requests:
             request = self._pending_approval_requests.popleft()
 
-            if not isinstance(self.soul, KimiSoul) or self.soul.runtime.approval_runtime is None:
+            if not isinstance(self.soul, CodrusSoul) or self.soul.runtime.approval_runtime is None:
                 break
             record = self.soul.runtime.approval_runtime.get_request(request.id)
             if record is None or record.status != "pending":
@@ -1306,7 +1306,7 @@ class Shell:
         # Re-queue any approval requests that were forwarded to the sink
         # but not yet resolved.  Without this, those requests would be
         # silently lost when the live view closes between turns.
-        if not isinstance(self.soul, KimiSoul) or self.soul.runtime.approval_runtime is None:
+        if not isinstance(self.soul, CodrusSoul) or self.soul.runtime.approval_runtime is None:
             return
         for record in self.soul.runtime.approval_runtime.list_pending():
             self._queue_approval_request(
@@ -1337,7 +1337,7 @@ class Shell:
             try:
                 response = await request.wait()
                 if (
-                    isinstance(self.soul, KimiSoul)
+                    isinstance(self.soul, CodrusSoul)
                     and self.soul.runtime.approval_runtime is not None
                 ):
                     self.soul.runtime.approval_runtime.resolve(
@@ -1382,7 +1382,7 @@ class Shell:
             while self._pending_approval_requests:
                 request = self._pending_approval_requests.popleft()
 
-                if not isinstance(self.soul, KimiSoul):
+                if not isinstance(self.soul, CodrusSoul):
                     break
                 if self.soul.runtime.approval_runtime is None:
                     break
@@ -1428,7 +1428,7 @@ class Shell:
         response: ApprovalResponse.Kind,
         feedback: str = "",
     ) -> None:
-        if not isinstance(self.soul, KimiSoul):
+        if not isinstance(self.soul, CodrusSoul):
             return
         if self.soul.runtime.approval_runtime is None:
             return
@@ -1437,7 +1437,7 @@ class Shell:
         self._activate_prompt_approval_modal()
 
     def _pop_next_pending_approval_request(self) -> ApprovalRequest | None:
-        if not isinstance(self.soul, KimiSoul) or self.soul.runtime.approval_runtime is None:
+        if not isinstance(self.soul, CodrusSoul) or self.soul.runtime.approval_runtime is None:
             return None
         while self._pending_approval_requests:
             request = self._pending_approval_requests.popleft()

@@ -8,12 +8,12 @@ import pytest
 from kosong.tooling.empty import EmptyToolset
 
 from codrus_cli.acp.session import ACPSession
-from codrus_cli.app import KimiCLI
+from codrus_cli.app import CodrusCLI
 from codrus_cli.approval_runtime import get_current_approval_source_or_none
 from codrus_cli.soul import wire_send
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.wire.types import Notification, TextPart, ToolCall, TurnBegin, TurnEnd
 
 
@@ -114,10 +114,10 @@ async def test_acp_prompt_cancel_closes_abandoned_approval_stream(
     async def fake_ensure_fresh(_runtime):
         return None
 
-    monkeypatch.setattr(KimiSoul, "_turn", fake_turn)
+    monkeypatch.setattr(CodrusSoul, "_turn", fake_turn)
     monkeypatch.setattr(runtime.oauth, "ensure_fresh", fake_ensure_fresh)
 
-    soul = KimiSoul(
+    soul = CodrusSoul(
         Agent(
             name="ACP Approval Agent",
             system_prompt="System prompt.",
@@ -127,7 +127,7 @@ async def test_acp_prompt_cancel_closes_abandoned_approval_stream(
         context=Context(file_backend=tmp_path / "history.jsonl"),
     )
     conn = _BlockingApprovalConn()
-    session = ACPSession("session-1", KimiCLI(soul, runtime, {}), conn)  # type: ignore[arg-type]
+    session = ACPSession("session-1", CodrusCLI(soul, runtime, {}), conn)  # type: ignore[arg-type]
     prompt_task = asyncio.create_task(session.prompt([acp.text_block("hello")]))
 
     await asyncio.wait_for(conn.permission_requested.wait(), timeout=1.0)

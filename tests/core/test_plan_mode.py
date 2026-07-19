@@ -13,7 +13,7 @@ from pydantic import ValidationError
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.approval import Approval
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.toolset import KimiToolset
 from codrus_cli.tools.file.replace import StrReplaceFile
 from codrus_cli.tools.file.write import WriteFile
@@ -47,14 +47,14 @@ def _clear_slug_cache():
     _slug_cache.clear()
 
 
-def _make_soul(runtime: Runtime, tmp_path: Path) -> KimiSoul:
+def _make_soul(runtime: Runtime, tmp_path: Path) -> CodrusSoul:
     agent = Agent(
         name="Test Agent",
         system_prompt="Test system prompt.",
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
 def _tool_output_text(result: ToolReturnValue) -> str:
@@ -525,11 +525,11 @@ class TestEnterPlanModeHappyPaths:
 
 
 # ---------------------------------------------------------------------------
-# KimiSoul — plan mode state management
+# CodrusSoul — plan mode state management
 # ---------------------------------------------------------------------------
 
 
-class TestKimiSoulPlanState:
+class TestCodrusSoulPlanState:
     async def test_session_id_allocated_on_activation(
         self, runtime: Runtime, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
@@ -645,7 +645,7 @@ class TestKimiSoulPlanState:
             toolset=toolset,
             runtime=runtime,
         )
-        soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+        soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
         assert write_tool._plan_mode_checker is not None
         assert write_tool._plan_file_path_getter is not None
@@ -662,17 +662,17 @@ class TestKimiSoulPlanState:
 
 
 # ---------------------------------------------------------------------------
-# KimiSoul — plan_session_id cross-process persistence
+# CodrusSoul — plan_session_id cross-process persistence
 # ---------------------------------------------------------------------------
 
 
-class TestKimiSoulPlanSessionPersistence:
+class TestCodrusSoulPlanSessionPersistence:
     """Tests that plan_session_id survives simulated process restarts."""
 
     async def test_plan_session_id_survives_restart(
         self, runtime: Runtime, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Second KimiSoul created from same session state gets same plan file path."""
+        """Second CodrusSoul created from same session state gets same plan file path."""
         monkeypatch.setattr("codrus_cli.tools.plan.heroes.PLANS_DIR", tmp_path)
         soul1 = _make_soul(runtime, tmp_path)
         soul1._set_plan_mode(True, source="tool")
@@ -682,7 +682,7 @@ class TestKimiSoulPlanSessionPersistence:
         # Simulate restart: clear in-process slug cache (as would happen in a new process)
         _slug_cache.clear()
 
-        # New KimiSoul reads from same (already-saved) session state and re-seeds cache
+        # New CodrusSoul reads from same (already-saved) session state and re-seeds cache
         soul2 = _make_soul(runtime, tmp_path)
         path2 = soul2.get_plan_file_path()
         assert path2 == path1

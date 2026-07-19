@@ -24,7 +24,7 @@ from codrus_cli.llm import LLM
 from codrus_cli.soul import run_soul
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.utils.aioqueue import QueueShutDown
 from codrus_cli.wire import Wire
 from codrus_cli.wire.types import StepBegin, StepRetry
@@ -308,7 +308,7 @@ def _runtime_with_llm(runtime: Runtime, llm: LLM) -> Runtime:
     )
 
 
-def _make_soul(runtime: Runtime, llm: LLM, tmp_path: Path) -> tuple[KimiSoul, Context]:
+def _make_soul(runtime: Runtime, llm: LLM, tmp_path: Path) -> tuple[CodrusSoul, Context]:
     agent = Agent(
         name="Retry Test Agent",
         system_prompt="Retry test prompt.",
@@ -316,7 +316,7 @@ def _make_soul(runtime: Runtime, llm: LLM, tmp_path: Path) -> tuple[KimiSoul, Co
         runtime=_runtime_with_llm(runtime, llm),
     )
     context = Context(file_backend=tmp_path / "history.jsonl")
-    return KimiSoul(agent, context=context), context
+    return CodrusSoul(agent, context=context), context
 
 
 async def _drain_ui_messages(wire: Wire) -> None:

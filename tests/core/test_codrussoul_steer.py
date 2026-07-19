@@ -8,14 +8,14 @@ from kosong import StepResult
 from kosong.message import ContentPart, Message
 from kosong.tooling.empty import EmptyToolset
 
-import codrus_cli.soul.kimisoul as kimisoul_module
+import codrus_cli.soul.codrussoul as codrussoul_module
 from codrus_cli.llm import LLM, ModelCapability
 from codrus_cli.soul import LLMNotSupported, run_soul
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.approval import Approval
 from codrus_cli.soul.context import Context
 from codrus_cli.soul.dynamic_injection import DynamicInjection
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.message import is_system_reminder_message
 from codrus_cli.utils.aioqueue import QueueShutDown
 from codrus_cli.wire import Wire
@@ -28,14 +28,14 @@ def approval() -> Approval:
     return Approval(yolo=False)
 
 
-def _make_soul(runtime: Runtime, tmp_path: Path) -> KimiSoul:
+def _make_soul(runtime: Runtime, tmp_path: Path) -> CodrusSoul:
     agent = Agent(
         name="Steer Test Agent",
         system_prompt="Test prompt.",
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
 def _runtime_with_llm(runtime: Runtime, llm: LLM) -> Runtime:
@@ -125,7 +125,7 @@ async def test_consume_pending_steers_appends_history_before_emitting_wire_event
         assert isinstance(msg, SteerInput)
         sent.append(msg)
 
-    monkeypatch.setattr(kimisoul_module, "wire_send", fake_wire_send)
+    monkeypatch.setattr(codrussoul_module, "wire_send", fake_wire_send)
 
     soul.steer("Follow up now.")
 
@@ -141,7 +141,7 @@ async def test_consume_pending_steers_does_not_emit_wire_event_for_unsupported_m
 ) -> None:
     soul = _make_soul(_runtime_with_llm(runtime, _llm_with_capabilities(runtime, set())), tmp_path)
     sent: list[SteerInput] = []
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda msg: sent.append(msg))
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda msg: sent.append(msg))
 
     soul.steer(
         [ImageURLPart(image_url=ImageURLPart.ImageURL(url="https://example.com/diagram.png"))]
@@ -163,7 +163,7 @@ async def test_consume_pending_steers_preserves_fifo_order_and_emits_matching_ev
     soul = _make_soul(runtime, tmp_path)
     sent: list[SteerInput] = []
 
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda msg: sent.append(msg))
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda msg: sent.append(msg))
 
     soul.steer("first")
     soul.steer("second")
@@ -195,7 +195,7 @@ async def test_agent_loop_injects_steer_between_completed_steps(
     monkeypatch.setattr(soul._approval, "request", fake_request)
     monkeypatch.setattr(soul, "_checkpoint", fake_checkpoint)
     monkeypatch.setattr(soul._denwa_renji, "set_n_checkpoints", lambda _n: None)
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda msg: sent.append(msg))
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda msg: sent.append(msg))
 
     async def fake_step():
         nonlocal step_calls
@@ -223,7 +223,7 @@ async def test_agent_loop_injects_steer_between_completed_steps(
             ),
             Message(role="user", content=[TextPart(text="follow-up steer")]),
         ]
-        return kimisoul_module.StepOutcome(
+        return codrussoul_module.StepOutcome(
             stop_reason="no_tool_calls",
             assistant_message=Message(role="assistant", content=[TextPart(text="done")]),
         )
@@ -258,7 +258,7 @@ async def test_agent_loop_continues_after_tool_rejected_when_steer_is_injected(
     monkeypatch.setattr(soul._approval, "request", fake_request)
     monkeypatch.setattr(soul, "_checkpoint", fake_checkpoint)
     monkeypatch.setattr(soul._denwa_renji, "set_n_checkpoints", lambda _n: None)
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda msg: sent.append(msg))
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda msg: sent.append(msg))
 
     async def fake_step():
         nonlocal step_calls
@@ -275,7 +275,7 @@ async def test_agent_loop_continues_after_tool_rejected_when_steer_is_injected(
                 )
             )
             soul.steer("switch to a read-only approach")
-            return kimisoul_module.StepOutcome(
+            return codrussoul_module.StepOutcome(
                 stop_reason="tool_rejected",
                 assistant_message=Message(
                     role="assistant",
@@ -292,7 +292,7 @@ async def test_agent_loop_continues_after_tool_rejected_when_steer_is_injected(
             ),
             Message(role="user", content=[TextPart(text="switch to a read-only approach")]),
         ]
-        return kimisoul_module.StepOutcome(
+        return codrussoul_module.StepOutcome(
             stop_reason="no_tool_calls",
             assistant_message=Message(role="assistant", content=[TextPart(text="done")]),
         )
@@ -343,8 +343,8 @@ async def test_step_merges_plain_steer_with_dynamic_injection_in_model_history(
         "_collect_injections",
         fake_collect_injections,
     )
-    monkeypatch.setattr(kimisoul_module.kosong, "step", fake_kosong_step)
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda _msg: None)
+    monkeypatch.setattr(codrussoul_module.kosong, "step", fake_kosong_step)
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda _msg: None)
 
     outcome = await soul._step()
 
@@ -435,7 +435,7 @@ async def test_run_soul_emits_steer_input_and_continues_same_turn(
         toolset=EmptyToolset(),
         runtime=_runtime_with_llm(runtime, llm),
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
     seen: list[object] = []
     injected = False

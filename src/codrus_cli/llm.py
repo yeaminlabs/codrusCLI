@@ -375,7 +375,7 @@ def create_llm(
                     max_completion_tokens = int(raw_max_completion_tokens)
                 except ValueError:
                     continue
-                # ``None`` is an explicit opt-out marker consumed by KimiSoul. Codrus's
+                # ``None`` is an explicit opt-out marker consumed by CodrusSoul. Codrus's
                 # request serializer omits it when no per-call override is supplied.
                 gen_kwargs["max_completion_tokens"] = (
                     max_completion_tokens if max_completion_tokens > 0 else None

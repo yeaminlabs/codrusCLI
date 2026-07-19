@@ -8,7 +8,7 @@ from kosong.message import Message
 from codrus_cli.soul.dynamic_injection import DynamicInjection, DynamicInjectionProvider
 
 if TYPE_CHECKING:
-    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.codrussoul import CodrusSoul
 
 _AFK_INJECTION_TYPE = "afk_mode"
 
@@ -46,7 +46,7 @@ class AfkModeInjectionProvider(DynamicInjectionProvider):
     async def get_injections(
         self,
         history: Sequence[Message],
-        soul: KimiSoul,
+        soul: CodrusSoul,
     ) -> list[DynamicInjection]:
         _ = history
         if not soul.is_afk:

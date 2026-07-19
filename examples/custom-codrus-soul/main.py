@@ -14,12 +14,12 @@ from codrus_cli.llm import LLM, create_llm
 from codrus_cli.session import Session
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell import Shell
 from codrus_cli.wire.types import ContentPart, ToolReturnValue
 
 
-class HakimiSoul(KimiSoul):
+class HakimiSoul(CodrusSoul):
     @staticmethod
     async def create(
         llm: LLM | None,

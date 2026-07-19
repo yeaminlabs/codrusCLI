@@ -28,7 +28,7 @@ from codrus_cli.wire.types import BtwBegin, BtwEnd, TextPart
 if TYPE_CHECKING:
     from kosong.chat_provider import StreamedMessagePart
 
-    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.codrussoul import CodrusSoul
 
 _BTW_MAX_TURNS = 2
 
@@ -77,11 +77,11 @@ class _DenyAllToolset:
 # ---------------------------------------------------------------------------
 
 
-def _build_btw_context(soul: KimiSoul, question: str) -> tuple[str, list[Message], _DenyAllToolset]:
+def _build_btw_context(soul: CodrusSoul, question: str) -> tuple[str, list[Message], _DenyAllToolset]:
     """Build (system_prompt, history, toolset) aligned with the main agent.
 
     Uses the same system_prompt, normalize_history(), and tool definitions
-    as ``KimiSoul._step`` so the LLM provider can reuse the prompt cache.
+    as ``CodrusSoul._step`` so the LLM provider can reuse the prompt cache.
     """
     system_prompt = soul._agent.system_prompt  # pyright: ignore[reportPrivateUsage]
     effective_history = normalize_history(soul.context.history)
@@ -100,7 +100,7 @@ def _build_btw_context(soul: KimiSoul, question: str) -> tuple[str, list[Message
 
 
 async def execute_side_question(
-    soul: KimiSoul,
+    soul: CodrusSoul,
     question: str,
     on_text_chunk: Callable[[str], None] | None = None,
 ) -> tuple[str | None, str | None]:
@@ -111,7 +111,7 @@ async def execute_side_question(
     to the history and a second step gives the LLM another chance.
 
     Args:
-        soul: The KimiSoul instance (for context and chat_provider access).
+        soul: The CodrusSoul instance (for context and chat_provider access).
         question: The user's side question.
         on_text_chunk: Optional callback for streaming text chunks.
 
@@ -230,7 +230,7 @@ def _tool_result_to_message(tool_result: ToolResult) -> Message:
 # ---------------------------------------------------------------------------
 
 
-async def run_side_question(soul: KimiSoul, question: str) -> None:
+async def run_side_question(soul: CodrusSoul, question: str) -> None:
     """Execute a side question via wire events."""
     if soul._runtime.llm is None:  # pyright: ignore[reportPrivateUsage]
         raise LLMNotSet()

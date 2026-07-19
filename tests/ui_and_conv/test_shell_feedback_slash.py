@@ -17,7 +17,7 @@ from pydantic import SecretStr
 from codrus_cli.config import LLMProvider, OAuthRef
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell import Shell
 from codrus_cli.ui.shell import slash as shell_slash
 from codrus_cli.ui.shell.slash import registry as shell_slash_registry
@@ -31,7 +31,7 @@ def _make_shell_app(runtime: Runtime, tmp_path: Path) -> SimpleNamespace:
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
     return SimpleNamespace(soul=soul)
 
 
@@ -103,9 +103,9 @@ class TestFeedbackRegistration:
 
 class TestFeedbackGuards:
     async def test_fallback_when_no_kimi_soul(self, monkeypatch) -> None:
-        """When soul is not KimiSoul, should fallback to GitHub issues."""
+        """When soul is not CodrusSoul, should fallback to GitHub issues."""
         shell = Mock()
-        shell.soul = Mock()  # not spec=KimiSoul
+        shell.soul = Mock()  # not spec=CodrusSoul
 
         open_mock = Mock(return_value=True)
         monkeypatch.setattr("webbrowser.open", open_mock)

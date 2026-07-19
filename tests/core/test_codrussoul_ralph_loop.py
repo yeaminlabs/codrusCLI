@@ -18,7 +18,7 @@ from codrus_cli.soul import run_soul
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.approval import Approval
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.tools.utils import ToolRejectedError
 from codrus_cli.utils.aioqueue import QueueShutDown
 from codrus_cli.wire import Wire
@@ -135,7 +135,7 @@ def _runtime_with_llm(runtime: Runtime, llm: LLM) -> Runtime:
 
 def _make_soul(
     runtime: Runtime, llm: LLM, toolset: Toolset, tmp_path: Path
-) -> tuple[KimiSoul, Context]:
+) -> tuple[CodrusSoul, Context]:
     agent = Agent(
         name="Test Agent",
         system_prompt="Test system prompt.",
@@ -143,11 +143,11 @@ def _make_soul(
         runtime=_runtime_with_llm(runtime, llm),
     )
     context = Context(file_backend=tmp_path / "history.jsonl")
-    return KimiSoul(agent, context=context), context
+    return CodrusSoul(agent, context=context), context
 
 
 async def _run_and_collect_turns(
-    soul: KimiSoul, user_input: str | list[ContentPart]
+    soul: CodrusSoul, user_input: str | list[ContentPart]
 ) -> list[str | list[ContentPart]]:
     turns: list[str | list[ContentPart]] = []
 

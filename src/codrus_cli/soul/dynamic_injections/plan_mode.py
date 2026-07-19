@@ -8,7 +8,7 @@ from kosong.message import Message, TextPart
 from codrus_cli.soul.dynamic_injection import DynamicInjection, DynamicInjectionProvider
 
 if TYPE_CHECKING:
-    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.codrussoul import CodrusSoul
 
 # Inject a reminder every N assistant turns.
 _TURN_INTERVAL = 5
@@ -30,7 +30,7 @@ class PlanModeInjectionProvider(DynamicInjectionProvider):
     async def get_injections(
         self,
         history: Sequence[Message],
-        soul: KimiSoul,
+        soul: CodrusSoul,
     ) -> list[DynamicInjection]:
         # Plan-mode workflow reminders are root-only. Subagents share the
         # session's plan_mode flag for persistence/resume, but their YAMLs

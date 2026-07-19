@@ -1,43 +1,43 @@
 from __future__ import annotations
 
 
-class KimiCLIException(Exception):
+class CodrusCLIException(Exception):
     """Base exception class for CodrusCLI powered by Codrus models."""
 
     pass
 
 
-class ConfigError(KimiCLIException, ValueError):
+class ConfigError(CodrusCLIException, ValueError):
     """Configuration error."""
 
     pass
 
 
-class AgentSpecError(KimiCLIException, ValueError):
+class AgentSpecError(CodrusCLIException, ValueError):
     """Agent specification error."""
 
     pass
 
 
-class InvalidToolError(KimiCLIException, ValueError):
+class InvalidToolError(CodrusCLIException, ValueError):
     """Invalid tool error."""
 
     pass
 
 
-class SystemPromptTemplateError(KimiCLIException, ValueError):
+class SystemPromptTemplateError(CodrusCLIException, ValueError):
     """System prompt template error."""
 
     pass
 
 
-class MCPConfigError(KimiCLIException, ValueError):
+class MCPConfigError(CodrusCLIException, ValueError):
     """MCP config error."""
 
     pass
 
 
-class MCPRuntimeError(KimiCLIException, RuntimeError):
+class MCPRuntimeError(CodrusCLIException, RuntimeError):
     """MCP runtime error."""
 
     pass

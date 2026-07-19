@@ -26,7 +26,7 @@ from codrus_cli.share import get_share_dir
 from codrus_cli.soul import RunCancelled, run_soul
 from codrus_cli.soul.agent import Runtime, load_agent
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.toolset import KimiToolset
 from codrus_cli.utils.aioqueue import QueueShutDown
 from codrus_cli.utils.envvar import get_env_bool
@@ -117,7 +117,7 @@ def _cleanup_stale_foreground_subagents(runtime: Runtime) -> None:
         subagent_store.update_instance(agent_id, status="failed")
 
 
-class KimiCLI:
+class CodrusCLI:
     @staticmethod
     async def create(
         session: Session,
@@ -143,9 +143,9 @@ class KimiCLI:
         max_ralph_iterations: int | None = None,
         startup_progress: Callable[[str], None] | None = None,
         defer_mcp_loading: bool = False,
-    ) -> KimiCLI:
+    ) -> CodrusCLI:
         """
-        Create a KimiCLI instance.
+        Create a CodrusCLI instance.
 
         Args:
             session (Session): A session created by `Session.create` or `Session.continue_`.
@@ -177,13 +177,13 @@ class KimiCLI:
 
         Raises:
             FileNotFoundError: When the agent file is not found.
-            ConfigError(KimiCLIException, ValueError): When the configuration is invalid.
-            AgentSpecError(KimiCLIException, ValueError): When the agent specification is invalid.
-            SystemPromptTemplateError(KimiCLIException, ValueError): When the system prompt
+            ConfigError(CodrusCLIException, ValueError): When the configuration is invalid.
+            AgentSpecError(CodrusCLIException, ValueError): When the agent specification is invalid.
+            SystemPromptTemplateError(CodrusCLIException, ValueError): When the system prompt
                 template is invalid.
-            InvalidToolError(KimiCLIException, ValueError): When any tool cannot be loaded.
-            MCPConfigError(KimiCLIException, ValueError): When any MCP configuration is invalid.
-            MCPRuntimeError(KimiCLIException, RuntimeError): When any MCP server cannot be
+            InvalidToolError(CodrusCLIException, ValueError): When any tool cannot be loaded.
+            MCPConfigError(CodrusCLIException, ValueError): When any MCP configuration is invalid.
+            MCPRuntimeError(CodrusCLIException, RuntimeError): When any MCP server cannot be
                 connected.
         """
         _create_t0 = time.monotonic()
@@ -310,7 +310,7 @@ class KimiCLI:
         else:
             await context.write_system_prompt(agent.system_prompt)
 
-        soul = KimiSoul(agent, context=context)
+        soul = CodrusSoul(agent, context=context)
 
         # Activate plan mode if requested (for new sessions or --plan flag)
         if plan_mode and not soul.plan_mode:
@@ -374,11 +374,11 @@ class KimiCLI:
             mcp_ms=_phase_timings_ms.get("mcp_ms", 0),
         )
 
-        return KimiCLI(soul, runtime, env_overrides, bg_refresh_task)
+        return CodrusCLI(soul, runtime, env_overrides, bg_refresh_task)
 
     def __init__(
         self,
-        _soul: KimiSoul,
+        _soul: CodrusSoul,
         _runtime: Runtime,
         _env_overrides: dict[str, str],
         _bg_refresh_task: asyncio.Task[None] | None = None,
@@ -389,8 +389,8 @@ class KimiCLI:
         self._bg_refresh_task = _bg_refresh_task
 
     @property
-    def soul(self) -> KimiSoul:
-        """Get the KimiSoul instance."""
+    def soul(self) -> CodrusSoul:
+        """Get the CodrusSoul instance."""
         return self._soul
 
     @property
@@ -544,7 +544,7 @@ class KimiCLI:
             merge_wire_messages (bool): Whether to merge Wire messages as much as possible.
 
         Yields:
-            WireMessage: The Wire messages from the `KimiSoul`.
+            WireMessage: The Wire messages from the `CodrusSoul`.
 
         Raises:
             LLMNotSet: When the LLM is not set.

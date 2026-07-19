@@ -52,12 +52,12 @@ JSONRPCOutMessageAdapter = TypeAdapter[JSONRPCOutMessage](JSONRPCOutMessage)
 
 
 class SessionProcess:
-    """Manages a single session's KimiCLI subprocess.
+    """Manages a single session's CodrusCLI subprocess.
 
     Handles:
     - Starting/stopping the subprocess
-    - Reading from stdout (wire messages from KimiCLI)
-    - Writing to stdin (user input to KimiCLI)
+    - Reading from stdout (wire messages from CodrusCLI)
+    - Writing to stdin (user input to CodrusCLI)
     - Broadcasting messages to connected WebSockets
 
     Concurrency model:
@@ -182,7 +182,7 @@ class SessionProcess:
         detail: str | None = None,
         restart_started_at: float | None = None,
     ) -> None:
-        """Start the KimiCLI subprocess."""
+        """Start the CodrusCLI subprocess."""
         async with self._lock:
             if self.is_alive:
                 if self._read_task is None or self._read_task.done():
@@ -665,7 +665,7 @@ class SessionProcess:
         await process.stdin.drain()
 
 
-class KimiCLIRunner:
+class CodrusCLIRunner:
     """Manages multiple session processes."""
 
     def __init__(self) -> None:

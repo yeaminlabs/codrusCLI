@@ -38,7 +38,7 @@ from codrus_cli.web.auth import (
     is_private_ip,
     normalize_allowed_origins,
 )
-from codrus_cli.web.runner.process import KimiCLIRunner
+from codrus_cli.web.runner.process import CodrusCLIRunner
 
 # Configure logging based on LOG_LEVEL environment variable
 _log_level = os.environ.get("LOG_LEVEL", "WARNING").upper()
@@ -153,8 +153,8 @@ def create_app(
         app.state.max_public_path_depth = max_public_path_depth
         app.state.lan_only = lan_only
 
-        # Start KimiCLI runner
-        runner = KimiCLIRunner()
+        # Start CodrusCLI runner
+        runner = CodrusCLIRunner()
         app.state.runner = runner
         runner.start()
 

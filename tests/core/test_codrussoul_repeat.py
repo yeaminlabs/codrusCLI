@@ -10,11 +10,11 @@ from kosong.message import Message, ToolCall
 from kosong.tooling import CallableTool2, Tool, ToolOk, ToolReturnValue
 from pydantic import BaseModel
 
-import codrus_cli.soul.kimisoul as kimisoul_module
+import codrus_cli.soul.codrussoul as codrussoul_module
 from codrus_cli.llm import LLM
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.soul.toolset import KimiToolset
 
 
@@ -111,14 +111,14 @@ def _runtime_with_llm(runtime: Runtime, llm: LLM) -> Runtime:
     )
 
 
-def _make_soul(runtime: Runtime, llm: LLM, toolset: KimiToolset, tmp_path: Path) -> KimiSoul:
+def _make_soul(runtime: Runtime, llm: LLM, toolset: KimiToolset, tmp_path: Path) -> CodrusSoul:
     agent = Agent(
         name="Repeat Test Agent",
         system_prompt="Test system prompt.",
         toolset=toolset,
         runtime=_runtime_with_llm(runtime, llm),
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
 @pytest.mark.asyncio
@@ -136,7 +136,7 @@ async def test_turn_force_stops_after_twelve_identical_calls(
     )
     soul = _make_soul(runtime, llm, toolset, tmp_path)
 
-    monkeypatch.setattr(kimisoul_module, "wire_send", lambda _msg: None)
+    monkeypatch.setattr(codrussoul_module, "wire_send", lambda _msg: None)
 
     async def _noop_checkpoint() -> None:
         return None

@@ -102,7 +102,7 @@ from codrus_cli.wire.types import (
 
 if TYPE_CHECKING:
 
-    def type_check(soul: KimiSoul):
+    def type_check(soul: CodrusSoul):
         _: Soul = soul
 
 
@@ -163,7 +163,7 @@ def is_retryable_api_error(e: Exception) -> bool:
     (including 529 overloaded) count as retryable, and any ChatProviderError
     (network/timeout/empty-response) counts as retryable by the fallback rule.
 
-    Deliberately separate from ``KimiSoul._is_retryable_error``, which drives
+    Deliberately separate from ``CodrusSoul._is_retryable_error``, which drives
     the tenacity retry loop — the Python retry loop does not currently retry
     408/409/529, but telemetry must report the TS-comparable value.
     """
@@ -225,7 +225,7 @@ class TurnOutcome:
     step_count: int
 
 
-class KimiSoul:
+class CodrusSoul:
     """The soul of CodrusCLI powered by Codrus models."""
 
     def __init__(
@@ -915,8 +915,8 @@ class KimiSoul:
     def _find_slash_command(self, name: str) -> SlashCommand[Any] | None:
         return self._slash_command_map.get(name)
 
-    def _make_skill_runner(self, skill: Skill) -> Callable[[KimiSoul, str], None | Awaitable[None]]:
-        async def _run_skill(soul: KimiSoul, args: str, *, _skill: Skill = skill) -> None:
+    def _make_skill_runner(self, skill: Skill) -> Callable[[CodrusSoul, str], None | Awaitable[None]]:
+        async def _run_skill(soul: CodrusSoul, args: str, *, _skill: Skill = skill) -> None:
             from codrus_cli.telemetry import track
 
             track("skill_invoked", skill_name=_skill.name)
@@ -1836,7 +1836,7 @@ class FlowRunner:
         max_moves = total_runs
         return FlowRunner(flow, max_moves=max_moves)
 
-    async def run(self, soul: KimiSoul, args: str) -> None:
+    async def run(self, soul: CodrusSoul, args: str) -> None:
         if args.strip():
             command = f"/{FLOW_COMMAND_PREFIX}{self._name}" if self._name else "/flow"
             logger.warning("Agent flow {command} ignores args: {args}", command=command, args=args)
@@ -1878,7 +1878,7 @@ class FlowRunner:
 
     async def _execute_flow_node(
         self,
-        soul: KimiSoul,
+        soul: CodrusSoul,
         node: FlowNode,
         edges: list[FlowEdge],
     ) -> tuple[str | None, int]:
@@ -1954,7 +1954,7 @@ class FlowRunner:
 
     @staticmethod
     async def _flow_turn(
-        soul: KimiSoul,
+        soul: CodrusSoul,
         prompt: str | list[ContentPart],
     ) -> TurnOutcome:
         wire_send(TurnBegin(user_input=prompt))

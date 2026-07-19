@@ -11,7 +11,7 @@ import codrus_cli.telemetry as telemetry_mod
 from codrus_cli.approval_runtime import ApprovalSource
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.telemetry import set_context
 from codrus_cli.utils.aioqueue import QueueShutDown
 from codrus_cli.wire.jsonrpc import (
@@ -28,14 +28,14 @@ from codrus_cli.wire.server import WireServer
 from codrus_cli.wire.types import ApprovalRequest, ApprovalResponse, TextPart
 
 
-def _make_soul(runtime: Runtime, tmp_path: Path) -> KimiSoul:
+def _make_soul(runtime: Runtime, tmp_path: Path) -> CodrusSoul:
     agent = Agent(
         name="Steer Test Agent",
         system_prompt="Test prompt.",
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    return KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    return CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
 
 
 def _reset_telemetry() -> None:

@@ -56,7 +56,7 @@ _disabled: bool = False
 # The ContextVar is intentionally the only process-global state here. Each
 # turn task (foreground turn, subagent, background task) sees the trace id of
 # its own latest LLM request, and tool tasks created after the request inherit
-# it. Root-session UI state is owned by KimiSoul and passed to the UI through
+# it. Root-session UI state is owned by CodrusSoul and passed to the UI through
 # an explicit session-bound getter.
 _trace_id_var: ContextVar[str | None] = ContextVar("kimi_telemetry_trace_id", default=None)
 
@@ -147,7 +147,7 @@ def disable() -> None:
 def attach_sink(sink: EventSink) -> None:
     """Attach the event sink and drain any queued events.
 
-    Multi-session ACP mode calls ``KimiCLI.create()`` per session, which
+    Multi-session ACP mode calls ``CodrusCLI.create()`` per session, which
     means ``attach_sink`` runs again while a previous sink may hold
     un-flushed buffered events. Flush the old sink synchronously (writes
     any pending events to the disk fallback) before replacing it, so

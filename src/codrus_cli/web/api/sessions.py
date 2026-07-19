@@ -22,7 +22,7 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from codrus_cli import logger
 from codrus_cli.metadata import load_metadata, save_metadata
-from codrus_cli.session import Session as KimiCLISession
+from codrus_cli.session import Session as CodrusCLISession
 from codrus_cli.utils.subprocess_env import get_clean_env
 from codrus_cli.web.auth import is_origin_allowed, is_private_ip, verify_token
 from codrus_cli.web.models import (
@@ -35,7 +35,7 @@ from codrus_cli.web.models import (
     UpdateSessionRequest,
 )
 from codrus_cli.web.runner.messages import new_session_status_message, send_history_complete
-from codrus_cli.web.runner.process import KimiCLIRunner
+from codrus_cli.web.runner.process import CodrusCLIRunner
 from codrus_cli.web.store.sessions import (
     JointSession,
     invalidate_sessions_cache,
@@ -97,19 +97,19 @@ def sanitize_filename(filename: str) -> str:
     return safe.strip() or "unnamed"
 
 
-def get_runner(req: Request) -> KimiCLIRunner:
-    """Get the KimiCLIRunner from the FastAPI app state."""
+def get_runner(req: Request) -> CodrusCLIRunner:
+    """Get the CodrusCLIRunner from the FastAPI app state."""
     return req.app.state.runner
 
 
-def get_runner_ws(ws: WebSocket) -> KimiCLIRunner:
-    """Get the KimiCLIRunner from the FastAPI app state (for WebSocket routes)."""
+def get_runner_ws(ws: WebSocket) -> CodrusCLIRunner:
+    """Get the CodrusCLIRunner from the FastAPI app state (for WebSocket routes)."""
     return ws.app.state.runner
 
 
 def get_editable_session(
     session_id: UUID,
-    runner: KimiCLIRunner,
+    runner: CodrusCLIRunner,
 ) -> JointSession:
     """Get a session and verify it's not busy."""
     session = load_session_by_id(session_id)
@@ -248,7 +248,7 @@ async def replay_history(ws: WebSocket, session_dir: Path) -> None:
 
 @router.get("/", summary="List all sessions")
 async def list_sessions(
-    runner: KimiCLIRunner = Depends(get_runner),
+    runner: CodrusCLIRunner = Depends(get_runner),
     limit: int = 100,
     offset: int = 0,
     q: str | None = None,
@@ -285,7 +285,7 @@ async def list_sessions(
 @router.get("/{session_id}", summary="Get session")
 async def get_session(
     session_id: UUID,
-    runner: KimiCLIRunner = Depends(get_runner),
+    runner: CodrusCLIRunner = Depends(get_runner),
 ) -> Session | None:
     """Get a session by ID."""
     session = load_session_by_id(session_id)
@@ -332,7 +332,7 @@ async def create_session(request: CreateSessionRequest | None = None) -> Session
         work_dir = KaosPath.unsafe_from_local_path(work_dir_path)
     else:
         work_dir = KaosPath.unsafe_from_local_path(Path.home())
-    codrus_cli_session = await KimiCLISession.create(work_dir=work_dir)
+    codrus_cli_session = await CodrusCLISession.create(work_dir=work_dir)
     context_file = codrus_cli_session.dir / "context.jsonl"
     invalidate_sessions_cache()
     invalidate_work_dirs_cache()
@@ -380,7 +380,7 @@ class UploadSessionFileResponse(BaseModel):
 async def upload_session_file(
     session_id: UUID,
     file: UploadFile,
-    runner: KimiCLIRunner = Depends(get_runner),
+    runner: CodrusCLIRunner = Depends(get_runner),
 ) -> UploadSessionFileResponse:
     """Upload a file to a session."""
     session = get_editable_session(session_id, runner)
@@ -563,7 +563,7 @@ def _update_last_session_id(session: JointSession) -> None:
 
 
 @router.delete("/{session_id}", summary="Delete a session")
-async def delete_session(session_id: UUID, runner: KimiCLIRunner = Depends(get_runner)) -> None:
+async def delete_session(session_id: UUID, runner: CodrusCLIRunner = Depends(get_runner)) -> None:
     """Delete a session."""
     session = get_editable_session(session_id, runner)
     session_process = runner.get_session(session_id)
@@ -587,7 +587,7 @@ async def delete_session(session_id: UUID, runner: KimiCLIRunner = Depends(get_r
 async def update_session(
     session_id: UUID,
     request: UpdateSessionRequest,
-    runner: KimiCLIRunner = Depends(get_runner),
+    runner: CodrusCLIRunner = Depends(get_runner),
 ) -> Session:
     """Update a session (e.g., rename title or archive/unarchive)."""
     from codrus_cli.session_state import load_session_state, save_session_state
@@ -685,7 +685,7 @@ def extract_first_turn_from_wire(session_dir: Path) -> tuple[str, str] | None:
 async def fork_session_endpoint(
     session_id: UUID,
     request: ForkSessionRequest,
-    runner: KimiCLIRunner = Depends(get_runner),
+    runner: CodrusCLIRunner = Depends(get_runner),
 ) -> Session:
     """Fork a session, creating a new session with history up to the specified turn.
 
@@ -750,7 +750,7 @@ async def fork_session_endpoint(
 async def generate_session_title(
     session_id: UUID,
     request: GenerateTitleRequest | None = None,
-    runner: KimiCLIRunner = Depends(get_runner),
+    runner: CodrusCLIRunner = Depends(get_runner),
 ) -> GenerateTitleResponse:
     """Generate a concise session title using AI based on the first conversation turn.
 
@@ -905,7 +905,7 @@ Title:"""
 async def session_stream(
     session_id: UUID,
     websocket: WebSocket,
-    runner: KimiCLIRunner = Depends(get_runner_ws),
+    runner: CodrusCLIRunner = Depends(get_runner_ws),
 ) -> None:
     """WebSocket stream for a session.
 

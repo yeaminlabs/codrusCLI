@@ -15,7 +15,7 @@ from codrus_cli.config import Config, get_default_config
 from codrus_cli.exception import ConfigError
 from codrus_cli.soul.agent import Agent, Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell import Shell
 from codrus_cli.ui.shell import slash as shell_slash
 from codrus_cli.ui.theme import (
@@ -48,7 +48,7 @@ def _make_shell_app(runtime: Runtime, tmp_path: Path) -> SimpleNamespace:
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
     return SimpleNamespace(soul=soul)
 
 
@@ -282,7 +282,7 @@ async def test_shell_startup_initializes_theme_from_config(
         toolset=EmptyToolset(),
         runtime=runtime,
     )
-    soul = KimiSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
+    soul = CodrusSoul(agent, context=Context(file_backend=tmp_path / "history.jsonl"))
     shell = RealShell(soul)
 
     set_theme_mock = Mock(side_effect=set_active_theme)

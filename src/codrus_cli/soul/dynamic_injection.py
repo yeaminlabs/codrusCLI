@@ -10,7 +10,7 @@ from kosong.message import Message
 from codrus_cli.notifications import is_notification_message
 
 if TYPE_CHECKING:
-    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.codrussoul import CodrusSoul
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,7 +33,7 @@ class DynamicInjectionProvider(ABC):
     async def get_injections(
         self,
         history: Sequence[Message],
-        soul: KimiSoul,
+        soul: CodrusSoul,
     ) -> list[DynamicInjection]: ...
 
     async def on_context_compacted(self) -> None:

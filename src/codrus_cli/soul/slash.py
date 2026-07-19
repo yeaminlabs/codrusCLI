@@ -21,11 +21,11 @@ from codrus_cli.utils.slashcmd import SlashCommandRegistry
 from codrus_cli.wire.types import StatusUpdate, TextPart
 
 if TYPE_CHECKING:
-    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.codrussoul import CodrusSoul
 
-type SoulSlashCmdFunc = Callable[[KimiSoul, str], None | Awaitable[None]]
+type SoulSlashCmdFunc = Callable[[CodrusSoul, str], None | Awaitable[None]]
 """
-A function that runs as a KimiSoul-level slash command.
+A function that runs as a CodrusSoul-level slash command.
 
 Raises:
     Any exception that can be raised by `Soul.run`.
@@ -35,13 +35,13 @@ registry = SlashCommandRegistry[SoulSlashCmdFunc]()
 
 
 @registry.command
-async def init(soul: KimiSoul, args: str):
+async def init(soul: CodrusSoul, args: str):
     """Analyze the codebase and generate an `AGENTS.md` file"""
-    from codrus_cli.soul.kimisoul import KimiSoul
+    from codrus_cli.soul.codrussoul import CodrusSoul
 
     with tempfile.TemporaryDirectory() as temp_dir:
         tmp_context = Context(file_backend=Path(temp_dir) / "context.jsonl")
-        tmp_soul = KimiSoul(soul.agent, context=tmp_context)
+        tmp_soul = CodrusSoul(soul.agent, context=tmp_context)
         await tmp_soul.run(prompts.INIT)
 
     agents_md = await load_agents_md(soul.runtime.builtin_args.KIMI_WORK_DIR)
@@ -57,7 +57,7 @@ async def init(soul: KimiSoul, args: str):
 
 
 @registry.command
-async def compact(soul: KimiSoul, args: str):
+async def compact(soul: CodrusSoul, args: str):
     """Compact the context (optionally with a custom focus, e.g. /compact keep db discussions)"""
     if soul.context.n_checkpoints == 0:
         wire_send(TextPart(text="The context is empty."))
@@ -78,7 +78,7 @@ async def compact(soul: KimiSoul, args: str):
 
 
 @registry.command(aliases=["reset"])
-async def clear(soul: KimiSoul, args: str):
+async def clear(soul: CodrusSoul, args: str):
     """Clear the context"""
     logger.info("Running `/clear`")
     await soul.context.clear()
@@ -95,7 +95,7 @@ async def clear(soul: KimiSoul, args: str):
 
 
 @registry.command
-async def yolo(soul: KimiSoul, args: str):
+async def yolo(soul: CodrusSoul, args: str):
     """Toggle YOLO mode (auto-approve all actions)"""
     from codrus_cli.telemetry import track
 
@@ -123,7 +123,7 @@ async def yolo(soul: KimiSoul, args: str):
 
 
 @registry.command
-async def afk(soul: KimiSoul, args: str):
+async def afk(soul: CodrusSoul, args: str):
     """Toggle afk mode (auto-dismiss AskUserQuestion, auto-approve tool calls)"""
     from codrus_cli.telemetry import track
 
@@ -157,7 +157,7 @@ async def afk(soul: KimiSoul, args: str):
 
 
 @registry.command
-async def plan(soul: KimiSoul, args: str):
+async def plan(soul: CodrusSoul, args: str):
     """Toggle plan mode. Usage: /plan [on|off|view|clear]"""
     subcmd = args.strip().lower()
 
@@ -198,7 +198,7 @@ async def plan(soul: KimiSoul, args: str):
 
 
 @registry.command(name="add-dir")
-async def add_dir(soul: KimiSoul, args: str):
+async def add_dir(soul: CodrusSoul, args: str):
     """Add a directory to the workspace. Usage: /add-dir <path>. Run without args to list added dirs"""  # noqa: E501
     from kaos.path import KaosPath
 
@@ -273,7 +273,7 @@ async def add_dir(soul: KimiSoul, args: str):
 
 
 @registry.command
-async def export(soul: KimiSoul, args: str):
+async def export(soul: CodrusSoul, args: str):
     """Export current session context to a markdown file"""
     from codrus_cli.utils.export import perform_export
 
@@ -301,7 +301,7 @@ async def export(soul: KimiSoul, args: str):
 
 
 @registry.command(name="import")
-async def import_context(soul: KimiSoul, args: str):
+async def import_context(soul: CodrusSoul, args: str):
     """Import context from a file or session ID"""
     from codrus_cli.utils.export import perform_import
 

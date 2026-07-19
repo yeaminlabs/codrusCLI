@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from codrus_cli import logger
 from codrus_cli.config import LLMModel, get_config_file, load_config, save_config
 from codrus_cli.llm import ProviderType, derive_model_capabilities
-from codrus_cli.web.runner.process import KimiCLIRunner
+from codrus_cli.web.runner.process import CodrusCLIRunner
 
 router = APIRouter(prefix="/api/config", tags=["config"])
 
@@ -105,8 +105,8 @@ def _build_global_config() -> GlobalConfig:
     )
 
 
-def _get_runner(req: Request) -> KimiCLIRunner:
-    """Get KimiCLIRunner from FastAPI app state."""
+def _get_runner(req: Request) -> CodrusCLIRunner:
+    """Get CodrusCLIRunner from FastAPI app state."""
     return req.app.state.runner
 
 
@@ -129,7 +129,7 @@ async def get_global_config() -> GlobalConfig:
 async def update_global_config(
     request: UpdateGlobalConfigRequest,
     http_request: Request,
-    runner: KimiCLIRunner = Depends(_get_runner),
+    runner: CodrusCLIRunner = Depends(_get_runner),
 ) -> UpdateGlobalConfigResponse:
     """Update global (codrus-cli) default model/thinking."""
     _ensure_sensitive_apis_allowed(http_request)

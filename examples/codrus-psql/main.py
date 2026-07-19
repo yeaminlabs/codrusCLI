@@ -39,7 +39,7 @@ from codrus_cli.session import Session
 from codrus_cli.soul import LLMNotSet, LLMNotSupported, MaxStepsReached, RunCancelled, run_soul
 from codrus_cli.soul.agent import Runtime
 from codrus_cli.soul.context import Context
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 from codrus_cli.ui.shell.visualize import visualize
 from codrus_cli.wire.types import StatusUpdate
 
@@ -260,8 +260,8 @@ class PsqlMode(Enum):
 # ============================================================================
 
 
-async def create_psql_soul(llm: LLM | None, conninfo: str) -> KimiSoul:
-    """Create a KimiSoul configured for PostgreSQL with ExecuteSql tool
+async def create_psql_soul(llm: LLM | None, conninfo: str) -> CodrusSoul:
+    """Create a CodrusSoul configured for PostgreSQL with ExecuteSql tool
     and standard codrus-cli tools."""
     from typing import cast
 
@@ -288,7 +288,7 @@ async def create_psql_soul(llm: LLM | None, conninfo: str) -> KimiSoul:
     cast(KimiToolset, agent.toolset).add(ExecuteSql(conninfo))
 
     context = Context(session.context_file)
-    return KimiSoul(agent, context=context)
+    return CodrusSoul(agent, context=context)
 
 
 # ============================================================================
@@ -302,7 +302,7 @@ class PsqlShell:
     PROMPT_SYMBOL_AI = "✨"
     PROMPT_SYMBOL_PSQL = "$"
 
-    def __init__(self, soul: KimiSoul, psql_process: PsqlProcess):
+    def __init__(self, soul: CodrusSoul, psql_process: PsqlProcess):
         self.soul = soul
         self._psql_process = psql_process
         self._mode = PsqlMode.AI

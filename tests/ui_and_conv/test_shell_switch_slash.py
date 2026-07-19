@@ -26,10 +26,10 @@ async def _invoke_slash_command(command: SlashCommand[ShellSlashCmdFunc], shell:
 
 
 def _mock_shell_with_soul(session_id: str = "current-session-id") -> Mock:
-    """Create a mock Shell whose soul passes the KimiSoul isinstance check."""
-    from codrus_cli.soul.kimisoul import KimiSoul
+    """Create a mock Shell whose soul passes the CodrusSoul isinstance check."""
+    from codrus_cli.soul.codrussoul import CodrusSoul
 
-    mock_soul = Mock(spec=KimiSoul)
+    mock_soul = Mock(spec=CodrusSoul)
     mock_soul.runtime.session.id = session_id
     shell = Mock()
     shell.soul = mock_soul
@@ -90,9 +90,9 @@ class TestWebCommandBehavior:
         assert exc_info.value.session_id == "abc-def"
 
     async def test_session_id_none_without_kimi_soul(self) -> None:
-        """When soul is not a KimiSoul, session_id should be None."""
+        """When soul is not a CodrusSoul, session_id should be None."""
         shell = Mock()
-        shell.soul = Mock()  # plain Mock, not spec=KimiSoul
+        shell.soul = Mock()  # plain Mock, not spec=CodrusSoul
 
         cmd = shell_slash_registry.find_command("web")
         assert cmd is not None
@@ -167,7 +167,7 @@ class TestVisCommandBehavior:
         assert exc_info.value.session_id == "abc-def"
 
     async def test_session_id_none_without_kimi_soul(self) -> None:
-        """When soul is not a KimiSoul, session_id should be None."""
+        """When soul is not a CodrusSoul, session_id should be None."""
         shell = Mock()
         shell.soul = Mock()
 

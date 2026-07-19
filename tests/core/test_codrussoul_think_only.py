@@ -11,10 +11,10 @@ from __future__ import annotations
 import pytest
 from kosong.chat_provider import APIEmptyResponseError
 
-from codrus_cli.soul.kimisoul import KimiSoul
+from codrus_cli.soul.codrussoul import CodrusSoul
 
 
 @pytest.mark.asyncio
 async def test_think_only_error_is_retryable() -> None:
     """APIEmptyResponseError from think-only responses should be retryable."""
-    assert KimiSoul._is_retryable_error(APIEmptyResponseError("only thinking content"))
+    assert CodrusSoul._is_retryable_error(APIEmptyResponseError("only thinking content"))

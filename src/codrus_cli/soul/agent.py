@@ -195,7 +195,7 @@ class Runtime:
     ui_mode: str = "shell"
     resumed: bool = False
     hook_engine: Any = None
-    """HookEngine instance, set by KimiCLI after soul creation."""
+    """HookEngine instance, set by CodrusCLI after soul creation."""
 
     def __post_init__(self) -> None:
         if self.subagent_store is None:
@@ -392,12 +392,12 @@ async def load_agent(
 
     Raises:
         FileNotFoundError: When the agent file is not found.
-        AgentSpecError(KimiCLIException, ValueError): When the agent specification is invalid.
-        SystemPromptTemplateError(KimiCLIException, ValueError): When the system prompt template
+        AgentSpecError(CodrusCLIException, ValueError): When the agent specification is invalid.
+        SystemPromptTemplateError(CodrusCLIException, ValueError): When the system prompt template
             is invalid.
-        InvalidToolError(KimiCLIException, ValueError): When any tool cannot be loaded.
-        MCPConfigError(KimiCLIException, ValueError): When any MCP configuration is invalid.
-        MCPRuntimeError(KimiCLIException, RuntimeError): When any MCP server cannot be connected.
+        InvalidToolError(CodrusCLIException, ValueError): When any tool cannot be loaded.
+        MCPConfigError(CodrusCLIException, ValueError): When any MCP configuration is invalid.
+        MCPRuntimeError(CodrusCLIException, RuntimeError): When any MCP server cannot be connected.
     """
     logger.info("Loading agent: {agent_file}", agent_file=agent_file)
     agent_spec = load_agent_spec(agent_file)

@@ -390,7 +390,7 @@ def test_begin_end_step():
     assert ts.end_step() == [("ToolB", "{}")]
 
     # After end_step, internal lists are not cleared by end_step itself;
-    # the caller (KimiSoul) is expected to call begin_step again for the next step.
+    # the caller (CodrusSoul) is expected to call begin_step again for the next step.
     # But dedup_triggered should still reflect the last step's state.
     assert ts.dedup_triggered is False
 
